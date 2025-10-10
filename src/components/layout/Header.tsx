@@ -26,14 +26,14 @@ export const Header = () => {
           <span className="logo-text">RubPlay</span>
         </a>
 
-               {/* Desktop Navigation */}
-               <nav className="desktop-nav">
-                 <a href="/" className="nav-link">
-                   Inicio
-                 </a>
-                 <a href="#casino" className="nav-link">
-                   Casino
-                 </a>
+        {/* Desktop Navigation */}
+        <nav className="desktop-nav">
+          <a href="/" className="nav-link">
+            Inicio
+          </a>
+          <a href="#casino" className="nav-link">
+            Casino
+          </a>
           
           {/* Desktop Login Form */}
           <form onSubmit={handleLogin} className="header-login-form">
@@ -58,9 +58,9 @@ export const Header = () => {
             >
               Ingresar
             </button>
-                   <a href="/register" className="nav-link register-link">
-                     Regístrate
-                   </a>
+            <a href="/register" className="nav-link register-link">
+              Regístrate
+            </a>
           </form>
         </nav>
 
@@ -75,16 +75,16 @@ export const Header = () => {
         </button>
       </div>
 
-             {/* Mobile Menu */}
-             {isMobileMenuOpen && (
-               <div className="mobile-menu">
-                 <div className="mobile-menu-content">
-                   <a href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
-                     Inicio
-                   </a>
-                   <a href="#casino" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
-                     Casino
-                   </a>
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu">
+          <div className="mobile-menu-content">
+            <a href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
+              Inicio
+            </a>
+            <a href="#casino" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
+              Casino
+            </a>
             
             {/* Mobile Login Form */}
             <form onSubmit={handleLogin} className="mobile-login-form">
@@ -109,13 +109,13 @@ export const Header = () => {
               >
                 Ingresar
               </button>
-                     <a 
-                       href="/register"
-                       className="mobile-nav-link"
-                       onClick={() => setIsMobileMenuOpen(false)}
-                     >
-                       Regístrate
-                     </a>
+              <a 
+                href="/register"
+                className="mobile-nav-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Regístrate
+              </a>
             </form>
           </div>
         </div>

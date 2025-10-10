@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 
 interface FormData {
   fullName: string;
@@ -186,18 +187,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register-page">
-      <div className="register-container">
-        {/* Header */}
-        <div className="register-header">
-          <Link href="/" className="back-link">
-            ← Volver al inicio
-          </Link>
-          <h1 className="register-title">Crear Cuenta en RubPlay</h1>
-          <p className="register-subtitle">
-            Únete a la mejor plataforma de ruleta online
-          </p>
-        </div>
+    <div className="main-container">
+      <Header />
+      <div className="register-page">
+        <div className="register-container">
+          {/* Header */}
+          <div className="register-header">
+            <Link href="/" className="back-link">
+              ← Volver al inicio
+            </Link>
+            <h1 className="register-title">Crear Cuenta en RubPlay</h1>
+            <p className="register-subtitle">
+              Únete a la mejor plataforma de ruleta online
+            </p>
+          </div>
 
         {/* Progress Bar */}
         <div className="progress-container">
@@ -443,6 +446,7 @@ export default function RegisterPage() {
           <p>
             ¿Ya tienes cuenta? <Link href="/login" className="login-link">Inicia sesión</Link>
           </p>
+        </div>
         </div>
       </div>
     </div>
