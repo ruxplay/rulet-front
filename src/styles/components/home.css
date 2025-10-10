@@ -1,0 +1,296 @@
+/* ========================================
+   COMPONENTES DE LA PÁGINA DE INICIO
+   ======================================== */
+
+/* Contenido principal */
+.home-content {
+  padding: var(--spacing-xl) 0;
+}
+
+/* Sección Hero */
+.hero-section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.hero-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-2xl);
+  align-items: center;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hero-subtitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-accent);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.promo-image {
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+  border-radius: var(--border-radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: var(--border-radius-xl);
+}
+
+.promo-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+/* Sección de Registro */
+.register-section {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  padding: var(--spacing-xl) 0;
+  margin: var(--spacing-xl) 0;
+}
+
+.register-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  text-align: center;
+}
+
+.register-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.register-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Sección de Pasos */
+.steps-section {
+  padding: var(--spacing-2xl) 0;
+}
+
+.steps-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+}
+
+.step {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(12px);
+}
+
+.step:hover::before {
+  opacity: 0.3;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background: var(--gradient-secondary);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto var(--spacing-md) auto;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animación secuencial para los números */
+.step:nth-child(1) .step-number {
+  animation: sequential-glow 6s ease-in-out infinite;
+  animation-delay: 0s;
+}
+
+.step:nth-child(2) .step-number {
+  animation: sequential-glow 6s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.step:nth-child(3) .step-number {
+  animation: sequential-glow 6s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+/* Keyframes para la animación secuencial */
+@keyframes sequential-glow {
+  0%, 15% {
+    transform: scale(1);
+    box-shadow: var(--shadow-md);
+    background: var(--gradient-secondary);
+  }
+  16%, 30% {
+    transform: scale(1.15);
+    box-shadow: 0 0 25px var(--secondary), 0 0 50px var(--secondary), var(--shadow-md);
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  }
+  31%, 100% {
+    transform: scale(1);
+    box-shadow: var(--shadow-md);
+    background: var(--gradient-secondary);
+  }
+}
+
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.step-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+    text-align: center;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 2rem;
+  }
+  
+  .steps-container {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.75rem;
+  }
+  
+  .hero-description {
+    font-size: 1.125rem;
+  }
+  
+  .promo-image {
+    height: 300px;
+  }
+  
+  .register-title {
+    font-size: 2rem;
+  }
+  
+  .register-subtitle {
+    font-size: 1.125rem;
+  }
+  
+  .step {
+    padding: var(--spacing-lg);
+  }
+  
+  .step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .step-title {
+    font-size: 1.25rem;
+  }
+}

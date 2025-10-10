@@ -1,0 +1,142 @@
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Breakpoints profesionales */
+/* Mobile First Approach */
+
+/* Mobile (320px - 767px) */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Typography responsive */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  /* Spacing responsive */
+  .p-lg {
+    padding: var(--spacing-md);
+  }
+  
+  .p-xl {
+    padding: var(--spacing-lg);
+  }
+  
+  .m-lg {
+    margin: var(--spacing-md);
+  }
+  
+  .m-xl {
+    margin: var(--spacing-lg);
+  }
+}
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--spacing-xl);
+  }
+  
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large Desktop (1280px+) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+/* Extra Large Desktop (1536px+) */
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1600px;
+  }
+}
+
+/* Utilities responsive */
+@media (max-width: 767px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .block-mobile {
+    display: block !important;
+  }
+  
+  .flex-mobile {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .hidden-tablet {
+    display: none !important;
+  }
+  
+  .block-tablet {
+    display: block !important;
+  }
+  
+  .flex-tablet {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hidden-desktop {
+    display: none !important;
+  }
+  
+  .block-desktop {
+    display: block !important;
+  }
+  
+  .flex-desktop {
+    display: flex !important;
+  }
+}

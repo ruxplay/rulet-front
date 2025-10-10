@@ -1,0 +1,709 @@
+/* ========================================
+   COMPONENTE HEADER
+   ======================================== */
+
+.header {
+  background-color: var(--primary);
+  border-bottom: 1px solid var(--bg-secondary);
+  box-shadow: var(--shadow-primary);
+  padding: var(--spacing-md) 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  position: relative;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+}
+
+.logo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-md);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(8px);
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--secondary);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+}
+
+.logo:hover::before {
+  opacity: 0.3;
+}
+
+.logo:hover::after {
+  width: 100%;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-logo);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Navegación Desktop */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-md);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(6px);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--secondary);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 8px var(--secondary), 0 0 16px var(--secondary);
+}
+
+.nav-link:hover::before {
+  opacity: 0.2;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Formulario de Login Desktop */
+.header-login-form {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(30, 30, 30, 0.5);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--bg-accent);
+  transition: all var(--transition-normal);
+}
+
+.header-login-form:hover {
+  background: rgba(30, 30, 30, 0.7);
+  border-color: var(--secondary);
+}
+
+.header-login-input {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  outline: none;
+  width: 160px;
+  transition: all var(--transition-normal);
+  position: relative;
+  border-radius: var(--border-radius-sm);
+}
+
+.header-login-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.header-login-input::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--secondary);
+  border-radius: 1px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 6px var(--secondary), 0 0 12px var(--secondary);
+}
+
+.header-login-input:hover::before {
+  opacity: 0.15;
+}
+
+.header-login-input:hover::after {
+  width: 100%;
+}
+
+.header-login-input::placeholder {
+  color: var(--text-muted);
+}
+
+.header-login-input:focus {
+  color: var(--text-primary);
+  background: rgba(0, 255, 156, 0.1);
+  border-radius: var(--border-radius-sm);
+  box-shadow: 0 0 0 2px rgba(0, 255, 156, 0.3);
+}
+
+.header-login-input:hover {
+  color: var(--text-primary);
+}
+
+.login-separator {
+  width: 1px;
+  height: 20px;
+  background-color: var(--bg-accent);
+}
+
+.header-login-button {
+  background: var(--gradient-secondary);
+  color: var(--primary);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-secondary);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.header-login-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(6px);
+}
+
+.header-login-button::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--secondary);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+}
+
+.header-login-button:hover::before {
+  opacity: 0.3;
+}
+
+.header-login-button:hover::after {
+  width: 100%;
+}
+
+.header-login-button:hover {
+  background: linear-gradient(135deg, var(--secondary-dark), #00B366);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
+}
+
+/* Enlace Regístrate dentro del formulario */
+.register-link {
+  margin-left: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-accent);
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-normal);
+  position: relative;
+  white-space: nowrap;
+  animation: color-cycle 4s ease-in-out infinite;
+}
+
+.register-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.register-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent);
+}
+
+.register-link:hover::before {
+  opacity: 0.2;
+}
+
+.register-link:hover::after {
+  width: 100%;
+}
+
+.register-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(199, 160, 8, 0.1);
+  transform: translateY(-1px);
+  animation-play-state: paused;
+}
+
+/* Animación de cambio de color para Regístrate */
+@keyframes color-cycle {
+  0% {
+    background-color: rgba(199, 160, 8, 0.1); /* Dorado suave */
+    color: var(--text-accent);
+  }
+  25% {
+    background-color: rgba(0, 255, 156, 0.1); /* Verde neón */
+    color: var(--secondary);
+  }
+  50% {
+    background-color: rgba(255, 71, 87, 0.1); /* Rojo vibrante */
+    color: #FF4757;
+  }
+  75% {
+    background-color: rgba(0, 212, 255, 0.1); /* Azul cielo */
+    color: #00D4FF;
+  }
+  100% {
+    background-color: rgba(199, 160, 8, 0.1); /* Dorado suave */
+    color: var(--text-accent);
+  }
+}
+
+/* Botón Menú Mobile */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-normal);
+}
+
+.mobile-menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Menú Mobile */
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--primary);
+  border-top: 1px solid var(--bg-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.mobile-menu-content {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.mobile-nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--bg-accent);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.mobile-nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--secondary);
+  border-radius: 1px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 6px var(--secondary), 0 0 12px var(--secondary);
+}
+
+.mobile-nav-link:hover::before {
+  opacity: 0.2;
+}
+
+.mobile-nav-link:hover::after {
+  width: 100%;
+}
+
+.mobile-nav-link:hover {
+  color: var(--text-primary);
+  transform: translateX(5px);
+}
+
+.mobile-nav-link:last-child {
+  border-bottom: none;
+}
+
+/* Formulario de Login Mobile */
+.mobile-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--bg-accent);
+}
+
+.mobile-login-input {
+  background: rgba(30, 30, 30, 0.5);
+  border: 1px solid var(--bg-accent);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.mobile-login-input::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.mobile-login-input::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--secondary);
+  border-radius: 1px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 6px var(--secondary), 0 0 12px var(--secondary);
+}
+
+.mobile-login-input:hover::before {
+  opacity: 0.15;
+}
+
+.mobile-login-input:hover::after {
+  width: 100%;
+}
+
+.mobile-login-input::placeholder {
+  color: var(--text-muted);
+}
+
+.mobile-login-input:focus {
+  color: var(--text-primary);
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(0, 255, 156, 0.3);
+}
+
+.mobile-login-input:hover {
+  color: var(--text-primary);
+}
+
+.mobile-login-button {
+  background: var(--gradient-secondary);
+  color: var(--primary);
+  border: none;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.mobile-login-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--secondary) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(6px);
+}
+
+.mobile-login-button::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--secondary);
+  border-radius: 2px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+}
+
+.mobile-login-button:hover::before {
+  opacity: 0.3;
+}
+
+.mobile-login-button:hover::after {
+  width: 100%;
+}
+
+.mobile-login-button:hover {
+  background: linear-gradient(135deg, var(--secondary-dark), #00B366);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
+}
+
+/* Enlace Regístrate en formulario móvil */
+.mobile-login-form .mobile-nav-link {
+  margin-top: var(--spacing-sm);
+  text-align: center;
+  color: var(--text-accent);
+  font-weight: 500;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-normal);
+  position: relative;
+  animation: color-cycle 4s ease-in-out infinite;
+}
+
+.mobile-login-form .mobile-nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+  border-radius: var(--border-radius-sm);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.mobile-login-form .mobile-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  border-radius: 1px;
+  transition: width var(--transition-normal);
+  box-shadow: 0 0 6px var(--accent), 0 0 12px var(--accent);
+}
+
+.mobile-login-form .mobile-nav-link:hover::before {
+  opacity: 0.2;
+}
+
+.mobile-login-form .mobile-nav-link:hover::after {
+  width: 100%;
+}
+
+.mobile-login-form .mobile-nav-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(199, 160, 8, 0.1);
+  transform: translateY(-1px);
+  animation-play-state: paused;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .desktop-nav {
+    gap: var(--spacing-md);
+  }
+  
+  .header-login-form {
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .header-login-input {
+    width: 140px;
+    font-size: 0.8125rem;
+  }
+  
+  .header-login-button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  
+  .mobile-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+  }
+}
