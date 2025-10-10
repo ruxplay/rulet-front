@@ -1,4 +1,5 @@
 import { Header } from '@/components/layout/Header';
+import { StepsSection } from '@/components/sections/StepsSection';
 
 export default function HomePage() {
   return (
@@ -13,8 +14,23 @@ export default function HomePage() {
               <h1 className="hero-title">Juega la Ruleta</h1>
               <h2 className="hero-subtitle">y Gana Estupendos Premios</h2>
               <p className="hero-description">
-                La mejor experiencia de ruleta online con premios reales y juegos justos
+                La mejor experiencia de ruleta online con premios reales y juegos justos. 
+                Únete a miles de jugadores que ya disfrutan de nuestra plataforma.
               </p>
+              <div className="hero-features">
+                <div className="feature-item">
+                  <span className="feature-icon">⚡</span>
+                  <span className="feature-text">Juegos Rápidos</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">🔒</span>
+                  <span className="feature-text">100% Seguro</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">💰</span>
+                  <span className="feature-text">Premios Reales</span>
+                </div>
+              </div>
             </div>
             <div className="hero-image">
               <div className="promo-image">
@@ -27,41 +43,25 @@ export default function HomePage() {
         {/* Sección de Registro */}
         <section className="register-section">
           <div className="register-content">
-            <h3 className="register-title">Regístrate</h3>
+            <h3 className="register-title">¡Únete a RubPlay!</h3>
             <p className="register-subtitle">
               Si todavía no eres usuario, abre tu cuenta, es gratis y solo toma unos segundos
             </p>
+            <div className="register-actions">
+              <button className="btn-primary">
+                <span className="btn-icon">🎯</span>
+                Registrarse Ahora
+              </button>
+              <button className="btn-secondary">
+                <span className="btn-icon">🎰</span>
+                Ver Casino
+              </button>
+            </div>
           </div>
         </section>
 
-        {/* Sección de Pasos */}
-        <section className="steps-section">
-          <div className="steps-container">
-            <div className="step">
-              <div className="step-number">1</div>
-              <h4 className="step-title">REGÍSTRATE</h4>
-              <p className="step-description">
-                Si todavía no eres usuario, abre tu cuenta, es gratis y solo toma unos segundos
-              </p>
-            </div>
-            
-            <div className="step">
-              <div className="step-number">2</div>
-              <h4 className="step-title">APUESTA</h4>
-              <p className="step-description">
-                Realiza tu apuesta en nuestra increíble oferta de eventos y mercados
-              </p>
-            </div>
-            
-            <div className="step">
-              <div className="step-number">3</div>
-              <h4 className="step-title">GANA</h4>
-              <p className="step-description">
-                Recibe bonos extras por tus ganancias con nuestras increíbles promociones
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Sección de Pasos - Usando el nuevo componente */}
+        <StepsSection />
       </main>
     </div>
   );
