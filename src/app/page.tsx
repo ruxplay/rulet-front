@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { StepsSection } from '@/components/sections/StepsSection';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -48,10 +49,10 @@ export default function HomePage() {
               Si todavía no eres usuario, abre tu cuenta, es gratis y solo toma unos segundos
             </p>
             <div className="register-actions">
-              <button className="btn-primary">
+              <Link href="/register" className="btn-primary">
                 <span className="btn-icon">🎯</span>
                 Registrarse Ahora
-              </button>
+              </Link>
               <button className="btn-secondary">
                 <span className="btn-icon">🎰</span>
                 Ver Casino

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export const Header = () => {
   const [loginData, setLoginData] = useState({
@@ -19,18 +20,18 @@ export const Header = () => {
       <div className="header-container">
         
         {/* Logo */}
-        <a href="/" className="logo">
+        <Link href="/" className="logo">
           <div className="logo-icon">
             <span className="logo-text">R</span>
           </div>
           <span className="logo-text">RubPlay</span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="desktop-nav">
-          <a href="/" className="nav-link">
+          <Link href="/" className="nav-link">
             Inicio
-          </a>
+          </Link>
           <a href="#casino" className="nav-link">
             Casino
           </a>
@@ -81,9 +82,9 @@ export const Header = () => {
       {isMobileMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-menu-content">
-            <a href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Inicio
-            </a>
+            </Link>
             <a href="#casino" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Casino
             </a>
