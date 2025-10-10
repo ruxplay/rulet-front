@@ -11,3 +11,5 @@
 @import '../styles/components/home.css';
 @import '../styles/components/register.css';
 @import '../styles/components/step-card.css';
+@import '../styles/components/help-button.css';
+@import '../styles/components/help-modal.css';

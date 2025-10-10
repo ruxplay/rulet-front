@@ -32,9 +32,6 @@ export const Header = () => {
           <Link href="/" className="nav-link">
             Inicio
           </Link>
-          <a href="#casino" className="nav-link">
-            Casino
-          </a>
           
           {/* Desktop Login Form */}
           <form onSubmit={handleLogin} className="header-login-form">
@@ -85,9 +82,6 @@ export const Header = () => {
             <Link href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
               Inicio
             </Link>
-            <a href="#casino" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
-              Casino
-            </a>
             
             {/* Mobile Login Form */}
             <form onSubmit={handleLogin} className="mobile-login-form">

@@ -20,8 +20,8 @@ export default function HomePage() {
               </p>
               <div className="hero-features">
                 <div className="feature-item">
-                  <span className="feature-icon">⚡</span>
-                  <span className="feature-text">Juegos Rápidos</span>
+                  <span className="feature-icon">🎰</span>
+                  <span className="feature-text">Ruleta Online</span>
                 </div>
                 <div className="feature-item">
                   <span className="feature-icon">🔒</span>
@@ -53,10 +53,6 @@ export default function HomePage() {
                 <span className="btn-icon">🎯</span>
                 Registrarse Ahora
               </Link>
-              <button className="btn-secondary">
-                <span className="btn-icon">🎰</span>
-                Ver Casino
-              </button>
             </div>
           </div>
         </section>
