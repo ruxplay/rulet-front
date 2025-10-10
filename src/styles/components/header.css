@@ -157,21 +157,47 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  background: rgba(30, 30, 30, 0.5);
+  background: var(--primary);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-md);
-  border: 1px solid var(--bg-accent);
+  border: 1px solid var(--bg-secondary);
   transition: all var(--transition-normal);
 }
 
 .header-login-form:hover {
-  background: rgba(30, 30, 30, 0.7);
+  background: var(--primary);
   border-color: var(--secondary);
+}
+
+/* Contenedor de inputs y botón */
+.login-inputs-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Título del formulario de login desktop - Alineado a la izquierda */
+.login-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--spacing-xs);
+  text-align: left;
+  opacity: 0.9;
+  transition: all var(--transition-normal);
+  margin-left: 0;
+}
+
+.header-login-form:hover .login-title {
+  color: var(--text-secondary);
+  opacity: 1;
 }
 
 .header-login-input {
   background: transparent;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-secondary);
   font-size: 0.875rem;
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -227,11 +253,14 @@
   color: var(--text-primary);
   background: rgba(0, 255, 156, 0.1);
   border-radius: var(--border-radius-sm);
+  border-color: var(--secondary);
   box-shadow: 0 0 0 2px rgba(0, 255, 156, 0.3);
 }
 
 .header-login-input:hover {
   color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .login-separator {
@@ -421,6 +450,31 @@
   border-top: 1px solid var(--bg-accent);
 }
 
+/* Título del formulario de login móvil */
+.mobile-login-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+  opacity: 0.9;
+  transition: all var(--transition-normal);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(199, 160, 8, 0.1);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid rgba(199, 160, 8, 0.3);
+}
+
+.mobile-login-form:hover .mobile-login-title {
+  color: var(--secondary);
+  opacity: 1;
+  text-shadow: 0 0 8px rgba(0, 255, 156, 0.3);
+  background: rgba(0, 255, 156, 0.1);
+  border-color: var(--secondary);
+}
+
 .mobile-login-input {
   background: rgba(30, 30, 30, 0.5);
   border: 1px solid var(--bg-accent);
@@ -570,6 +624,15 @@
   .header-login-form {
     gap: var(--spacing-xs);
     padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .login-title {
+    font-size: 0.6875rem;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .login-inputs-container {
+    gap: var(--spacing-xs);
   }
   
   .header-login-input {

@@ -37,30 +37,32 @@ export const Header = () => {
           
           {/* Desktop Login Form */}
           <form onSubmit={handleLogin} className="header-login-form">
-            <input
-              type="email"
-              placeholder="Correo"
-              value={loginData.email}
-              onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-              className="header-login-input"
-            />
-            <div className="login-separator"></div>
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={loginData.password}
-              onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-              className="header-login-input"
-            />
-            <button
-              type="submit"
-              className="header-login-button"
-            >
-              Ingresar
-            </button>
-            <a href="/register" className="nav-link register-link">
-              Regístrate
-            </a>
+            <div className="login-inputs-container">
+              <input
+                type="email"
+                placeholder="Correo"
+                value={loginData.email}
+                onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                className="header-login-input"
+              />
+              <div className="login-separator"></div>
+              <input
+                type="password"
+                placeholder="Contraseña"
+                value={loginData.password}
+                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                className="header-login-input"
+              />
+              <button
+                type="submit"
+                className="header-login-button"
+              >
+                Ingresar
+              </button>
+              <a href="/register" className="nav-link register-link">
+                Regístrate
+              </a>
+            </div>
           </form>
         </nav>
 
@@ -88,6 +90,7 @@ export const Header = () => {
             
             {/* Mobile Login Form */}
             <form onSubmit={handleLogin} className="mobile-login-form">
+              <div className="mobile-login-title">Iniciar Sesión</div>
               <input
                 type="email"
                 placeholder="Correo electrónico"
