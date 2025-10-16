@@ -27,8 +27,14 @@ export const authApi = createApi({
         body: registerData,
       }),
       transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
-        if (response.user) return response;
-        if (response.data?.user) return response.data;
+        // Verificar que response es un objeto antes de acceder a sus propiedades
+        if (response && typeof response === 'object' && 'user' in response) {
+          return response as { user?: unknown; data?: { user?: unknown } };
+        }
+        if (response && typeof response === 'object' && 'data' in response) {
+          const responseObj = response as { data?: { user?: unknown } };
+          if (responseObj.data?.user) return responseObj.data;
+        }
         return { user: response };
       },
       invalidatesTags: ['Auth'],
@@ -42,9 +48,14 @@ export const authApi = createApi({
         body: credentials,
       }),
       transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
-        // Acepta respuesta flexible desde backend
-        if (response.user) return response;
-        if (response.data?.user) return response.data;
+        // Verificar que response es un objeto antes de acceder a sus propiedades
+        if (response && typeof response === 'object' && 'user' in response) {
+          return response as { user?: unknown; data?: { user?: unknown } };
+        }
+        if (response && typeof response === 'object' && 'data' in response) {
+          const responseObj = response as { data?: { user?: unknown } };
+          if (responseObj.data?.user) return responseObj.data;
+        }
         return { user: response };
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
