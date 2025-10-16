@@ -103,7 +103,7 @@ export const useAuth = () => {
       // Siempre usar username para consistencia
       const userWithConsistentName = {
         ...user,
-        fullName: user.username // Siempre usar username
+        fullName: (user as { username?: string }).username // Siempre usar username
       };
       
       dispatch(setUser(userWithConsistentName));
