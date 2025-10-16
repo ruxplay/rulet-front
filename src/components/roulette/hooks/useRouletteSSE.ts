@@ -76,30 +76,18 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
     });
 
     // Evento: mesa actualizada
-    eventSource.addEventListener('mesa.updated', (event) => {
-      try {
-        const _data = JSON.parse(event.data);
-      } catch (error) {
-        console.error('❌ Error parsing mesa.updated:', error);
-      }
+    eventSource.addEventListener('mesa.updated', () => {
+      // Evento recibido pero no procesado actualmente
     });
 
     // Evento: mesa girando
-    eventSource.addEventListener('mesa.spinning', (event) => {
-      try {
-        const _data = JSON.parse(event.data);
-      } catch (error) {
-        console.error('❌ Error parsing mesa.spinning:', error);
-      }
+    eventSource.addEventListener('mesa.spinning', () => {
+      // Evento recibido pero no procesado actualmente
     });
 
     // Evento: snapshot inicial
-    eventSource.addEventListener('snapshot', (event) => {
-      try {
-        const _data = JSON.parse(event.data);
-      } catch (error) {
-        console.error('❌ Error parsing snapshot:', error);
-      }
+    eventSource.addEventListener('snapshot', () => {
+      // Evento recibido pero no procesado actualmente
     });
 
     // Evento: balance de usuario actualizado

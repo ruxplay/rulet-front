@@ -53,7 +53,7 @@ export const authApi = createApi({
           if (data?.user) {
             dispatch(setUser(data.user));
           }
-        } catch (error) {
+        } catch {
           dispatch(clearUser());
         }
       },
@@ -82,7 +82,7 @@ export const authApi = createApi({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-        } catch (err) {
+        } catch {
           console.warn('Logout backend falló, limpiando localmente.');
         } finally {
           dispatch(clearUser());

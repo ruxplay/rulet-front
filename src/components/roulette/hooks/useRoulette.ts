@@ -54,7 +54,7 @@ export const useRoulette = (type: RouletteType) => {
   // Función para realizar apuesta
   const placeBet = useCallback(async () => {
     // Permitir apostar incluso si no hay mesa activa (para crear la primera mesa)
-    const isNoActiveMesa = (error as any)?.status === 404 || (error as any)?.data?.code === 'NO_ACTIVE_MESA';
+    const isNoActiveMesa = (error as { status?: number; data?: { code?: string } })?.status === 404 || (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
     
     if (!username || selectedSector === null) {
       return;
@@ -73,12 +73,12 @@ export const useRoulette = (type: RouletteType) => {
       }).unwrap();
 
       console.log('🎯 Respuesta completa de placeBet:', result);
-      console.log('🎯 Balance en respuesta:', (result as any)?.balance);
+      console.log('🎯 Balance en respuesta:', (result as { balance?: number | string })?.balance);
 
       // Si el backend devuelve balance actualizado, reflejarlo en Redux
-      if ((result as any)?.balance !== undefined) {
-        console.log('✅ Balance recibido, actualizando Redux:', (result as any).balance);
-        dispatch(updateUserBalance((result as any).balance));
+      if ((result as { balance?: number | string })?.balance !== undefined) {
+        console.log('✅ Balance recibido, actualizando Redux:', (result as { balance?: number | string }).balance);
+        dispatch(updateUserBalance((result as { balance?: number | string }).balance!));
       } else {
         console.log('❌ No se recibió balance en la respuesta de placeBet');
       }
@@ -88,16 +88,16 @@ export const useRoulette = (type: RouletteType) => {
       
       // Refrescar datos
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ ERROR USUARIO 15:', error);
       throw error;
     }
-  }, [username, selectedSector, mesaData, type, placeBetMutation, spinMesaMutation, refetch, error]);
+  }, [username, selectedSector, mesaData, type, placeBetMutation, refetch, error, dispatch]);
 
   // Función para manejar clic en sector
   const handleSectorClick = useCallback((sectorIndex: number) => {
     // Permitir selección incluso si no hay mesa activa (para crear la primera mesa)
-    const isNoActiveMesa = (error as any)?.status === 404 || (error as any)?.data?.code === 'NO_ACTIVE_MESA';
+    const isNoActiveMesa = (error as { status?: number; data?: { code?: string } })?.status === 404 || (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
 
     if (isNoActiveMesa) {
       // Si no hay mesa activa, permitir selección para crear la primera mesa
@@ -117,7 +117,7 @@ export const useRoulette = (type: RouletteType) => {
 
     // Verificar si el usuario ya apostó
     const userAlreadyBet = mesaData.mesa.sectors.some(
-      (sector: any) => sector && sector.username === username
+      (sector: { username?: string } | null) => sector && sector.username === username
     );
     if (userAlreadyBet) {
       return;
@@ -134,7 +134,7 @@ export const useRoulette = (type: RouletteType) => {
         setSelectedSector(null);
       }
     }
-  }, [mesaData]);
+  }, [mesaData?.mesa]);
 
   // Efecto para manejar el giro automático cuando la mesa se llena
   useEffect(() => {
@@ -158,7 +158,7 @@ export const useRoulette = (type: RouletteType) => {
             setIsSpinning(false);
             setRotation(0); // Resetear rotación
           }, 2000);
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('❌ ERROR EN GIRO AUTOMÁTICO:', error);
           setIsSpinning(false);
         }
