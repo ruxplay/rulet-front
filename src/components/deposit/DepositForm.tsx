@@ -58,9 +58,9 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
         break;
 
       case 'reference':
-        if (!value || value.length < 3) {
+        if (!value || String(value).length < 3) {
           newErrors.reference = 'El número de referencia es requerido';
-        } else if (value.length > 100) {
+        } else if (String(value).length > 100) {
           newErrors.reference = 'La referencia no puede exceder 100 caracteres';
         } else {
           delete newErrors.reference;

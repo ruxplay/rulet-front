@@ -78,9 +78,9 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
         break;
 
       case 'walletAddress':
-        if (!value || value.length < 10) {
+        if (!value || String(value).length < 10) {
           newErrors.walletAddress = 'La dirección de wallet es requerida';
-        } else if (!value.startsWith('0x') && !value.startsWith('T') && !value.startsWith('1')) {
+        } else if (!String(value).startsWith('0x') && !String(value).startsWith('T') && !String(value).startsWith('1')) {
           newErrors.walletAddress = 'Formato de dirección de wallet inválido';
         } else {
           delete newErrors.walletAddress;
@@ -88,7 +88,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
         break;
 
       case 'transactionHash':
-        if (value && value.length < 10) {
+        if (value && String(value).length < 10) {
           newErrors.transactionHash = 'El hash de transacción debe tener al menos 10 caracteres';
         } else {
           delete newErrors.transactionHash;
