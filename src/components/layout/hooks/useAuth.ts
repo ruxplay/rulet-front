@@ -96,7 +96,7 @@ export const useAuth = () => {
 
       
       // Soporte flexible según formato del backend
-      const user = result.user || result?.data?.user || result;
+      const user = result.user;
 
       if (!user) throw new Error('Respuesta inesperada del servidor');
       
