@@ -162,7 +162,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       // Punteros laterales
       drawPointer(centerX - 90, centerY + 10, -0.5);
       drawPointer(centerX + 90, centerY + 10, 0.5);
-    }, [sectors, colors]);
+    }, [sectors]);
 
     // Función para manejar clic en el canvas
     const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
