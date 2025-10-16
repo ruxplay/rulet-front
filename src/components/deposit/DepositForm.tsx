@@ -45,7 +45,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
   const [currentStep, setCurrentStep] = useState(1);
 
 
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string | number) => {
     const newErrors = { ...errors };
 
     switch (name) {
@@ -173,9 +173,9 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
 
       onSuccess();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating deposit:', error);
-      const message = error?.data?.error || 'Error al crear el depósito. Inténtalo nuevamente.';
+      const message = (error as { data?: { error?: string } })?.data?.error || 'Error al crear el depósito. Inténtalo nuevamente.';
       setErrors({ general: message });
     }
   };

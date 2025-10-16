@@ -196,15 +196,15 @@ export default function RegisterPage() {
       // Redirigir al home para iniciar sesión
       router.push('/');
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error en registro:', error);
       
       // Manejar errores de Zod (validación del backend)
-      if (error.errors && Array.isArray(error.errors)) {
+      if ((error as { errors?: unknown[] })?.errors && Array.isArray((error as { errors?: unknown[] }).errors)) {
         const zodErrors: Record<string, string> = {};
-        error.errors.forEach((err: any) => {
+        (error as { errors: unknown[] }).errors.forEach((err: { path?: string[]; message?: string }) => {
           if (err.path && err.path.length > 0) {
-            zodErrors[err.path[0]] = err.message;
+            zodErrors[err.path[0]] = err.message || 'Error de validación';
           }
         });
         setErrors(zodErrors);

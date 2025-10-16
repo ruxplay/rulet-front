@@ -18,7 +18,7 @@ function Roulette300Content() {
   const { authState } = useAuth();
   
   useEffect(() => {
-    const user = authState.user as any;
+    const user = authState.user as { balance?: number | string };
     const balance = user?.balance;
     console.log('🔎 Balance (authState.user):', { user, balance });
   }, [authState.user]);
@@ -63,7 +63,7 @@ function Roulette300Content() {
                 <strong>Usuario:</strong> {authState.user?.username || 'No definido'}
               </div>
               <div>
-                <strong>Saldo:</strong> {(authState.user as any)?.balance !== undefined ? formatCurrency((authState.user as any).balance) : 'No definido'}
+                <strong>Saldo:</strong> {(authState.user as { balance?: number | string })?.balance !== undefined ? formatCurrency((authState.user as { balance?: number | string }).balance!) : 'No definido'}
               </div>
             </div>
           </div>
