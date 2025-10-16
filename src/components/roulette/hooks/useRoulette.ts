@@ -7,7 +7,7 @@ import {
   useSpinMesaMutation
 } from '@/store/api/rouletteApi';
 import { useAuth } from '@/components/layout/hooks/useAuth';
-import { RouletteType, RouletteWinners } from '@/types';
+import { RouletteType } from '@/types';
 import { useRouletteSSE } from './useRouletteSSE';
 import { useAppDispatch } from '@/lib/store/hooks';
 import { updateUserBalance } from '@/store/slices/authSlice';

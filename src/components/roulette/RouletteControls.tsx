@@ -9,7 +9,7 @@ interface RouletteControlsProps {
   onPlaceBet: () => Promise<void>;
   isPlacingBet: boolean;
   isLoading: boolean;
-  error: any;
+  error: { status?: number; data?: { code?: string } } | null;
 }
 
 export const RouletteControls = ({

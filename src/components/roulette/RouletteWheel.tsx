@@ -19,17 +19,12 @@ export interface RouletteWheelRef {
 }
 
 export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
-  ({ type, sectors, rotation, highlightedSector, onSectorClick, isLoading }, ref) => {
+  ({ sectors, rotation, highlightedSector, onSectorClick, isLoading }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationRef = useRef<number | null>(null);
     const currentRotationRef = useRef(rotation);
 
     const NUM_SECTORS = 15;
-    const colors = [
-      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-      '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
-      '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
-    ];
 
     // Función para dibujar la ruleta
     const drawWheel = useCallback((
@@ -38,6 +33,11 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       currentRotation: number,
       highlightSector?: number | null
     ) => {
+      const colors = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+        '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
+        '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
+      ];
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const radius = canvas.width / 2 - 20;

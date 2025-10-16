@@ -35,7 +35,6 @@ export const useAuth = () => {
   const {
     data: authData,
     isLoading: isVerifying,
-    refetch: refetchAuth,
   } = useVerifyAuthQuery(undefined, {
     skip: shouldSkipVerify,
   });
@@ -67,14 +66,14 @@ export const useAuth = () => {
               dispatch(setUser(userWithFallback));
             }
           }
-        } catch (error) {
+        } catch {
           // Error silencioso en verificación
         }
       }
     };
 
     checkAuthOnLoad();
-  }, []); // Solo ejecutar una vez al montar el componente
+  }, [authState.isAuthenticated, authState.user, dispatch, isLoggingOut]); // Dependencias necesarias
 
   // 🔑 LOGIN
   const handleLogin = async (e: React.FormEvent) => {
@@ -113,7 +112,7 @@ export const useAuth = () => {
 
       // Redireccionar al dashboard
       router.push('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       dispatch(clearUser());
 
       // Siempre mostrar solo "Credenciales inválidas" sin importar el tipo de error
