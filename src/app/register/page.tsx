@@ -27,6 +27,7 @@ interface FormErrors {
   confirmPassword?: string;
   acceptTerms?: string;
   general?: string;
+  [key: string]: string | undefined; // permitir acceso dinámico por nombre de campo
 }
 
 export default function RegisterPage() {
