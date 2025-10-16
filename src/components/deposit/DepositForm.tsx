@@ -158,7 +158,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
         amount: formData.amount,
         reference: formData.reference,
         bank: formData.bank,
-        paymentMethod: 'bank_transfer',
+        paymentMethod: 'bank_transfer' as const,
         ...receiptData,
       };
 
@@ -317,7 +317,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
                 onClick={nextStep}
                 className="btn-primary"
                 disabled={!formData.amount || !formData.reference || !formData.bank || 
-                         errors.amount || errors.reference || errors.bank}
+                         !!errors.amount || !!errors.reference || !!errors.bank}
               >
                 Continuar
               </button>
