@@ -33,7 +33,6 @@ export const useAuth = () => {
   const shouldSkipVerify = false; // Habilitar verificación automática
 
   const {
-    data: authData,
     isLoading: isVerifying,
   } = useVerifyAuthQuery(undefined, {
     skip: shouldSkipVerify,
@@ -106,13 +105,13 @@ export const useAuth = () => {
         fullName: (user as { username?: string }).username // Siempre usar username
       };
       
-      dispatch(setUser(userWithConsistentName as any));
+      dispatch(setUser(userWithConsistentName as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
 
       setLoginData({ username: '', password: '' });
 
       // Redireccionar al dashboard
       router.push('/dashboard');
-    } catch (error: unknown) {
+    } catch {
       dispatch(clearUser());
 
       // Siempre mostrar solo "Credenciales inválidas" sin importar el tipo de error
