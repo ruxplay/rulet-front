@@ -106,7 +106,7 @@ export const useAuth = () => {
         fullName: (user as { username?: string }).username // Siempre usar username
       };
       
-      dispatch(setUser(userWithConsistentName));
+      dispatch(setUser(userWithConsistentName as any));
 
       setLoginData({ username: '', password: '' });
 
