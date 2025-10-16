@@ -63,7 +63,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
     calculateAmount();
   }, [formData.usdtAmount, rateData, convertUsdtToBs]);
 
-  const validateField = (name: string, value: any) => {
+  const validateField = (name: string, value: string | number) => {
     const newErrors = { ...errors };
 
     switch (name) {
@@ -203,9 +203,9 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
       onSuccess();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating USDT deposit:', error);
-      const message = error?.data?.error || 'Error al crear el depósito USDT. Inténtalo nuevamente.';
+      const message = (error as { data?: { error?: string } })?.data?.error || 'Error al crear el depósito USDT. Inténtalo nuevamente.';
       setErrors({ general: message });
     }
   };
