@@ -68,7 +68,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           if (data?.user) {
-            dispatch(setUser(data.user));
+            dispatch(setUser(data.user as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
           }
         } catch {
           dispatch(clearUser());
