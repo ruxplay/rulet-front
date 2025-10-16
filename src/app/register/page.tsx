@@ -30,6 +30,20 @@ interface FormErrors {
   [key: string]: string | undefined; // permitir acceso dinámico por nombre de campo
 }
 
+const isApiError = (err: unknown): err is { data?: { error?: string } } => {
+  if (typeof err !== 'object' || err === null || !('data' in err)) return false;
+  const data = (err as { data?: unknown }).data;
+  return typeof data === 'object' && data !== null;
+};
+
+const isZodError = (err: unknown): err is { errors: Array<{ path?: string[]; message?: string }> } => {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    Array.isArray((err as { errors?: unknown[] }).errors)
+  );
+};
+
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -201,19 +215,18 @@ export default function RegisterPage() {
       console.error('Error en registro:', error);
       
       // Manejar errores de Zod (validación del backend)
-      if ((error as { errors?: unknown[] })?.errors && Array.isArray((error as { errors?: unknown[] }).errors)) {
+      if (isZodError(error)) {
         const zodErrors: Record<string, string> = {};
-        (error as { errors: unknown[] }).errors.forEach((err: unknown) => {
-          const errorObj = err as { path?: string[]; message?: string };
-          if (errorObj.path && errorObj.path.length > 0) {
-            zodErrors[errorObj.path[0]] = errorObj.message || 'Error de validación';
+        for (const { path, message } of error.errors) {
+          if (path && path.length > 0) {
+            zodErrors[path[0]] = message || 'Error de validación';
           }
-        });
+        }
         setErrors(zodErrors);
         return; // No mostrar error general si hay errores de validación
       }
       // Manejar errores del backend (RTK Query)
-      else if (error.data?.error) {
+      else if (isApiError(error) && error.data?.error) {
         dispatch(setError(error.data.error));
         setErrors({ general: error.data.error });
       } else {
