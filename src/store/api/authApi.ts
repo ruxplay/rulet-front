@@ -29,11 +29,14 @@ export const authApi = createApi({
       transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
         // Verificar que response es un objeto antes de acceder a sus propiedades
         if (response && typeof response === 'object' && 'user' in response) {
-          return response as { user?: unknown; data?: { user?: unknown } };
+          const responseObj = response as { user?: unknown; data?: { user?: unknown } };
+          return { user: responseObj.user || response };
         }
         if (response && typeof response === 'object' && 'data' in response) {
           const responseObj = response as { data?: { user?: unknown } };
-          if (responseObj.data?.user) return responseObj.data;
+          if (responseObj.data?.user) {
+            return { user: responseObj.data.user };
+          }
         }
         return { user: response };
       },
@@ -50,11 +53,14 @@ export const authApi = createApi({
       transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
         // Verificar que response es un objeto antes de acceder a sus propiedades
         if (response && typeof response === 'object' && 'user' in response) {
-          return response as { user?: unknown; data?: { user?: unknown } };
+          const responseObj = response as { user?: unknown; data?: { user?: unknown } };
+          return { user: responseObj.user || response };
         }
         if (response && typeof response === 'object' && 'data' in response) {
           const responseObj = response as { data?: { user?: unknown } };
-          if (responseObj.data?.user) return responseObj.data;
+          if (responseObj.data?.user) {
+            return { user: responseObj.data.user };
+          }
         }
         return { user: response };
       },
