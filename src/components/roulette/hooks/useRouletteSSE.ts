@@ -78,7 +78,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
     // Evento: mesa actualizada
     eventSource.addEventListener('mesa.updated', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const _data = JSON.parse(event.data);
       } catch (error) {
         console.error('❌ Error parsing mesa.updated:', error);
       }
@@ -87,7 +87,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
     // Evento: mesa girando
     eventSource.addEventListener('mesa.spinning', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const _data = JSON.parse(event.data);
       } catch (error) {
         console.error('❌ Error parsing mesa.spinning:', error);
       }
@@ -96,7 +96,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
     // Evento: snapshot inicial
     eventSource.addEventListener('snapshot', (event) => {
       try {
-        const data = JSON.parse(event.data);
+        const _data = JSON.parse(event.data);
       } catch (error) {
         console.error('❌ Error parsing snapshot:', error);
       }
@@ -128,7 +128,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         modalTimeoutRef.current = null;
       }
     };
-  }, [type]);
+  }, [type, currentUsername, dispatch]);
 
   // Función para cerrar modal
   const closeModal = () => {

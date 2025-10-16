@@ -172,7 +172,7 @@ export const useExchangeRate = () => {
       setLoading(true);
       const data = await exchangeRateService.forceUpdate();
       setRateData(data);
-    } catch (err) {
+    } catch {
       setError('Error al actualizar tasa de cambio');
     } finally {
       setLoading(false);

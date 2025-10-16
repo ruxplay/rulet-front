@@ -138,9 +138,9 @@ export interface RouletteWinnerHistory {
 
 // ===== EVENTOS SSE =====
 
-export interface RouletteEvent {
+export interface RouletteEvent<T = unknown> {
   type: string;
-  payload: any;
+  payload: T;
 }
 
 // Evento SSE para balance de usuario actualizado

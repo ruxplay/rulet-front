@@ -20,13 +20,13 @@ export const authApi = createApi({
 
   endpoints: (builder) => ({
     // 📝 REGISTER
-    register: builder.mutation({
+    register: builder.mutation<{ user: unknown }, { username: string; email: string; password: string; fullName: string } | Record<string, unknown>>({
       query: (registerData) => ({
         url: '/register',
         method: 'POST',
         body: registerData,
       }),
-      transformResponse: (response: any) => {
+      transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
         if (response.user) return response;
         if (response.data?.user) return response.data;
         return { user: response };
@@ -35,13 +35,13 @@ export const authApi = createApi({
     }),
 
     // 🔑 LOGIN
-    login: builder.mutation({
+    login: builder.mutation<{ user: unknown }, { username?: string; email?: string; password: string } | Record<string, unknown>>({
       query: (credentials) => ({
         url: '/login',
         method: 'POST',
         body: credentials,
       }),
-      transformResponse: (response: any) => {
+      transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
         // Acepta respuesta flexible desde backend
         if (response.user) return response;
         if (response.data?.user) return response.data;
@@ -60,12 +60,12 @@ export const authApi = createApi({
     }),
 
     // 👁️‍🗨️ VERIFICAR AUTENTICACIÓN (para persistencia)
-    verifyAuth: builder.query({
+    verifyAuth: builder.query<{ user: unknown | null }, void>({
       query: () => ({
         url: '/verify',
         method: 'GET',
       }),
-      transformResponse: (response: any) => {
+      transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
         if (response.user) return response;
         if (response.data?.user) return response.data;
         return { user: null };
