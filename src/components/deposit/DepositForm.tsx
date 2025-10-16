@@ -18,6 +18,7 @@ interface DepositFormErrors {
   bank?: string;
   receipt?: string;
   general?: string;
+  [key: string]: string | undefined;
 }
 
 interface DepositFormProps {

@@ -20,6 +20,7 @@ interface UsdtDepositFormErrors {
   transactionHash?: string;
   receipt?: string;
   general?: string;
+  [key: string]: string | undefined;
 }
 
 interface UsdtDepositFormProps {
@@ -375,7 +376,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               onClick={nextStep}
               className="btn-primary"
               disabled={!formData.usdtAmount || !formData.walletAddress || 
-                       errors.usdtAmount || errors.walletAddress}
+                       !!errors.usdtAmount || !!errors.walletAddress}
             >
               Continuar
             </button>
