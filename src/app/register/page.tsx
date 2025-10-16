@@ -365,7 +365,7 @@ export default function RegisterPage() {
                 type="button" 
                 onClick={nextStep}
                 className="btn-primary"
-                disabled={!formData.fullName || !formData.username || !formData.email || errors.fullName || errors.username || errors.email}
+                disabled={!formData.fullName || !formData.username || !formData.email || !!errors.fullName || !!errors.username || !!errors.email}
               >
                 Continuar
               </button>
@@ -455,7 +455,7 @@ export default function RegisterPage() {
                   type="button" 
                   onClick={nextStep}
                   className="btn-primary"
-                  disabled={!formData.password || !formData.confirmPassword || errors.password || errors.confirmPassword || errors.phone}
+                  disabled={!formData.password || !formData.confirmPassword || !!errors.password || !!errors.confirmPassword || !!errors.phone}
                 >
                   Continuar
                 </button>
