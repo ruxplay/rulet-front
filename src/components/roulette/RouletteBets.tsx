@@ -100,15 +100,15 @@ export const RouletteBets = ({ type, sectors, filledCount }: RouletteBetsProps) 
         <div className="total-bet">
           <span className="info-label">Total apostado:</span>
           <span className="info-value">
-            {formatCurrency(filledCount * betAmount)}
+            {formatCurrency((filledCount || 0) * betAmount)}
           </span>
         </div>
         
-        {filledCount > 0 && (
+        {(filledCount || 0) > 0 && (
           <div className="potential-prize">
             <span className="info-label">Premio principal:</span>
             <span className="info-value">
-              {formatCurrency((filledCount * betAmount) * 0.70)}
+              {formatCurrency((filledCount || 0) * betAmount * 0.70)}
             </span>
           </div>
         )}
