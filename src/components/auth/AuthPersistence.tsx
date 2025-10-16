@@ -7,20 +7,20 @@ import { setUser, clearUser } from '@/store/slices/authSlice';
 
 export const AuthPersistence: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isVerifying, authData, verifyError } = useAuth();
+  const { isVerifying, authState } = useAuth();
 
   useEffect(() => {
     // Solo actuar cuando termine de verificar
     if (!isVerifying) {
-      if (authData?.user) {
+      if (authState?.user) {
         // Usuario válido encontrado, mantener en Redux
-        dispatch(setUser(authData.user));
-      } else if (verifyError) {
-        // Error de verificación, limpiar Redux
+        dispatch(setUser(authState.user));
+      } else if (!authState?.isAuthenticated) {
+        // No autenticado, limpiar Redux
         dispatch(clearUser());
       }
     }
-  }, [isVerifying, authData, verifyError, dispatch]);
+  }, [isVerifying, authState, dispatch]);
 
   // No renderiza nada, solo maneja persistencia
   return null;
