@@ -1,0 +1,80 @@
+/* ===== RULETA SELECTOR CSS ===== */
+
+.roulette-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.rouleta-btn {
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+}
+
+.rouleta-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.rouleta-btn.active {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border-color: #e74c3c;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+}
+
+.rouleta-btn.active:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes selectorPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(231, 76, 60, 0.5); }
+  50% { box-shadow: 0 0 25px rgba(231, 76, 60, 0.8); }
+}
+
+.rouleta-btn.active {
+  animation: selectorPulse 2s infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .roulette-selector {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .rouleta-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-selector {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .rouleta-btn {
+    padding: 10px 25px;
+    font-size: 0.9rem;
+    min-width: 200px;
+  }
+}
+

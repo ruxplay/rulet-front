@@ -1,0 +1,38 @@
+/* Quick Actions Styles */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.action-btn {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--dashboard-border);
+  background: linear-gradient(180deg, #0e1630, #0b142b);
+  color: #c7d2ff;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(76, 106, 255, 0.25);
+}
+
+@media (max-width: 1100px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+}

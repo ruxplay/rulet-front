@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ruleta de 15 Espacios con 3 Premios</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info span {
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+        }
+
+        .user-info .balance {
+            color: #f1c40f;
+            font-size: 1.05rem;
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Estilos para la ruleta - Versión mejorada */
+        .wheel-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 40px;
+            perspective: 1000px;
+        }
+
+        .wheel-shadow {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            top: -5%;
+            left: -5%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 60%);
+            z-index: -1;
+        }
+
+        .wheel {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            transform-style: preserve-3d;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wheel:hover {
+            transform: rotate(5deg);
+        }
+
+        .pointer {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--accent-color);
+            z-index: 10;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+        }
+
+        .mainPointer {
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .leftPointer {
+            top: 10px;
+            left: 90px;
+            transform: rotate(-30deg);
+        }
+
+        .rightPointer {
+            top: 10px;
+            right: 90px;
+            transform: rotate(30deg);
+        }
+
+        .wheel-center {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            border: 5px solid var(--primary-color);
+        }
+
+        /* Efecto de giro */
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(3600deg); }
+        }
+
+        .wheel-spinning {
+            animation: wheelSpin 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+        }
+
+        /* Efectos para los ganadores */
+        .winner-glow {
+            animation: winnerGlow 1.5s infinite alternate;
+        }
+
+        @keyframes winnerGlow {
+            from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.9); }
+        }
+
+        .secondary-glow {
+            animation: secondaryGlow 1.5s infinite alternate;
+        }
+
+        @keyframes secondaryGlow {
+            from { box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+            to { box-shadow: 0 0 20px rgba(52, 152, 219, 0.7); }
+        }
+        
+        .bet-controls {
+            margin: 20px 0;
+        }
+        
+        .messages {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+            background-color: rgba(255,255,255,0.9);
+            color: var(--dark-color);
+        }
+        
+        .error {
+            background-color: #ffdddd !important;
+            color: #d8000c;
+            border: 1px solid #d8000c;
+        }
+        
+        .success {
+            background-color: #ddffdd !important;
+            color: #4f8a10;
+            border: 1px solid #4f8a10;
+        }
+        
+        .currentBets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .player-bet {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .player-bet:hover {
+            transform: translateY(-5px);
+        }
+        
+        .player-bet-number {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .player-bet-name {
+            font-size: 0.9em;
+            margin: 5px 0;
+            color: var(--dark-color);
+        }
+        
+        .player-bet-amount {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .result {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            color: var(--dark-color);
+        }
+        
+        .result h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .winner-highlight {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .secondary-winner {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Botones de selección de ruleta */
+        .ruleta-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .ruleta-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .ruleta-btn.active {
+            background-color: var(--accent-color);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+        }
+        
+        /* Contenedor para ambas ruletas */
+        .ruletas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .ruleta-section {
+            flex: 1;
+            min-width: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .ruleta-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Modal de ganadores */
+        .winner-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .winner-modal-overlay.visible {
+            display: flex;
+        }
+
+        .winner-modal {
+            background: #ffffff;
+            color: var(--dark-color);
+            border-radius: 15px;
+            max-width: 480px;
+            width: 100%;
+            padding: 25px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            position: relative;
+            text-align: left;
+        }
+
+        .winner-modal h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .winner-modal p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .winner-modal .winner-main {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .winner-modal .winner-secondary {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .winner-modal .winner-note {
+            margin-top: 18px;
+            font-style: italic;
+            color: var(--primary-color);
+        }
+
+        .winner-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+
+        .winner-modal-close:hover {
+            color: var(--accent-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .ruletas-container {
+                flex-direction: column;
+            }
+            
+            .ruleta-section {
+                min-width: 100%;
+            }
+            
+            .wheel-container {
+                max-width: 300px;
+            }
+            
+            .pointer {
+                border-left: 12px solid transparent;
+                border-right: 12px solid transparent;
+                border-top: 25px solid var(--accent-color);
+            }
+            
+            .leftPointer {
+                top: 20px;
+                left: 70px;
+            }
+            
+            .rightPointer {
+                top: 20px;
+                right: 70px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .currentBets {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            
+            .player-bet {
+                padding: 10px;
+            }
+            
+            .ruleta-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-info">
+            <span id="userNameDisplay">Nombre: Usuario</span>
+            <span id="userBalanceDisplay" class="balance">Saldo: 0 Bs</span>
+        </div>
+        <h1>Ruletas de 15 Espacios con 3 Premios</h1>
+        
+        <div class="ruleta-selector">
+            <button id="ruleta150" class="ruleta-btn active">Ruleta 150 Bs</button>
+            <button id="ruleta300" class="ruleta-btn">Ruleta 300 Bs</button>
+        </div>
+        
+        <div class="ruletas-container">
+            <!-- Ruleta de 150 Bs -->
+            <div class="ruleta-section" id="section150">
+                <div class="ruleta-title">Ruleta 150 Bs</div>
+                
+                <div class="wheel-container">
+                    <div class="wheel-shadow"></div>
+                    <div class="leftPointer pointer"></div>
+                    <div class="mainPointer pointer"></div>
+                    <div class="rightPointer pointer"></div>
+                    <div class="wheel-center"></div>
+                    <canvas id="wheel150" width="400" height="400" class="wheel"></canvas>
+                </div>
+                
+                <div class="bet-controls">
+                    <button id="betBtn150">Apostar 150 Bs</button>
+                    <div id="messages150" class="messages"></div>
+                </div>
+                
+                <div id="currentBets150" class="currentBets"></div>
+                
+                <div id="result150" class="result"></div>
+            </div>
+            
+            <!-- Ruleta de 300 Bs -->
+            <div class="ruleta-section" id="section300" style="display:none;">
+                <div class="ruleta-title">Ruleta 300 Bs</div>
+                
+                <div class="wheel-container">
+                    <div class="wheel-shadow"></div>
+                    <div class="leftPointer pointer"></div>
+                    <div class="mainPointer pointer"></div>
+                    <div class="rightPointer pointer"></div>
+                    <div class="wheel-center"></div>
+                    <canvas id="wheel300" width="400" height="400" class="wheel"></canvas>
+                </div>
+                
+                <div class="bet-controls">
+                    <button id="betBtn300">Apostar 300 Bs</button>
+                    <div id="messages300" class="messages"></div>
+                </div>
+                
+                <div id="currentBets300" class="currentBets"></div>
+                
+                <div id="result300" class="result"></div>
+            </div>
+        </div>
+        
+        <a href="dashboard.html" class="back-btn">Volver al Panel</a>
+        
+        <input type="hidden" id="playerName" />
+    </div>
+
+    <div id="winnerModalOverlay" class="winner-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="winnerModalTitle">
+        <div class="winner-modal">
+            <button id="winnerModalClose" class="winner-modal-close" aria-label="Cerrar">&times;</button>
+            <h2 id="winnerModalTitle">Ganadores</h2>
+            <div id="winnerModalContent"></div>
+            <p id="winnerModalNote" class="winner-note">Los premios han sido acreditados a los ganadores.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import {
+            db,
+            doc,
+            getDoc,
+            setDoc,
+            onSnapshot,
+            runTransaction,
+            serverTimestamp
+        } from "./firebase-config.js";
+
+        const NUM_SECTORS = 15;
+        const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
+            '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
+        ];
+
+        const loggedUserName = sessionStorage.getItem("loggedInUser") || "UsuarioDemo";
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const userBalanceDisplay = document.getElementById("userBalanceDisplay");
+        const winnerModalOverlay = document.getElementById("winnerModalOverlay");
+        const winnerModalContent = document.getElementById("winnerModalContent");
+        const winnerModalClose = document.getElementById("winnerModalClose");
+        const winnerModalNote = document.getElementById("winnerModalNote");
+        document.getElementById("playerName").value = loggedUserName;
+        userNameDisplay.textContent = `Nombre: ${loggedUserName}`;
+
+        let rotationAngle150 = 0;
+        let rotationAngle300 = 0;
+        let currentUserData = null;
+
+        const state = {
+            "150": createInitialState(),
+            "300": createInitialState()
+        };
+
+        const lastResults = {
+            "150": null,
+            "300": null
+        };
+
+        let currentModalType = null;
+
+        function showWinnerModal({ type, winnersPayload }) {
+            if (!winnerModalOverlay || !winnerModalContent) {
+                return;
+            }
+
+            currentModalType = type;
+            const { main, left, right, totals } = winnersPayload || {};
+            const lines = [];
+
+            if (main) {
+                lines.push(`<p><span class="winner-main">Ganador principal:</span> ${main.playerName} (número ${main.index + 1}) - Premio ${formatCurrency(main.prize)} Bs</p>`);
+            }
+            if (left) {
+                lines.push(`<p><span class="winner-secondary">Ganador secundario izquierdo:</span> ${left.playerName} (número ${left.index + 1}) - Premio ${formatCurrency(left.prize)} Bs</p>`);
+            }
+            if (right) {
+                lines.push(`<p><span class="winner-secondary">Ganador secundario derecho:</span> ${right.playerName} (número ${right.index + 1}) - Premio ${formatCurrency(right.prize)} Bs</p>`);
+            }
+
+            winnerModalContent.innerHTML = lines.join("\n");
+            const ruletaLabel = type === "150" ? "Ruleta 150 Bs" : "Ruleta 300 Bs";
+            const totalTexto = totals ? `Total apostado: ${formatCurrency(totals.totalApostado)} Bs.` : "Los premios han sido acreditados a los ganadores.";
+            if (winnerModalNote) {
+                winnerModalNote.textContent = `${ruletaLabel}. ${totalTexto}`;
+            }
+            winnerModalOverlay.classList.add("visible");
+        }
+
+        function hideWinnerModal(type = null) {
+            if (winnerModalOverlay) {
+                winnerModalOverlay.classList.remove("visible");
+            }
+            if (winnerModalContent) {
+                winnerModalContent.innerHTML = "";
+            }
+            if (winnerModalNote) {
+                winnerModalNote.textContent = "Los premios han sido acreditados a los ganadores.";
+            }
+
+            if (type) {
+                const typeState = state[type];
+                if (typeState && typeState.modalTimeoutId) {
+                    clearTimeout(typeState.modalTimeoutId);
+                    typeState.modalTimeoutId = null;
+                }
+                if (lastResults[type]) {
+                    lastResults[type] = null;
+                    renderResult(type);
+                }
+                if (currentModalType === type) {
+                    currentModalType = null;
+                }
+                refreshMesaUI(type).catch((error) => {
+                    console.error("Error al refrescar la mesa tras cerrar el modal", error);
+                });
+            } else {
+                Object.entries(state).forEach(([stateType, typeState]) => {
+                    if (typeState.modalTimeoutId) {
+                        clearTimeout(typeState.modalTimeoutId);
+                        typeState.modalTimeoutId = null;
+                    }
+                    if (lastResults[stateType]) {
+                        lastResults[stateType] = null;
+                        renderResult(stateType);
+                    }
+                    refreshMesaUI(stateType).catch((error) => {
+                        console.error("Error al refrescar la mesa tras cerrar el modal", error);
+                    });
+                });
+                currentModalType = null;
+            }
+        }
+
+        function scheduleModalAutoClose(type) {
+            const typeState = state[type];
+            if (!typeState) {
+                return;
+            }
+
+            if (typeState.modalTimeoutId) {
+                clearTimeout(typeState.modalTimeoutId);
+            }
+
+            typeState.modalTimeoutId = setTimeout(() => {
+                hideWinnerModal(type);
+            }, 60000);
+        }
+
+        if (winnerModalOverlay) {
+            winnerModalOverlay.addEventListener("click", (event) => {
+                if (event.target === winnerModalOverlay) {
+                    if (currentModalType) {
+                        hideWinnerModal(currentModalType);
+                    } else {
+                        hideWinnerModal();
+                    }
+                }
+            });
+        }
+
+        winnerModalClose.addEventListener("click", () => {
+            if (currentModalType) {
+                hideWinnerModal(currentModalType);
+            } else {
+                hideWinnerModal();
+            }
+        });
+
+        function createInitialState() {
+            return {
+                mesa: null,
+                mesaId: null,
+                unsubscribeControl: null,
+                unsubscribeMesa: null,
+                selectedSector: null,
+                spinInitiator: false,
+                currentSpin: null,
+                modalTimeoutId: null,
+                animationPromise: null,
+                lastMesaId: null,
+                mesaAdvancePromise: null
+            };
+        }
+
+        function createEmptySectorsMap() {
+            const sectors = {};
+            for (let i = 0; i < NUM_SECTORS; i++) {
+                sectors[`s${i}`] = null;
+            }
+            return sectors;
+        }
+
+        function buildInitialMesaData() {
+            return {
+                status: "open",
+                sectors: createEmptySectorsMap(),
+                filledCount: 0,
+                spinning: false,
+                winners: null,
+                lastSpin: null,
+                houseEarnings: 0,
+                active: true,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+        }
+
+        function countFilledSectors(sectorsMap = {}) {
+            return Object.values(sectorsMap).filter(Boolean).length;
+        }
+
+        function normalizeMesaDoc(id, data) {
+            const sectorsMap = data.sectors || {};
+            const sectorsArray = Array.from({ length: NUM_SECTORS }, (_, index) => sectorsMap[`s${index}`] || null);
+            const filledCount = data.filledCount !== undefined ? data.filledCount : countFilledSectors(sectorsMap);
+            const status = data.status || (data.spinning ? "spinning" : (data.active === false ? "closed" : "open"));
+            return {
+                id,
+                sectors: sectorsArray,
+                sectorsMap,
+                status,
+                spinning: status === "spinning",
+                winners: data.winners || null,
+                lastSpin: data.lastSpin || null,
+                houseEarnings: data.houseEarnings || 0,
+                filledCount
+            };
+        }
+
+        function formatCurrency(value) {
+            const amount = Number(value) || 0;
+            return amount.toLocaleString("es-VE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        async function ensureUserDocument(playerName) {
+            const userRef = doc(db, "users", playerName);
+            const snapshot = await getDoc(userRef);
+            if (!snapshot.exists()) {
+                await setDoc(userRef, {
+                    balance: 2000,
+                    wins: 0,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+            }
+        }
+
+        let unsubscribeUser = null;
+
+        function subscribeToUser(playerName) {
+            if (unsubscribeUser) {
+                unsubscribeUser();
+                unsubscribeUser = null;
+            }
+
+            unsubscribeUser = onSnapshot(doc(db, "users", playerName), (snapshot) => {
+                currentUserData = snapshot.data() || null;
+                if (currentUserData) {
+                    userBalanceDisplay.textContent = `Saldo: ${formatCurrency(currentUserData.balance)} Bs`;
+                } else {
+                    userBalanceDisplay.textContent = "Saldo: 0 Bs";
+                }
+                checkBalance("150");
+                checkBalance("300");
+            });
+        }
+
+        async function ensureRuletaStructure(type) {
+            const controlRef = doc(db, "ruletas", type);
+            await runTransaction(db, async (transaction) => {
+                const controlSnap = await transaction.get(controlRef);
+                if (!controlSnap.exists()) {
+                    const firstId = "1";
+                    transaction.set(controlRef, {
+                        currentRuletaId: firstId,
+                        nextRuletaId: "2",
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                    const mesaRef = doc(db, "ruletas", type, "mesas", firstId);
+                    transaction.set(mesaRef, buildInitialMesaData());
+                    return;
+                }
+
+                const controlData = controlSnap.data();
+                let currentId = controlData.currentRuletaId;
+                const nextId = controlData.nextRuletaId;
+
+                if (!currentId) {
+                    currentId = "1";
+                    const mesaRef = doc(db, "ruletas", type, "mesas", currentId);
+                    const mesaSnap = await transaction.get(mesaRef);
+                    if (!mesaSnap.exists()) {
+                        transaction.set(mesaRef, buildInitialMesaData());
+                    }
+                    transaction.update(controlRef, {
+                        currentRuletaId: currentId,
+                        nextRuletaId: "2",
+                        updatedAt: serverTimestamp()
+                    });
+                    return;
+                }
+
+                const mesaRef = doc(db, "ruletas", type, "mesas", currentId);
+                const mesaSnap = await transaction.get(mesaRef);
+                if (!mesaSnap.exists()) {
+                    transaction.set(mesaRef, buildInitialMesaData());
+                } else {
+                    const mesaData = mesaSnap.data();
+                    const updates = {};
+                    if (mesaData.status === undefined) {
+                        updates.status = mesaData.spinning ? "spinning" : "open";
+                    }
+                    if (mesaData.filledCount === undefined) {
+                        updates.filledCount = countFilledSectors(mesaData.sectors || {});
+                    }
+                    if (mesaData.lastSpin === undefined) {
+                        updates.lastSpin = null;
+                    }
+                    if (Object.keys(updates).length > 0) {
+                        updates.updatedAt = serverTimestamp();
+                        transaction.update(mesaRef, updates);
+                    }
+                }
+
+                if (!nextId) {
+                    const calculatedNext = String(parseInt(currentId, 10) + 1);
+                    transaction.update(controlRef, {
+                        nextRuletaId: calculatedNext,
+                        updatedAt: serverTimestamp()
+                    });
+                }
+            });
+        }
+
+        function subscribeToRuleta(type) {
+            const typeState = state[type];
+
+            if (typeState.unsubscribeControl) {
+                typeState.unsubscribeControl();
+                typeState.unsubscribeControl = null;
+            }
+
+            const controlRef = doc(db, "ruletas", type);
+            typeState.unsubscribeControl = onSnapshot(controlRef, async (controlSnap) => {
+                if (!controlSnap.exists()) {
+                    typeState.mesa = null;
+                    typeState.mesaId = null;
+                    drawWheel(type);
+                    updateBetsDisplay(type);
+                    checkBalance(type);
+                    return;
+                }
+
+                const controlData = controlSnap.data();
+                let mesaId = controlData.currentRuletaId;
+
+                if (!mesaId) {
+                    await ensureRuletaStructure(type);
+                    mesaId = controlData.currentRuletaId;
+                }
+
+                if (!mesaId) {
+                    typeState.mesa = null;
+                    typeState.mesaId = null;
+                    drawWheel(type);
+                    updateBetsDisplay(type);
+                    checkBalance(type);
+                    return;
+                }
+
+                if (typeState.mesaId === mesaId && typeState.unsubscribeMesa) {
+                    return;
+                }
+
+                if (typeState.unsubscribeMesa) {
+                    typeState.unsubscribeMesa();
+                    typeState.unsubscribeMesa = null;
+                }
+
+                const mesaRef = doc(db, "ruletas", type, "mesas", mesaId);
+                typeState.unsubscribeMesa = onSnapshot(mesaRef, (mesaSnap) => {
+                    if (!mesaSnap.exists()) {
+                        return;
+                    }
+
+                    const mesaData = normalizeMesaDoc(mesaId, mesaSnap.data());
+                    typeState.mesa = mesaData;
+                    typeState.mesaId = mesaId;
+
+                    if (!mesaData.spinning) {
+                        typeState.selectedSector = null;
+                    }
+
+                    drawWheel(type);
+                    updateBetsDisplay(type);
+                    checkBalance(type);
+                    handleSpinState(type, mesaData);
+                });
+            });
+        }
+
+        function drawWheel(type, options = {}) {
+            const { mesaData = null, rotation = null, selectedSector = undefined, helpers = {} } = options;
+            const canvas = document.getElementById(`wheel${type}`);
+            if (!canvas) {
+                return;
+            }
+
+            const ctx = canvas.getContext("2d");
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 20;
+
+            const typeState = state[type];
+            const mesa = mesaData || typeState.mesa;
+            const sectors = mesa ? mesa.sectors : Array(NUM_SECTORS).fill(null);
+
+            const rotationAngle = rotation !== null
+                ? rotation
+                : (helpers.baseRotation !== undefined
+                    ? helpers.baseRotation
+                    : getRotationBase(type));
+            const highlightedSector = selectedSector !== undefined ? selectedSector : typeState.selectedSector;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = "rgba(255,255,255,0.3)";
+            ctx.stroke();
+
+            for (let i = 0; i < NUM_SECTORS; i++) {
+                const startAngle = rotationAngle + i * anglePerSector;
+                const endAngle = startAngle + anglePerSector;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+
+                ctx.strokeStyle = "rgba(255,255,255,0.5)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                const textAngle = startAngle + anglePerSector / 2;
+                const textX = centerX + (radius / 1.8) * Math.cos(textAngle);
+                const textY = centerY + (radius / 1.8) * Math.sin(textAngle);
+                ctx.save();
+                ctx.translate(textX, textY);
+                ctx.rotate(textAngle + Math.PI / 2);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 18px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.shadowColor = "rgba(0,0,0,0.5)";
+                ctx.shadowBlur = 3;
+                ctx.fillText(i + 1, 0, 0);
+                ctx.restore();
+
+                const sectorData = sectors[i];
+                if (sectorData && sectorData.playerName) {
+                    const infoX = centerX + (radius - 25) * Math.cos(textAngle);
+                    const infoY = centerY + (radius - 25) * Math.sin(textAngle);
+                    ctx.save();
+                    ctx.translate(infoX, infoY);
+                    ctx.rotate(textAngle + Math.PI / 2);
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "bold 12px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.shadowColor = "rgba(0,0,0,0.5)";
+                    ctx.shadowBlur = 2;
+
+                    const name = sectorData.playerName.length > 10
+                        ? `${sectorData.playerName.substring(0, 8)}...`
+                        : sectorData.playerName;
+
+                    ctx.fillText(name, 0, 0);
+                    ctx.restore();
+                }
+            }
+
+            if (highlightedSector !== null && highlightedSector !== undefined) {
+                const startAngle = rotationAngle + highlightedSector * anglePerSector;
+                const endAngle = startAngle + anglePerSector;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                ctx.fill();
+
+                ctx.strokeStyle = "rgba(255,255,255,0.8)";
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+        }
+
+        function drawWheelWithRotation(type, mesaData, rotation, highlightSector = null) {
+            if (type === "150") {
+                rotationAngle150 = rotation;
+            } else {
+                rotationAngle300 = rotation;
+            }
+
+            drawWheel(type, {
+                mesaData,
+                rotation,
+                selectedSector: highlightSector,
+                helpers: { baseRotation: rotation }
+            });
+        }
+//hola
+        function animateWheel({ type, mesaData, finalRotation, duration = 6000 }) {
+            const typeState = state[type];
+            if (!typeState) {
+                return Promise.resolve();
+            }
+
+            if (typeState.animationPromise) {
+                return typeState.animationPromise;
+            }
+
+            const startRotation = type === "150" ? rotationAngle150 : rotationAngle300;
+            const rotationDelta = calculateRotationDelta(startRotation, finalRotation);
+            const startTime = performance.now();
+
+            typeState.animationPromise = new Promise((resolve) => {
+                function step(time) {
+                    const elapsed = time - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    const currentRotation = startRotation + rotationDelta * easeOut;
+
+                    if (type === "150") {
+                        rotationAngle150 = currentRotation;
+                    } else {
+                        rotationAngle300 = currentRotation;
+                    }
+
+                    drawWheel(type, { mesaData, rotation: currentRotation, selectedSector: null });
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        typeState.animationPromise = null;
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(step);
+            });
+
+            return typeState.animationPromise;
+        }
+
+        function normalizeRotationDifference(start, end) {
+            const fullTurn = 2 * Math.PI;
+            let delta = ((end - start) % fullTurn + fullTurn) % fullTurn;
+            if (delta < fullTurn * 0.5) {
+                delta += fullTurn;
+            }
+            return delta;
+        }
+
+        function calculateRotationDelta(start, end) {
+            const fullTurn = 2 * Math.PI;
+            const rawDelta = end - start;
+            const normalized = normalizeRotationDifference(start, end);
+            const rotations = Math.round((rawDelta - normalized) / fullTurn);
+            return normalized + rotations * fullTurn;
+        }
+
+        function computeSpinResult(type, mesaData, seed) {
+            const random = mulberry32(seedToInt(seed));
+            const extraRotation = (random() * 3 + 3) * 2 * Math.PI;
+            const baseRotation = type === "150" ? rotationAngle150 : rotationAngle300;
+            const fullTurn = 2 * Math.PI;
+            const finalRotation = baseRotation + extraRotation;
+            const normalizedRotation = ((finalRotation % fullTurn) + fullTurn) % fullTurn;
+
+            const mainIndex = determineIndexFromRotation(normalizedRotation);
+            const leftIndex = (mainIndex - 1 + NUM_SECTORS) % NUM_SECTORS;
+            const rightIndex = (mainIndex + 1) % NUM_SECTORS;
+
+            const mainWinner = mesaData.sectors[mainIndex];
+            const leftWinner = mesaData.sectors[leftIndex];
+            const rightWinner = mesaData.sectors[rightIndex];
+
+            if (!mainWinner || !leftWinner || !rightWinner) {
+                throw new Error("No se pudieron determinar todos los ganadores");
+            }
+
+            const betAmount = type === "150" ? 150 : 300;
+            const totalApostado = NUM_SECTORS * betAmount;
+            const premioPrincipal = Math.round(totalApostado * 0.70);
+            const restante = totalApostado - premioPrincipal;
+            const premioSecundario = Math.round((restante * 0.59) / 2);
+            const gananciasCasa = totalApostado - (premioPrincipal + premioSecundario * 2);
+
+            const winnersPayload = {
+                mesaId: mesaData.id,
+                seed,
+                main: {
+                    playerName: mainWinner.playerName,
+                    bet: mainWinner.bet,
+                    prize: premioPrincipal,
+                    index: mainIndex
+                },
+                left: {
+                    playerName: leftWinner.playerName,
+                    bet: leftWinner.bet,
+                    prize: premioSecundario,
+                    index: leftIndex
+                },
+                right: {
+                    playerName: rightWinner.playerName,
+                    bet: rightWinner.bet,
+                    prize: premioSecundario,
+                    index: rightIndex
+                },
+                totals: {
+                    totalApostado,
+                    premioPrincipal,
+                    premioSecundario,
+                    gananciasCasa
+                }
+            };
+
+            return {
+                finalRotation,
+                normalizedRotation,
+                winnersPayload,
+                gananciasCasa
+            };
+        }
+//hola
+        function determineIndexFromRotation(rotation) {
+            const normalized = (rotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+            const sector = Math.floor(normalized / anglePerSector);
+            return (NUM_SECTORS - sector) % NUM_SECTORS;
+        }
+
+        function seedToInt(seed) {
+            if (typeof seed === "number") {
+                return Math.floor(seed * 1000000);
+            }
+            if (typeof seed === "string") {
+                let hash = 0;
+                for (let i = 0; i < seed.length; i++) {
+                    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+                }
+                return hash;
+            }
+            return Math.floor(Math.random() * 1000000);
+        }
+
+        function mulberry32(a) {
+            return function() {
+                let t = (a += 0x6D2B79F5);
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        function getRotationBase(type) {
+            return type === "150" ? rotationAngle150 : rotationAngle300;
+        }
+
+        function handleSpinState(type, mesaData) {
+            const typeState = state[type];
+            if (!typeState || !mesaData) {
+                return;
+            }
+
+            if (typeState.lastMesaId !== mesaData.id) {
+                typeState.lastMesaId = mesaData.id;
+                typeState.spinInitiator = false;
+                typeState.currentSpin = null;
+                typeState.selectedSector = null;
+                hideWinnerModal(type);
+                lastResults[type] = null;
+                renderResult(type);
+
+                if (mesaData.status === "open" && mesaData.filledCount === 0) {
+                    if (type === "150") {
+                        rotationAngle150 = 0;
+                    } else {
+                        rotationAngle300 = 0;
+                    }
+                    drawWheel(type, { mesaData, rotation: 0, selectedSector: null });
+                }
+            }
+
+            const lastSpin = mesaData.lastSpin || null;
+
+            if (mesaData.status === "spinning") {
+                if (lastSpin && lastSpin.executed === false && !typeState.spinInitiator) {
+                    typeState.spinInitiator = true;
+                    spinMesa(type, mesaData.id).catch((error) => {
+                        console.error("Error al procesar el giro como iniciador", error);
+                        typeState.spinInitiator = false;
+                    });
+                }
+                return;
+            }
+
+            if (mesaData.status === "closed" && lastSpin && lastSpin.winners) {
+                const finalRotation = typeof lastSpin.finalRotation === "number" ? lastSpin.finalRotation : null;
+                const normalizedRotation = typeof lastSpin.normalizedRotation === "number" ? lastSpin.normalizedRotation : null;
+                const seed = lastSpin.seed || Math.random();
+
+                if (finalRotation === null) {
+                    const recomputed = computeSpinResult(type, mesaData, seed);
+                    triggerSpinAnimation({
+                        type,
+                        mesaData,
+                        finalRotation: recomputed.finalRotation,
+                        normalizedRotation: recomputed.normalizedRotation,
+                        winnersPayload: lastSpin.winners
+                    })
+                        .then(() => ensureMesaAdvance(type, mesaData.id))
+                        .catch((error) => {
+                            console.error("Error al reproducir animación del giro", error);
+                        });
+                } else {
+                    triggerSpinAnimation({
+                        type,
+                        mesaData,
+                        finalRotation,
+                        normalizedRotation,
+                        winnersPayload: lastSpin.winners
+                    })
+                        .then(() => ensureMesaAdvance(type, mesaData.id))
+                        .catch((error) => {
+                            console.error("Error al reproducir animación del giro", error);
+                        });
+                }
+                return;
+            }
+
+            if (mesaData.status === "open") {
+                typeState.spinInitiator = false;
+            }
+        }
+
+        async function triggerSpinAnimation({ type, mesaData, finalRotation, normalizedRotation, winnersPayload }) {
+            const typeState = state[type];
+            if (!typeState || !winnersPayload) {
+                return;
+            }
+
+            const fullTurn = 2 * Math.PI;
+            const targetRotation = typeof finalRotation === "number" ? finalRotation : null;
+            const displayRotation = typeof normalizedRotation === "number"
+                ? ((normalizedRotation % fullTurn) + fullTurn) % fullTurn
+                : (targetRotation !== null ? ((targetRotation % fullTurn) + fullTurn) % fullTurn : null);
+
+            if (targetRotation === null && displayRotation === null) {
+                return;
+            }
+
+            const previousSpin = typeState.currentSpin;
+            const sameSpin = previousSpin && previousSpin.mesaId === mesaData.id && targetRotation !== null && previousSpin.finalRotation === targetRotation;
+            if (sameSpin) {
+                if (!previousSpin.shown) {
+                    if (typeState.animationPromise) {
+                        try {
+                            await typeState.animationPromise;
+                        } catch (animationError) {
+                            console.error("Error esperando la animación de la ruleta", animationError);
+                        }
+                    }
+
+                    if (!previousSpin.shown) {
+                        lastResults[type] = winnersPayload;
+                        renderResult(type);
+                        showWinnerModal({ type, winnersPayload });
+                        scheduleModalAutoClose(type);
+                        previousSpin.shown = true;
+                    }
+                }
+                return;
+            }
+
+            const resolvedRotation = targetRotation !== null ? targetRotation : (displayRotation + fullTurn * 4);
+            const resolvedDisplay = displayRotation !== null ? displayRotation : ((resolvedRotation % fullTurn) + fullTurn) % fullTurn;
+
+            typeState.currentSpin = {
+                mesaId: mesaData.id,
+                finalRotation: resolvedRotation,
+                normalizedRotation: resolvedDisplay,
+                shown: false
+            };
+
+            await animateWheel({ type, mesaData, finalRotation: resolvedRotation });
+
+            if (type === "150") {
+                rotationAngle150 = resolvedDisplay;
+            } else {
+                rotationAngle300 = resolvedDisplay;
+            }
+
+            const highlightSector = typeof winnersPayload.main?.index === "number" ? winnersPayload.main.index : null;
+            drawWheel(type, { mesaData, rotation: resolvedDisplay, selectedSector: highlightSector });
+
+            lastResults[type] = winnersPayload;
+            renderResult(type);
+            showWinnerModal({ type, winnersPayload });
+            scheduleModalAutoClose(type);
+            typeState.currentSpin.shown = true;
+            typeState.spinInitiator = false;
+        }
+
+        function updateBetsDisplay(type, mesaOverride = null) {
+            const container = document.getElementById(`currentBets${type}`);
+            if (!container) {
+                return;
+            }
+
+            const mesa = mesaOverride || state[type].mesa;
+
+            container.innerHTML = "";
+
+            if (!mesa) {
+                container.innerHTML = "<p style='grid-column:1/-1;text-align:center;'>Cargando datos...</p>";
+                return;
+            }
+
+            mesa.sectors.forEach((sector, index) => {
+                if (sector) {
+                    const betElement = document.createElement("div");
+                    betElement.className = "player-bet";
+                    betElement.innerHTML = `
+                        <div class="player-bet-number">Número ${index + 1}</div>
+                        <div class="player-bet-name">${sector.playerName}</div>
+                        <div class="player-bet-amount">${formatCurrency(sector.bet)} Bs</div>
+                    `;
+                    container.appendChild(betElement);
+                }
+            });
+
+            if (container.children.length === 0) {
+                container.innerHTML = "<p style='grid-column:1/-1;text-align:center;'>No hay apuestas aún</p>";
+            }
+        }
+
+        function renderResult(type) {
+            const resultDiv = document.getElementById(`result${type}`);
+            if (!resultDiv) {
+                return;
+            }
+
+            const result = lastResults[type];
+            if (!result) {
+                resultDiv.style.display = "none";
+                resultDiv.innerHTML = "";
+                return;
+            }
+
+            resultDiv.innerHTML = `
+                <h2>Resultado de la Ruleta ${type} Bs (Mesa ${result.mesaId})</h2>
+                <p>Ganador principal: <span class="winner-highlight">${result.main.playerName}</span>,
+                número <strong>${result.main.index + 1}</strong> - Premio: <strong>${formatCurrency(result.main.prize)} Bs</strong></p>
+                <p>Ganador secundario izquierdo: <span class="secondary-winner">${result.left.playerName}</span>,
+                número <strong>${result.left.index + 1}</strong> - Premio: <strong>${formatCurrency(result.left.prize)} Bs</strong></p>
+                <p>Ganador secundario derecho: <span class="secondary-winner">${result.right.playerName}</span>,
+                número <strong>${result.right.index + 1}</strong> - Premio: <strong>${formatCurrency(result.right.prize)} Bs</strong></p>
+                <p style="margin-top:20px;font-style:italic;">Los premios han sido acreditados a los ganadores</p>
+            `;
+            resultDiv.style.display = "block";
+
+            setTimeout(() => {
+                if (lastResults[type] === result) {
+                    resultDiv.style.display = "none";
+                }
+            }, 15000);
+        }
+
+        function checkBalance(type) {
+            const betBtn = document.getElementById(`betBtn${type}`);
+            const messagesDiv = document.getElementById(`messages${type}`);
+            if (!betBtn || !messagesDiv) {
+                return false;
+            }
+
+            const mesa = state[type].mesa;
+
+            if (!mesa) {
+                betBtn.disabled = true;
+                messagesDiv.textContent = "Cargando mesa disponible...";
+                messagesDiv.style.display = "block";
+                messagesDiv.className = "error";
+                return false;
+            }
+
+            if (!currentUserData) {
+                betBtn.disabled = true;
+                messagesDiv.textContent = "Cargando información del usuario...";
+                messagesDiv.style.display = "block";
+                messagesDiv.className = "error";
+                return false;
+            }
+
+            if (mesa.status === "spinning" || mesa.status === "closed") {
+                betBtn.disabled = true;
+                messagesDiv.textContent = "La mesa está en proceso de sorteo. Espera a la siguiente mesa.";
+                messagesDiv.style.display = "block";
+                messagesDiv.className = "error";
+                return false;
+            }
+
+            const betAmount = type === "150" ? 150 : 300;
+
+            if ((currentUserData.balance || 0) < betAmount) {
+                betBtn.disabled = true;
+                messagesDiv.textContent = `No tienes saldo suficiente para apostar. Necesitas ${betAmount} Bs. Por favor recarga tu cuenta.`;
+                messagesDiv.style.display = "block";
+                messagesDiv.className = "error";
+                return false;
+            }
+
+            betBtn.disabled = false;
+            if (messagesDiv.textContent !== "La ruleta está girando, espera los resultados...") {
+                messagesDiv.style.display = "none";
+            }
+            return true;
+        }
+
+        function setupBetButton(type) {
+            const button = document.getElementById(`betBtn${type}`);
+            if (!button) {
+                return;
+            }
+
+            button.addEventListener("click", async () => {
+                const messagesDiv = document.getElementById(`messages${type}`);
+                if (messagesDiv.textContent !== "La ruleta está girando, espera los resultados...") {
+                    messagesDiv.style.display = "none";
+                }
+
+                try {
+                    await placeBet(type);
+                } catch (error) {
+                    console.error("Error al realizar la apuesta:", error);
+                    messagesDiv.textContent = error.message || "Ocurrió un error al registrar la apuesta.";
+                    messagesDiv.style.display = "block";
+                    messagesDiv.className = "error";
+                }
+            });
+        }
+
+        function registerCanvasEvents(type) {
+            const canvas = document.getElementById(`wheel${type}`);
+            if (!canvas) {
+                return;
+            }
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = canvas.width / 2 - 20;
+
+            canvas.addEventListener("click", (event) => {
+                const mesa = state[type].mesa;
+                const messagesDiv = document.getElementById(`messages${type}`);
+
+                if (!mesa || mesa.status !== "open") {
+                    if (messagesDiv) {
+                        messagesDiv.textContent = "La mesa actual no está disponible para apuestas en este momento.";
+                        messagesDiv.style.display = "block";
+                        messagesDiv.className = "error";
+                    }
+                    return;
+                }
+
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left - centerX;
+                const y = event.clientY - rect.top - centerY;
+                const distance = Math.sqrt(x * x + y * y);
+
+                if (distance >= radius) {
+                    return;
+                }
+
+                const angle = Math.atan2(y, x);
+                const rotationAngle = type === "150" ? rotationAngle150 : rotationAngle300;
+                const normalizedAngle = (angle - rotationAngle + 2 * Math.PI) % (2 * Math.PI);
+                const selectedSector = Math.floor(normalizedAngle / (2 * Math.PI / NUM_SECTORS));
+
+                if (mesa.sectors[selectedSector]) {
+                    if (messagesDiv) {
+                        messagesDiv.textContent = "Este número ya está ocupado. Por favor, elige otro.";
+                        messagesDiv.style.display = "block";
+                        messagesDiv.className = "error";
+                    }
+                    state[type].selectedSector = null;
+                } else {
+                    state[type].selectedSector = selectedSector;
+                    if (messagesDiv && messagesDiv.textContent !== "La ruleta está girando, espera los resultados...") {
+                        messagesDiv.style.display = "none";
+                    }
+                }
+
+                drawWheel(type);
+            });
+        }
+
+        async function placeBet(type) {
+            const typeState = state[type];
+            const mesa = typeState.mesa;
+            if (!mesa) {
+                throw new Error("La mesa aún no está lista. Inténtalo nuevamente en unos segundos.");
+            }
+
+            if (mesa.status !== "open") {
+                throw new Error("La mesa ya no está disponible para apuestas. Espera a la siguiente mesa.");
+            }
+
+            const selectedSector = typeState.selectedSector;
+            if (selectedSector === null || selectedSector === undefined) {
+                throw new Error("Por favor, selecciona un número en la ruleta.");
+            }
+
+            if (!currentUserData) {
+                throw new Error("No se pudo validar tu saldo. Intenta nuevamente.");
+            }
+
+            const betAmount = type === "150" ? 150 : 300;
+            if ((currentUserData.balance || 0) < betAmount) {
+                throw new Error(`No tienes fondos suficientes para esa apuesta de ${betAmount} Bs.`);
+            }
+
+            const playerName = loggedUserName;
+            const mesaId = mesa.id;
+            let mesaCompleta = false;
+
+            await runTransaction(db, async (transaction) => {
+                const controlRef = doc(db, "ruletas", type);
+                const controlSnap = await transaction.get(controlRef);
+                if (!controlSnap.exists()) {
+                    throw new Error("No se encontró la configuración de la ruleta.");
+                }
+
+                const controlData = controlSnap.data();
+                if (controlData.currentRuletaId !== mesaId) {
+                    throw new Error("La mesa cambió mientras apostabas. Actualiza y vuelve a intentarlo.");
+                }
+
+                const mesaRef = doc(db, "ruletas", type, "mesas", mesaId);
+                const mesaSnap = await transaction.get(mesaRef);
+                if (!mesaSnap.exists()) {
+                    throw new Error("No se encontró la mesa activa.");
+                }
+
+                const mesaData = mesaSnap.data();
+                const status = mesaData.status || (mesaData.spinning ? "spinning" : "open");
+                if (status !== "open") {
+                    throw new Error("La mesa ya no acepta más apuestas.");
+                }
+
+                const sectorsMap = mesaData.sectors || {};
+                const sectorKey = `s${selectedSector}`;
+
+                if (sectorsMap[sectorKey]) {
+                    throw new Error("Este número ya está ocupado. Por favor, elige otro.");
+                }
+
+                const jugadorYaAposto = Object.values(sectorsMap).some((sector) => sector && sector.playerName === playerName);
+                if (jugadorYaAposto) {
+                    throw new Error("Ya has apostado en esta mesa. Solo se permite una apuesta por usuario.");
+                }
+
+                const userRef = doc(db, "users", playerName);
+                const userSnap = await transaction.get(userRef);
+                if (!userSnap.exists()) {
+                    throw new Error("No se encontró información del usuario.");
+                }
+
+                const userData = userSnap.data();
+                if ((userData.balance || 0) < betAmount) {
+                    throw new Error(`No tienes fondos suficientes para esa apuesta de ${betAmount} Bs.`);
+                }
+
+                const filledBefore = mesaData.filledCount !== undefined ? mesaData.filledCount : countFilledSectors(sectorsMap);
+                const filledAfter = filledBefore + 1;
+
+                transaction.update(userRef, {
+                    balance: (userData.balance || 0) - betAmount,
+                    updatedAt: serverTimestamp()
+                });
+
+                const mesaUpdate = {
+                    [`sectors.${sectorKey}`]: {
+                        playerName,
+                        bet: betAmount,
+                        playerId: userData.uid || playerName,
+                        createdAt: serverTimestamp()
+                    },
+                    filledCount: filledAfter,
+                    updatedAt: serverTimestamp()
+                };
+
+                if (filledAfter >= NUM_SECTORS) {
+                    mesaUpdate.status = "spinning";
+                    mesaUpdate.spinning = true;
+                    mesaUpdate.active = false;
+                    mesaUpdate.spinRequestedAt = serverTimestamp();
+                    mesaUpdate.lastSpin = {
+                        initiatedBy: playerName,
+                        initiatedAt: serverTimestamp(),
+                        seed: Math.random(),
+                        finalRotation: null,
+                        executed: false
+                    };
+                    mesaCompleta = true;
+                }
+
+                transaction.update(mesaRef, mesaUpdate);
+            });
+
+            state[type].selectedSector = null;
+            drawWheel(type);
+
+            const messagesDiv = document.getElementById(`messages${type}`);
+            if (messagesDiv) {
+                messagesDiv.textContent = `Jugador ${playerName} eligió el número ${selectedSector + 1} con apuesta de ${betAmount} bolívares.`;
+                messagesDiv.style.display = "block";
+                messagesDiv.className = "success";
+            }
+
+            if (mesaCompleta) {
+                if (messagesDiv) {
+                    messagesDiv.textContent += " La ruleta está girando, espera los resultados...";
+                    messagesDiv.className = "messages success";
+                }
+                checkBalance(type);
+
+                await spinMesa(type, mesaId);
+
+                const newMesaId = await ensureMesaAdvance(type, mesaId);
+                if (messagesDiv && newMesaId) {
+                    messagesDiv.textContent += ` Mesa ${newMesaId} disponible para nuevas apuestas.`;
+                }
+                checkBalance(type);
+            } else {
+                checkBalance(type);
+            }
+        }
+
+        async function createNextRuleta(type, closedMesaId = null) {
+            const controlRef = doc(db, "ruletas", type);
+
+            return runTransaction(db, async (transaction) => {
+                const controlSnap = await transaction.get(controlRef);
+                if (!controlSnap.exists()) {
+                    throw new Error("No se encontró la configuración de la ruleta.");
+                }
+
+                const controlData = controlSnap.data();
+
+                if (closedMesaId && controlData.currentRuletaId !== closedMesaId) {
+                    return controlData.currentRuletaId || null;
+                }
+
+                let nextNumber = controlData.nextRuletaId ? parseInt(controlData.nextRuletaId, 10) : (controlData.currentRuletaId ? parseInt(controlData.currentRuletaId, 10) + 1 : 1);
+                if (Number.isNaN(nextNumber) || nextNumber < 1) {
+                    nextNumber = 1;
+                }
+
+                let assignedId = null;
+
+                while (!assignedId) {
+                    const candidateId = String(nextNumber);
+                    const candidateRef = doc(db, "ruletas", type, "mesas", candidateId);
+                    const candidateSnap = await transaction.get(candidateRef);
+
+                    if (!candidateSnap.exists()) {
+                        transaction.set(candidateRef, buildInitialMesaData());
+                        assignedId = candidateId;
+                        nextNumber += 1;
+                        break;
+                    }
+
+                    const candidateData = candidateSnap.data();
+                    const status = candidateData.status || (candidateData.spinning ? "spinning" : "open");
+                    const filled = candidateData.filledCount !== undefined ? candidateData.filledCount : countFilledSectors(candidateData.sectors || {});
+                    if (status === "open" && filled < NUM_SECTORS) {
+                        assignedId = candidateId;
+                        break;
+                    }
+
+                    nextNumber += 1;
+                }
+
+                transaction.update(controlRef, {
+                    currentRuletaId: assignedId,
+                    nextRuletaId: String(nextNumber),
+                    updatedAt: serverTimestamp()
+                });
+
+                return assignedId;
+            });
+        }
+
+        function ensureMesaAdvance(type, closedMesaId) {
+            const typeState = state[type];
+            if (!typeState) {
+                return Promise.resolve(null);
+            }
+
+            if (!typeState.mesaAdvancePromise) {
+                typeState.mesaAdvancePromise = createNextRuleta(type, closedMesaId)
+                    .then((mesaId) => {
+                        typeState.mesaAdvancePromise = null;
+                        return mesaId;
+                    })
+                    .catch((error) => {
+                        typeState.mesaAdvancePromise = null;
+                        console.error("Error al preparar la siguiente mesa", error);
+                        return null;
+                    });
+            }
+
+            return typeState.mesaAdvancePromise;
+        }
+
+        async function refreshMesaUI(type) {
+            const typeState = state[type];
+            if (!typeState) {
+                return;
+            }
+
+            const { mesaId } = typeState;
+            if (!mesaId) {
+                drawWheel(type, { mesaData: null, rotation: 0, selectedSector: null });
+                updateBetsDisplay(type, null);
+                checkBalance(type);
+                return;
+            }
+
+            try {
+                const controlSnap = await getDoc(doc(db, "ruletas", type));
+                let activeMesaId = null;
+
+                if (controlSnap.exists()) {
+                    const controlData = controlSnap.data();
+                    activeMesaId = controlData.currentRuletaId || null;
+                }
+
+                if (!activeMesaId) {
+                    drawWheel(type, { mesaData: null, rotation: 0, selectedSector: null });
+                    updateBetsDisplay(type, null);
+                    checkBalance(type);
+                    return;
+                }
+
+                if (activeMesaId !== mesaId) {
+                    return;
+                }
+
+                const mesaSnapshot = typeState.mesa;
+                if (mesaSnapshot && mesaSnapshot.id === activeMesaId && mesaSnapshot.status === "open") {
+                    drawWheel(type, { mesaData: mesaSnapshot, selectedSector: null });
+                    updateBetsDisplay(type, mesaSnapshot);
+                    checkBalance(type);
+                    return;
+                }
+
+                const mesaRef = doc(db, "ruletas", type, "mesas", activeMesaId);
+                const mesaSnap = await getDoc(mesaRef);
+                if (!mesaSnap.exists()) {
+                    drawWheel(type, { mesaData: null, rotation: 0, selectedSector: null });
+                    updateBetsDisplay(type, null);
+                    checkBalance(type);
+                    return;
+                }
+
+                const mesaData = normalizeMesaDoc(activeMesaId, mesaSnap.data());
+                typeState.mesa = mesaData;
+
+                if (mesaData.status === "closed") {
+                    await ensureMesaAdvance(type, activeMesaId);
+                    return;
+                }
+
+                drawWheel(type, { mesaData, selectedSector: null });
+                updateBetsDisplay(type, mesaData);
+                checkBalance(type);
+            } catch (error) {
+                console.error("Error refrescando la mesa", error);
+                drawWheel(type);
+                updateBetsDisplay(type);
+                checkBalance(type);
+            }
+        }
+
+        async function spinMesa(type, mesaId) {
+            const mesaRef = doc(db, "ruletas", type, "mesas", mesaId);
+            const mesaSnap = await getDoc(mesaRef);
+            if (!mesaSnap.exists()) {
+                return;
+            }
+
+            const mesaData = normalizeMesaDoc(mesaId, mesaSnap.data());
+            const seed = mesaData.winners?.seed || mesaData.lastSpin?.seed || Math.random();
+            const result = computeSpinResult(type, mesaData, seed);
+
+            await finalizeSpin({
+                type,
+                mesaId,
+                mesaData,
+                winnersPayload: result.winnersPayload,
+                gananciasCasa: result.gananciasCasa,
+                finalRotation: result.finalRotation,
+                seed
+            });
+        }
+
+        async function finalizeSpin({ type, mesaId, winnersPayload, gananciasCasa, finalRotation, seed }) {
+            const mesaRef = doc(db, "ruletas", type, "mesas", mesaId);
+
+            await runTransaction(db, async (transaction) => {
+                const mesaSnap = await transaction.get(mesaRef);
+                if (!mesaSnap.exists()) {
+                    throw new Error("No se encontró la mesa para finalizar el giro.");
+                }
+
+                const mesaDoc = mesaSnap.data();
+
+                const players = [
+                    { info: winnersPayload.main },
+                    { info: winnersPayload.left },
+                    { info: winnersPayload.right }
+                ];
+
+                const aggregated = new Map();
+                players.forEach(({ info }) => {
+                    if (!info || !info.playerName) {
+                        return;
+                    }
+                    if (!aggregated.has(info.playerName)) {
+                        aggregated.set(info.playerName, { prize: 0, bet: 0 });
+                    }
+                    const entry = aggregated.get(info.playerName);
+                    entry.prize += info.prize || 0;
+                    entry.bet += info.bet || 0;
+                });
+
+                const playerDocs = [];
+                for (const [playerName, values] of aggregated.entries()) {
+                    const playerRef = doc(db, "users", playerName);
+                    const playerSnap = await transaction.get(playerRef);
+                    playerDocs.push({ playerRef, playerSnap, values });
+                }
+
+                transaction.update(mesaRef, {
+                    winners: winnersPayload,
+                    status: "closed",
+                    spinning: false,
+                    active: false,
+                    lastSpin: {
+                        seed,
+                        finalRotation,
+                        winners: winnersPayload,
+                        executedAt: serverTimestamp()
+                    },
+                    houseEarnings: (mesaDoc.houseEarnings || 0) + gananciasCasa,
+                    updatedAt: serverTimestamp()
+                });
+
+                for (const { playerRef, playerSnap, values } of playerDocs) {
+                    if (!playerSnap.exists()) {
+                        continue;
+                    }
+                    const playerData = playerSnap.data();
+                    transaction.update(playerRef, {
+                        balance: (playerData.balance || 0) + values.prize + values.bet,
+                        wins: (playerData.wins || 0) + values.prize,
+                        updatedAt: serverTimestamp()
+                    });
+                }
+            });
+
+            await ensureMesaAdvance(type, mesaId);
+        }
+
+        function getSectorFromPointer(pointerOffset, type) {
+            let rotationAngle = type === "150" ? rotationAngle150 : rotationAngle300;
+
+            if (pointerOffset === -1) {
+                rotationAngle += (2 * Math.PI / NUM_SECTORS) * 0.3;
+            }
+            if (pointerOffset === 1) {
+                rotationAngle -= (2 * Math.PI / NUM_SECTORS) * 0.3;
+            }
+
+            rotationAngle = (rotationAngle + 2 * Math.PI) % (2 * Math.PI);
+            const sector = Math.floor(rotationAngle / (2 * Math.PI / NUM_SECTORS));
+            return (NUM_SECTORS - sector) % NUM_SECTORS;
+        }
+
+        document.getElementById("ruleta150").addEventListener("click", function() {
+            document.getElementById("section150").style.display = "block";
+            document.getElementById("section300").style.display = "none";
+            document.getElementById("ruleta150").classList.add("active");
+            document.getElementById("ruleta300").classList.remove("active");
+            drawWheel("150");
+            updateBetsDisplay("150");
+            checkBalance("150");
+        });
+
+        document.getElementById("ruleta300").addEventListener("click", function() {
+            document.getElementById("section150").style.display = "none";
+            document.getElementById("section300").style.display = "block";
+            document.getElementById("ruleta300").classList.add("active");
+            document.getElementById("ruleta150").classList.remove("active");
+            drawWheel("300");
+            updateBetsDisplay("300");
+            checkBalance("300");
+        });
+
+        async function bootstrap() {
+            await ensureUserDocument(loggedUserName);
+            subscribeToUser(loggedUserName);
+
+            await ensureRuletaStructure("150");
+            await ensureRuletaStructure("300");
+
+            subscribeToRuleta("150");
+            subscribeToRuleta("300");
+
+            registerCanvasEvents("150");
+            registerCanvasEvents("300");
+            setupBetButton("150");
+            setupBetButton("300");
+
+            drawWheel("150");
+            drawWheel("300");
+            updateBetsDisplay("150");
+            updateBetsDisplay("300");
+            checkBalance("150");
+            checkBalance("300");
+        }
+
+        bootstrap().catch((error) => {
+            console.error("Error al iniciar la ruleta:", error);
+            ["150", "300"].forEach((type) => {
+                const messagesDiv = document.getElementById(`messages${type}`);
+                if (messagesDiv) {
+                    messagesDiv.textContent = `No fue posible inicializar la ruleta: ${error.message}`;
+                    messagesDiv.style.display = "block";
+                    messagesDiv.className = "error";
+                }
+                const betBtn = document.getElementById(`betBtn${type}`);
+                if (betBtn) {
+                    betBtn.disabled = true;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

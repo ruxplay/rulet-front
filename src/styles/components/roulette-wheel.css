@@ -1,0 +1,184 @@
+/* ===== RULETA WHEEL CSS ===== */
+
+/* Fondo removido - se usa el de roulette.css para mantener consistencia */
+
+.roulette-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.roulette-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.roulette-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-weight: bold;
+}
+
+.roulette-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.roulette-wheel-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== WHEEL CONTAINER ===== */
+.wheel-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 40px;
+  perspective: 1000px;
+}
+
+.wheel-shadow {
+  position: absolute;
+  width: 110%;
+  height: 110%;
+  top: -5%;
+  left: -5%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 60%);
+  z-index: -1;
+}
+
+.wheel {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  transform-style: preserve-3d;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.wheel:hover {
+  transform: rotate(5deg);
+}
+
+.wheel.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.wheel-center {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  border: 5px solid #2c3e50;
+}
+
+/* ===== LOADING STATES ===== */
+.wheel-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+  color: white;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+.loading-text {
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== WHEEL ANIMATIONS ===== */
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(3600deg); }
+}
+
+.wheel-spinning {
+  animation: wheelSpin 4s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+}
+
+/* ===== WINNER EFFECTS ===== */
+.winner-glow {
+  animation: winnerGlow 1.5s infinite alternate;
+}
+
+@keyframes winnerGlow {
+  from { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  to { box-shadow: 0 0 30px rgba(255, 215, 0, 0.9); }
+}
+
+.secondary-glow {
+  animation: secondaryGlow 1.5s infinite alternate;
+}
+
+@keyframes secondaryGlow {
+  from { box-shadow: 0 0 10px rgba(52, 152, 219, 0.5); }
+  to { box-shadow: 0 0 20px rgba(52, 152, 219, 0.7); }
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .roulette-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .wheel-container {
+    max-width: 300px;
+  }
+  
+  .roulette-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-page {
+    padding: 10px;
+  }
+  
+  .roulette-container {
+    padding: 10px;
+  }
+  
+  .wheel-container {
+    max-width: 250px;
+  }
+  
+  .roulette-title {
+    font-size: 1.5rem;
+  }
+}

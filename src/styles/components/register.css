@@ -1,6 +1,19 @@
-/* ========================================
-   FORMULARIO DE REGISTRO PROFESIONAL
-   ======================================== */
+/* Error General */
+.error-general {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  border: 1px solid #ff4757;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.error-general .error-message {
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
 
 .register-page {
   min-height: 100vh;

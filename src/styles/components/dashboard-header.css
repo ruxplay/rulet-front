@@ -1,0 +1,137 @@
+/* Dashboard Header Styles */
+.dashboard-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 20px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: var(--dashboard-radius);
+  background: linear-gradient(145deg, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85));
+  backdrop-filter: blur(6px);
+  box-shadow: var(--dashboard-shadow);
+  max-width: 1280px;
+  margin: 0 auto;
+  color: white;
+}
+
+.dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.dashboard-brand-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--dashboard-primary), var(--dashboard-primary-2));
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: white;
+  box-shadow: 0 8px 24px rgba(108, 140, 255, 0.35);
+}
+
+.dashboard-brand-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.dashboard-brand-title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: white;
+}
+
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-meta {
+  display: grid;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.dashboard-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #1a2550;
+  color: #93a1ff;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.dashboard-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #24305f;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  
+  .dashboard-brand {
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .dashboard-brand-badge {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  
+  .dashboard-brand-subtitle {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  
+  .dashboard-brand-title {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .dashboard-user {
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .dashboard-meta {
+    text-align: center;
+    font-size: 12px;
+    gap: 4px;
+  }
+  
+  .dashboard-badge {
+    font-size: 12px;
+    padding: 8px 12px;
+    order: 1;
+  }
+  
+  .dashboard-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    order: 2;
+  }
+}

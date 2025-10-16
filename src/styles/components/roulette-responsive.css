@@ -1,0 +1,249 @@
+/* ===== RULETA RESPONSIVE CSS ===== */
+
+/* ===== TABLET STYLES ===== */
+@media (max-width: 1024px) {
+  .roulette-container {
+    max-width: 100%;
+    padding: 15px;
+  }
+  
+  .roulette-content {
+    gap: 25px;
+  }
+  
+  .wheel-container {
+    max-width: 350px;
+  }
+}
+
+/* ===== MOBILE LANDSCAPE ===== */
+@media (max-width: 768px) {
+  .roulette-page {
+    padding: 15px;
+  }
+  
+  .roulette-container {
+    padding: 15px;
+  }
+  
+  .roulette-header {
+    margin-bottom: 25px;
+  }
+  
+  .roulette-title {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .roulette-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .roulette-wheel-section {
+    order: 1;
+  }
+  
+  .roulette-controls-section {
+    order: 2;
+  }
+  
+  .roulette-bets-section {
+    order: 3;
+  }
+  
+  .roulette-results-section {
+    order: 4;
+  }
+  
+  .wheel-container {
+    max-width: 300px;
+    margin-bottom: 30px;
+  }
+}
+
+/* ===== MOBILE PORTRAIT ===== */
+@media (max-width: 480px) {
+  .roulette-page {
+    padding: 10px;
+  }
+  
+  .roulette-container {
+    padding: 10px;
+  }
+  
+  .roulette-header {
+    margin-bottom: 20px;
+  }
+  
+  .roulette-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .roulette-content {
+    gap: 15px;
+  }
+  
+  .wheel-container {
+    max-width: 250px;
+    margin-bottom: 25px;
+  }
+  
+  /* Ajustar espaciado en componentes */
+  .roulette-controls,
+  .roulette-bets,
+  .roulette-results {
+    padding: 15px;
+  }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 360px) {
+  .roulette-page {
+    padding: 5px;
+  }
+  
+  .roulette-container {
+    padding: 5px;
+  }
+  
+  .roulette-title {
+    font-size: 1.3rem;
+  }
+  
+  .wheel-container {
+    max-width: 220px;
+  }
+  
+  .roulette-controls,
+  .roulette-bets,
+  .roulette-results {
+    padding: 12px;
+  }
+}
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .roulette-page {
+    padding: 10px;
+  }
+  
+  .roulette-container {
+    padding: 10px;
+  }
+  
+  .roulette-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .roulette-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .wheel-container {
+    max-width: 200px;
+    margin-bottom: 15px;
+  }
+  
+  .roulette-controls,
+  .roulette-bets {
+    padding: 15px;
+  }
+}
+
+/* ===== HIGH DPI DISPLAYS ===== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .wheel {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .roulette-page {
+    /* Fondo removido - se usa el de roulette.css para mantener consistencia */
+    color: black !important;
+  }
+  
+  .roulette-controls,
+  .roulette-bets,
+  .roulette-results {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .bet-button,
+  .rouleta-btn {
+    display: none !important;
+  }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+@media (prefers-reduced-motion: reduce) {
+  .wheel,
+  .bet-slot,
+  .winner-item,
+  .rouleta-btn {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .loading-spinner {
+    animation: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .roulette-results,
+  .winner-modal {
+    background: #2c3e50 !important;
+    color: #ecf0f1 !important;
+  }
+  
+  .winner-modal-close {
+    color: #ecf0f1 !important;
+  }
+  
+  .winner-modal-close:hover {
+    color: #e74c3c !important;
+  }
+}
+
+/* ===== FOCUS STYLES FOR ACCESSIBILITY ===== */
+.rouleta-btn:focus,
+.bet-button:focus,
+.winner-modal-btn:focus,
+.winner-modal-close:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+.wheel:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 4px;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.winner-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.winner-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.winner-modal::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.winner-modal::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

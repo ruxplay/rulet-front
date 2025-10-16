@@ -1,0 +1,54 @@
+/* Activity Feed Styles */
+.activity-feed {
+  margin-top: 14px;
+}
+
+.activity-list {
+  display: grid;
+  gap: 10px;
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 12px;
+  background: #0f1834;
+}
+
+.activity-time {
+  color: var(--dashboard-muted);
+  font-size: 14px;
+}
+
+.activity-description {
+  font-size: 14px;
+  color: var(--dashboard-text);
+}
+
+.activity-win {
+  color: var(--dashboard-success);
+}
+
+.activity-tag {
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+  background: #122046;
+  color: #9db2ff;
+  border: 1px solid var(--dashboard-border);
+}
+
+@media (max-width: 560px) {
+  .activity-item {
+    grid-template-columns: 70px 1fr;
+  }
+  
+  .activity-tag {
+    justify-self: start;
+    margin-top: 8px;
+  }
+}

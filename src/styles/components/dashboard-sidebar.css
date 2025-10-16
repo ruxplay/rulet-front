@@ -1,0 +1,136 @@
+/* Dashboard Sidebar Styles */
+.dashboard-sidebar {
+  display: grid;
+  gap: 14px;
+}
+
+.sidebar-title {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: var(--dashboard-muted);
+  letter-spacing: 0.4px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sidebar-header .sidebar-title {
+  margin: 0;
+}
+
+.toggle-info-button {
+  background: var(--dashboard-primary);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-info-button:hover {
+  background: var(--dashboard-secondary);
+  transform: translateY(-1px);
+}
+
+.user-info {
+  display: grid;
+  gap: 8px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--dashboard-muted);
+}
+
+.info-item span:last-child {
+  color: var(--dashboard-text);
+  font-weight: 500;
+}
+
+.live-list {
+  display: grid;
+  gap: 10px;
+}
+
+.live-item {
+  padding: 12px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 12px;
+  background: #0f1834;
+  display: grid;
+  gap: 8px;
+}
+
+.live-header {
+  display: flex;
+  justify-content: space-between;
+  color: var(--dashboard-muted);
+  font-size: 14px;
+}
+
+.live-meter {
+  height: 8px;
+  background: #111832;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.live-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--dashboard-success), #6cffb7);
+}
+
+.live-status {
+  color: var(--dashboard-muted);
+  font-size: 12px;
+}
+
+.winner-list {
+  display: grid;
+  gap: 8px;
+}
+
+.winner-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--dashboard-muted);
+}
+
+/* Quick Links */
+.quick-links {
+  display: grid;
+  gap: 8px;
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--dashboard-bg);
+  border: 1px solid var(--dashboard-border);
+  border-radius: 6px;
+  color: var(--dashboard-text);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.quick-link:hover {
+  background: var(--dashboard-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

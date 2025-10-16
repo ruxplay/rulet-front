@@ -1,0 +1,134 @@
+/* Copy Button Component */
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--dashboard-primary);
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  justify-content: center;
+}
+
+.copy-button:hover {
+  background: var(--dashboard-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.copy-button:active {
+  transform: translateY(0);
+}
+
+.copy-button.copied {
+  background: var(--color-success);
+  animation: copySuccess 0.3s ease;
+}
+
+.copy-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.copy-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Copy button variants */
+.copy-button.small {
+  padding: 4px 8px;
+  font-size: 10px;
+  min-width: 50px;
+}
+
+.copy-button.small .copy-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.copy-button.icon-only {
+  padding: 6px;
+  min-width: auto;
+}
+
+.copy-button.icon-only .copy-label {
+  display: none;
+}
+
+/* Wallet info specific styles */
+.wallet-copy-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.wallet-copy-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 156, 0.2);
+}
+
+.wallet-copy-text {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+  word-break: break-all;
+  flex: 1;
+}
+
+.wallet-copy-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-right: 8px;
+}
+
+.copy-all-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 255, 156, 0.2);
+}
+
+.copy-all-button {
+  width: 100%;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+@keyframes copySuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wallet-copy-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .wallet-copy-text {
+    font-size: 11px;
+    word-break: break-all;
+  }
+  
+  .copy-button {
+    align-self: flex-end;
+  }
+}

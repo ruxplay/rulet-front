@@ -68,14 +68,14 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-number">2</div>
                 <div className="step-content">
                   <h4>Haz tu Depósito</h4>
-                  <p>Deposita un mínimo de <strong>150 Bs</strong> para comenzar a jugar. Aceptamos dos métodos de pago.</p>
+                  <p>Deposita un mínimo de <strong>150</strong> para comenzar a jugar. Aceptamos dos métodos de pago.</p>
                 </div>
               </div>
               <div className="help-step">
                 <div className="step-number">3</div>
                 <div className="step-content">
                   <h4>¡Comienza a Jugar!</h4>
-                  <p>Elige la mesa de <strong>150 Bs</strong> o <strong>300 Bs</strong>, selecciona tu número y espera a que los <strong>15 espacios</strong> se completen para que la ruleta gire automáticamente.</p>
+                  <p>Elige la mesa de <strong>150</strong> o <strong>300</strong>, selecciona tu número y espera a que los <strong>15 espacios</strong> se completen para que la ruleta gire automáticamente.</p>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">🧩 Cómo se Apuesta</h4>
                 <ul className="bet-list">
-                  <li>Elige la mesa: <strong>150 Bs</strong> o <strong>300 Bs</strong>.</li>
+                  <li>Elige la mesa: <strong>150</strong> o <strong>300</strong>.</li>
                   <li>Haz clic en un <strong>número disponible</strong> del 1 al 15.</li>
                   <li><strong>Una apuesta por usuario y por mesa</strong>.</li>
                   <li>Cuando los 15 espacios se llenan, la ruleta <strong>gira automáticamente</strong>.</li>
@@ -121,7 +121,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                   </div>
                   <div className="payout-row">
                     <span>Pozo</span>
-                    <span className="payout">15 × apuesta (150 o 300 Bs)</span>
+                    <span className="payout">15 × apuesta (150 o 300)</span>
                   </div>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">⚡ Pasos para Jugar</h4>
                 <ol className="game-steps">
-                  <li>Elige mesa: 150 Bs o 300 Bs.</li>
+                  <li>Elige mesa: 150 o 300.</li>
                   <li>Haz clic sobre tu número (1-15) disponible.</li>
                   <li>Espera a que se llenen los 15 espacios.</li>
                   <li>La ruleta gira y se muestran <strong>3 ganadores</strong>.</li>
@@ -148,7 +148,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
             <div className="tips-grid">
               <div className="tip-card">
                 <h4>🎯 Elige tu Mesa</h4>
-                <p>Puedes jugar en dos mesas: <strong>150 Bs</strong> o <strong>300 Bs</strong>. La mesa de 150 Bs tiene premios menores pero es más accesible para principiantes.</p>
+                <p>Puedes jugar en dos mesas: <strong>150</strong> o <strong>300</strong>. La mesa de 150 tiene premios menores pero es más accesible para principiantes.</p>
               </div>
               <div className="tip-card">
                 <h4>⏰ Una Apuesta por Mesa</h4>
@@ -160,7 +160,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               </div>
               <div className="tip-card">
                 <h4>💰 Gestiona tu Saldo</h4>
-                <p>Necesitas al menos <strong>150 Bs</strong> para la mesa básica o <strong>300 Bs</strong> para la mesa premium. Controla tu presupuesto antes de apostar.</p>
+                <p>Necesitas al menos <strong>150</strong> para la mesa básica o <strong>300</strong> para la mesa premium. Controla tu presupuesto antes de apostar.</p>
               </div>
             </div>
           </section>

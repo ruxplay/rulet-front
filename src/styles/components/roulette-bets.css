@@ -1,0 +1,251 @@
+/* ===== RULETA BETS CSS ===== */
+
+.roulette-bets {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.bets-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.bets-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.bets-summary {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 0.9rem;
+}
+
+.filled-count {
+  color: #2ecc71;
+  font-weight: bold;
+  background: rgba(46, 204, 113, 0.2);
+  padding: 4px 12px;
+  border-radius: 15px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.empty-count {
+  color: #3498db;
+  font-weight: bold;
+  background: rgba(52, 152, 219, 0.2);
+  padding: 4px 12px;
+  border-radius: 15px;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+/* Mensaje cuando no hay mesa activa */
+.no-bets-message {
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin: 20px 0;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+.no-bets-message p {
+  color: #ecf0f1;
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.no-bets-message p:first-child {
+  font-weight: bold;
+  color: #f39c12;
+  font-size: 1.1rem;
+}
+
+/* ===== BETS GRID ===== */
+.bets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.bet-slot {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.bet-slot:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.bet-slot.occupied {
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+}
+
+.bet-slot.empty {
+  border-color: #3498db;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.bet-slot.empty:hover {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.slot-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: inherit;
+}
+
+.slot-content {
+  font-size: 0.85rem;
+}
+
+.player-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: inherit;
+  word-break: break-word;
+}
+
+.bet-amount {
+  font-weight: bold;
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.empty-text {
+  font-style: italic;
+  opacity: 0.8;
+  color: inherit;
+}
+
+/* ===== BETS INFO ===== */
+.bets-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-bet,
+.potential-prize {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px 0;
+}
+
+.potential-prize {
+  margin-bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.info-value {
+  font-weight: bold;
+  color: #f1c40f;
+  font-size: 1.1rem;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.bet-slot.occupied {
+  animation: slotPulse 2s infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .roulette-bets {
+    padding: 20px;
+  }
+  
+  .bets-title {
+    font-size: 1.3rem;
+  }
+  
+  .bets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+  
+  .bet-slot {
+    padding: 12px;
+  }
+  
+  .slot-number {
+    font-size: 1.1rem;
+  }
+  
+  .slot-content {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-bets {
+    padding: 15px;
+  }
+  
+  .bets-title {
+    font-size: 1.2rem;
+  }
+  
+  .bets-summary {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .bets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+  }
+  
+  .bet-slot {
+    padding: 10px;
+  }
+  
+  .slot-number {
+    font-size: 1rem;
+  }
+  
+  .slot-content {
+    font-size: 0.75rem;
+  }
+  
+  .bets-info {
+    padding: 15px;
+  }
+}

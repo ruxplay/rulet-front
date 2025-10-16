@@ -1,24 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useAuth } from './hooks/useAuth';
+import { AuthForm } from './AuthForm';
+import { UserInfo } from './UserInfo';
+import { MobileMenu } from './MobileMenu';
 
 export const Header = () => {
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: ''
-  });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login:', loginData);
-  };
+  
+  const {
+    loginData,
+    setLoginData,
+    errors,
+    isAuthenticated,
+    isLoading,
+    isVerifying,
+    authState,
+    handleLogin,
+    handleLogout,
+  } = useAuth();
 
   return (
     <header className="header">
       <div className="header-container">
-        
         {/* Logo */}
         <Link href="/" className="logo">
           <div className="logo-icon">
@@ -27,97 +33,75 @@ export const Header = () => {
           <span className="logo-text">RubPlay</span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Nav */}
         <nav className="desktop-nav">
           <Link href="/" className="nav-link">
             Inicio
           </Link>
-          
-          {/* Desktop Login Form */}
-          <form onSubmit={handleLogin} className="header-login-form">
-            <div className="login-inputs-container">
-              <input
-                type="email"
-                placeholder="Correo"
-                value={loginData.email}
-                onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-                className="header-login-input"
-              />
-              <div className="login-separator"></div>
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={loginData.password}
-                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                className="header-login-input"
-              />
-              <button
-                type="submit"
-                className="header-login-button"
-              >
-                Ingresar
-              </button>
-              <a href="/register" className="nav-link register-link">
-                Regístrate
-              </a>
-            </div>
-          </form>
+          {isAuthenticated && (
+            <>
+              <Link href="/dashboard" className="nav-link">
+                Dashboard
+              </Link>
+              <Link href="/roulette/150" className="nav-link">
+                Ruleta
+              </Link>
+            </>
+          )}
         </nav>
 
-        {/* Mobile Menu Button */}
+        {/* Login Form */}
+        {!isAuthenticated && (
+          <AuthForm
+            loginData={loginData}
+            setLoginData={setLoginData}
+            errors={errors}
+            isLoading={isLoading}
+            isVerifying={isVerifying}
+            handleLogin={handleLogin}
+            variant="desktop"
+          />
+        )}
+
+        {/* Usuario autenticado */}
+        {isAuthenticated && (
+          <UserInfo
+            authState={authState}
+            handleLogout={handleLogout}
+            variant="desktop"
+          />
+        )}
+
+        {/* Botón móvil */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="mobile-menu-button"
         >
           <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu">
-          <div className="mobile-menu-content">
-            <Link href="/" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>
-              Inicio
-            </Link>
-            
-            {/* Mobile Login Form */}
-            <form onSubmit={handleLogin} className="mobile-login-form">
-              <div className="mobile-login-title">Iniciar Sesión</div>
-              <input
-                type="email"
-                placeholder="Correo electrónico"
-                value={loginData.email}
-                onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-                className="mobile-login-input"
-              />
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={loginData.password}
-                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                className="mobile-login-input"
-              />
-              <button
-                type="submit"
-                className="mobile-login-button"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Ingresar
-              </button>
-              <a 
-                href="/register"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Regístrate
-              </a>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Menú móvil */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        isAuthenticated={isAuthenticated}
+        loginData={loginData}
+        setLoginData={setLoginData}
+        errors={errors}
+        isLoading={isLoading}
+        isVerifying={isVerifying}
+        handleLogin={handleLogin}
+        authState={authState}
+        handleLogout={handleLogout}
+      />
     </header>
   );
 };

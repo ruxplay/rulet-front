@@ -1,0 +1,276 @@
+/* ===== RULETA RESULTS CSS ===== */
+
+.roulette-results {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  color: #2c3e50;
+  margin-top: 20px;
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.results-title {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* ===== WINNERS SECTION ===== */
+.winners-section {
+  margin-bottom: 25px;
+}
+
+.winner-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.winner-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.winner-card.main-winner {
+  border-left-color: #f1c40f;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+}
+
+.winner-card.secondary-winner {
+  border-left-color: #3498db;
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+}
+
+.winner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.winner-label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+}
+
+.winner-prize {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #2ecc71;
+}
+
+.winner-details {
+  color: #495057;
+}
+
+.winner-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.winner-info {
+  font-size: 0.95rem;
+  color: #6c757d;
+}
+
+.winner-info strong {
+  color: #2c3e50;
+}
+
+/* ===== SECONDARY WINNERS GRID ===== */
+.secondary-winners {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* ===== RESULTS SUMMARY ===== */
+.results-summary {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item.house {
+  background: rgba(231, 76, 60, 0.1);
+  margin: 0 -20px -20px -20px;
+  padding: 15px 20px;
+  border-radius: 0 0 10px 10px;
+  border-bottom: none;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.summary-value {
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.summary-item.house .summary-value {
+  color: #e74c3c;
+}
+
+/* ===== PERCENTAGES ===== */
+.results-percentages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.percentage-item {
+  text-align: center;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.percentage-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.percentage-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* ===== RESULTS FOOTER ===== */
+.results-footer {
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.results-note {
+  font-style: italic;
+  color: #6c757d;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .roulette-results {
+    padding: 20px;
+  }
+  
+  .results-title {
+    font-size: 1.3rem;
+  }
+  
+  .winner-card {
+    padding: 15px;
+  }
+  
+  .winner-name {
+    font-size: 1.2rem;
+  }
+  
+  .secondary-winners {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .results-percentages {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .results-summary {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-results {
+    padding: 15px;
+  }
+  
+  .results-title {
+    font-size: 1.2rem;
+  }
+  
+  .winner-card {
+    padding: 12px;
+  }
+  
+  .winner-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .winner-name {
+    font-size: 1.1rem;
+  }
+  
+  .winner-info {
+    font-size: 0.9rem;
+  }
+  
+  .results-summary {
+    padding: 12px;
+  }
+  
+  .summary-item.house {
+    margin: 0 -12px -12px -12px;
+    padding: 12px;
+  }
+}
+

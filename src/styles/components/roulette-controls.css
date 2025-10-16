@@ -1,0 +1,260 @@
+/* ===== RULETA CONTROLS CSS ===== */
+
+.roulette-controls {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.bet-controls {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.bet-button {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  min-width: 200px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bet-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.bet-button:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.bet-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  opacity: 0.7;
+}
+
+/* ===== STATUS MESSAGES ===== */
+.status-message {
+  margin-top: 15px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.status-message.success {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.status-message.error {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.status-message.loading {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #3498db;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.status-message.spinning {
+  background-color: rgba(155, 89, 182, 0.2);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.status-message.closed {
+  background-color: rgba(149, 165, 166, 0.2);
+  color: #95a5a6;
+  border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+.status-message.info {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #ecf0f1;
+  border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ===== MESA INFO ===== */
+.mesa-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mesa-id {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.id-label {
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.id-value {
+  font-weight: bold;
+  color: #f39c12;
+  background-color: rgba(243, 156, 18, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.mesa-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-label {
+  font-weight: 600;
+  color: #ecf0f1;
+}
+
+.status-value {
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-value.open {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.status-value.spinning {
+  background-color: rgba(155, 89, 182, 0.2);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.status-value.closed {
+  background-color: rgba(149, 165, 166, 0.2);
+  color: #95a5a6;
+  border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+/* ===== PROGRESS BAR ===== */
+.mesa-progress {
+  margin-top: 15px;
+}
+
+.progress-label {
+  font-weight: 600;
+  color: #ecf0f1;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.progress-value {
+  font-weight: bold;
+  color: #3498db;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .roulette-controls {
+    padding: 20px;
+  }
+  
+  .bet-button {
+    padding: 12px 25px;
+    font-size: 1rem;
+    min-width: 180px;
+  }
+  
+  .mesa-info {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-controls {
+    padding: 15px;
+  }
+  
+  .bet-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    min-width: 160px;
+  }
+  
+  .status-message {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}

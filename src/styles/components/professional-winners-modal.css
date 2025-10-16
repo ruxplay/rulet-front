@@ -1,0 +1,421 @@
+/* ========================================
+   MODAL PROFESIONAL DE GANADORES
+   Estética moderna con colores de la página
+   ======================================== */
+
+/* Backdrop del modal */
+.professional-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.professional-modal-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Contenedor del modal */
+.professional-modal-container {
+  background: linear-gradient(135deg, #0A192F 0%, #1E1E1E 50%, #2A2A2A 100%);
+  border-radius: 20px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.8) translateY(50px);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.professional-modal-container.visible {
+  transform: scale(1) translateY(0);
+}
+
+/* Header del modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 30px 30px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(0, 255, 156, 0.1) 0%, rgba(0, 204, 122, 0.05) 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-title-section {
+  flex: 1;
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 156, 0.5));
+}
+
+.modal-subtitle {
+  color: #B0BEC5;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.modal-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.timer-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: 1px solid rgba(0, 255, 156, 0.3);
+}
+
+.timer-icon {
+  font-size: 1.2rem;
+}
+
+.timer-text {
+  color: #00FF9C;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #B0BEC5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  transform: scale(1.1);
+}
+
+/* Contenido del modal */
+.modal-content {
+  padding: 30px;
+}
+
+/* Tarjeta de ganador principal */
+.main-winner-card {
+  background: linear-gradient(135deg, rgba(0, 255, 156, 0.15) 0%, rgba(0, 204, 122, 0.1) 100%);
+  border: 2px solid rgba(0, 255, 156, 0.3);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-winner-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00FF9C, #00CC7A);
+}
+
+.winner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.winner-rank {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+.rank-text {
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.winner-prize {
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  color: #0A192F;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 900;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 15px rgba(0, 255, 156, 0.3);
+}
+
+.winner-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.winner-name {
+  color: #FFFFFF;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 255, 156, 0.3);
+}
+
+.winner-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  color: #B0BEC5;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #00FF9C;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Sección de ganadores secundarios */
+.secondary-winners-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #FFFFFF;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.secondary-winners-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.secondary-winner-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.secondary-winner-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 255, 156, 0.2);
+  transform: translateY(-2px);
+}
+
+.secondary-winner-card .winner-header {
+  margin-bottom: 15px;
+}
+
+.secondary-winner-card .rank-icon {
+  font-size: 1.5rem;
+}
+
+.secondary-winner-card .rank-text {
+  font-size: 0.9rem;
+}
+
+.secondary-winner-card .winner-prize {
+  font-size: 1.1rem;
+  padding: 8px 16px;
+}
+
+.secondary-winner-card .winner-name {
+  font-size: 1.2rem;
+}
+
+/* Resumen de estadísticas */
+.stats-summary {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+}
+
+.stat-item.house {
+  background: rgba(255, 87, 34, 0.1);
+  border: 1px solid rgba(255, 87, 34, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.stat-label {
+  color: #B0BEC5;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.stat-item.house .stat-value {
+  color: #FF5722;
+}
+
+/* Footer del modal */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0 0 20px 20px;
+}
+
+.footer-info {
+  flex: 1;
+}
+
+.footer-text {
+  color: #B0BEC5;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.continue-btn {
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  color: #0A192F;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 255, 156, 0.3);
+}
+
+.continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 156, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .professional-modal-container {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .modal-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  .secondary-winners-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-header {
+    padding: 20px 20px 15px;
+  }
+  
+  .modal-footer {
+    padding: 15px 20px 20px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

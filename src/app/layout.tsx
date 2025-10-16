@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "@/styles/components/centered-loading.css";
+import "@/styles/components/deposit-form.css";
+import "@/styles/components/deposit-history.css";
+import "@/styles/components/deposit-modal.css";
+import "@/styles/components/copy-button.css";
+import "@/styles/components/roulette-wheel.css";
+import "@/styles/components/roulette-controls.css";
+import "@/styles/components/roulette-bets.css";
+import "@/styles/components/roulette-results.css";
+import "@/styles/components/roulette-modal.css";
+import "@/styles/components/roulette-selector.css";
+import "@/styles/components/roulette-responsive.css";
 import { HelpButton } from "@/components/ui/HelpButton";
+import { Header } from "@/components/layout/Header";
+import { Providers } from "@/lib/providers";
+import { AuthPersistence } from "@/components/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +36,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        {children}
-        <HelpButton />
+        <Providers>
+          <AuthPersistence />
+          <Header />
+          {children}
+          <HelpButton />
+        </Providers>
       </body>
     </html>
   );

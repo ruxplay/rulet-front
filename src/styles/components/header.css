@@ -326,6 +326,58 @@
   box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
 }
 
+/* Estilos para errores en el header */
+.header-error-general {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  border: 1px solid #ff4757;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+}
+
+.header-error-message {
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.header-input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-field-error {
+  color: #ff4757;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  margin-top: 2px;
+  text-align: left;
+}
+
+.header-login-input.error {
+  border-color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.header-login-input.error:focus {
+  border-color: #ff4757;
+  box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.3);
+}
+
+.header-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.header-login-button:disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow-secondary);
+}
+
 /* Enlace Regístrate dentro del formulario */
 .register-link {
   margin-left: var(--spacing-sm);
@@ -359,6 +411,8 @@
   padding: var(--spacing-sm);
   border-radius: var(--border-radius-sm);
   transition: background-color var(--transition-normal);
+  z-index: 100;
+  position: relative;
 }
 
 .mobile-menu-button:hover {
@@ -375,6 +429,7 @@
   background-color: var(--primary);
   border-top: 1px solid var(--bg-secondary);
   box-shadow: var(--shadow-lg);
+  z-index: 99;
 }
 
 .mobile-menu-content {
@@ -594,6 +649,58 @@
   box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
 }
 
+/* Estilos para errores móviles */
+.mobile-error-general {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  border: 1px solid #ff4757;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+}
+
+.mobile-error-message {
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.mobile-input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-field-error {
+  color: #ff4757;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  margin-top: 2px;
+  text-align: left;
+}
+
+.mobile-login-input.error {
+  border-color: #ff4757;
+  background: rgba(255, 71, 87, 0.1);
+}
+
+.mobile-login-input.error:focus {
+  border-color: #ff4757;
+  box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.3);
+}
+
+.mobile-login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mobile-login-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Enlace Regístrate en formulario móvil */
 .mobile-login-form .mobile-nav-link {
   margin-top: var(--spacing-sm);
@@ -605,6 +712,82 @@
   transition: all var(--transition-normal);
   background: rgba(199, 160, 8, 0.1);
   border: 1px solid rgba(199, 160, 8, 0.3);
+}
+
+/* Estilos para usuario autenticado - Desktop */
+.header-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.user-welcome {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.header-logout-button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.header-logout-button:hover {
+  background: linear-gradient(135deg, #ff5252, #e53935);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+/* Estilos para usuario autenticado - Mobile */
+.mobile-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--bg-accent);
+}
+
+.mobile-user-welcome {
+  text-align: center;
+}
+
+.mobile-user-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.mobile-logout-button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.mobile-logout-button:hover {
+  background: linear-gradient(135deg, #ff5252, #e53935);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
 }
 
 .mobile-login-form .mobile-nav-link:hover {
@@ -651,8 +834,16 @@
     display: none;
   }
   
+  .header-login-form {
+    display: none;
+  }
+  
+  .header-user-info {
+    display: none;
+  }
+  
   .mobile-menu-button {
-    display: block;
+    display: block !important;
   }
   
   .mobile-menu {

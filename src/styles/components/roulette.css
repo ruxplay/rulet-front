@@ -1,0 +1,555 @@
+/* ========================================
+   RULETA - ESTILOS PROFESIONALES
+   Adaptados del home para mantener consistencia
+   ======================================== */
+
+/* Contenedor principal de la ruleta */
+.roulette-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0A192F 0%, #1E1E1E 50%, #2A2A2A 100%);
+  color: #FFFFFF;
+  padding-top: 60px; /* Espacio para el header fijo */
+}
+
+.roulette-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1rem;
+}
+
+/* ========================================
+   HEADER DE LA RULETA
+   ======================================== */
+
+.roulette-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.roulette-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   CONTENIDO PRINCIPAL
+   ======================================== */
+
+.roulette-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* ========================================
+   SECCIÓN DE LA RULETA
+   ======================================== */
+
+.roulette-wheel-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.roulette-wheel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.roulette-wheel {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(0, 255, 156, 0.3);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.roulette-wheel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(0, 255, 156, 0.1), rgba(199, 160, 8, 0.1));
+  opacity: 0.5;
+}
+
+/* ========================================
+   SECCIÓN DE CONTROLES
+   ======================================== */
+
+.roulette-controls-section {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================
+   SECCIÓN DE APUESTAS
+   ======================================== */
+
+.roulette-bets-section {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* ========================================
+   SECCIÓN DE RESULTADOS
+   ======================================== */
+
+.roulette-results-section {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  margin-top: 2rem;
+}
+
+/* ========================================
+   TÍTULOS DE SECCIÓN
+   ======================================== */
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: #E5E5E5;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+/* ========================================
+   BOTONES PROFESIONALES
+   ======================================== */
+
+.btn-roulette-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  color: #0A192F;
+  box-shadow: 0 4px 8px rgba(0, 255, 156, 0.3);
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-roulette-primary:hover {
+  background: linear-gradient(135deg, #00CC7A, #00B366);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 255, 156, 0.4);
+}
+
+.btn-roulette-primary:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: #B0B0B0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-roulette-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid #00FF9C;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.btn-roulette-secondary:hover {
+  background: rgba(0, 255, 156, 0.1);
+  border-color: #33FFB3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 255, 156, 0.2);
+}
+
+/* ========================================
+   SELECTOR DE RULETA
+   ======================================== */
+
+.roulette-selector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.roulette-type-btn {
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roulette-type-btn:hover {
+  background: rgba(0, 255, 156, 0.1);
+  border-color: #00FF9C;
+  transform: translateY(-2px);
+}
+
+.roulette-type-btn.active {
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  color: #0A192F;
+  border-color: #00FF9C;
+  box-shadow: 0 4px 8px rgba(0, 255, 156, 0.3);
+}
+
+/* ========================================
+   TABLA DE APUESTAS
+   ======================================== */
+
+.bets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bet-slot {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.bet-slot:hover {
+  background: rgba(0, 255, 156, 0.1);
+  border-color: #00FF9C;
+  transform: scale(1.05);
+}
+
+.bet-slot.selected {
+  background: linear-gradient(135deg, #00FF9C, #00CC7A);
+  border-color: #00FF9C;
+  color: #0A192F;
+  box-shadow: 0 4px 8px rgba(0, 255, 156, 0.3);
+}
+
+.bet-slot.occupied {
+  background: rgba(199, 160, 8, 0.2);
+  border-color: #C7A008;
+  cursor: not-allowed;
+}
+
+.bet-slot-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.bet-slot-player {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.bet-slot-amount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+/* ========================================
+   INFORMACIÓN DE APUESTAS
+   ======================================== */
+
+.bets-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  text-align: center;
+}
+
+.bet-stat {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bet-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00FF9C;
+  margin-bottom: 0.25rem;
+}
+
+.bet-stat-label {
+  font-size: 0.875rem;
+  color: #E5E5E5;
+}
+
+/* ========================================
+   RESULTADOS
+   ======================================== */
+
+.results-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.result-card.main-winner {
+  border-color: #00FF9C;
+  background: rgba(0, 255, 156, 0.1);
+}
+
+.result-card.secondary-winner {
+  border-color: #C7A008;
+  background: rgba(199, 160, 8, 0.1);
+}
+
+.result-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 1rem;
+}
+
+.result-player {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #00FF9C;
+  margin-bottom: 0.5rem;
+}
+
+.result-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+
+.roulette-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.roulette-modal {
+  background: linear-gradient(135deg, #0A192F 0%, #1E1E1E 50%, #2A2A2A 100%);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  font-size: 1rem;
+  color: #E5E5E5;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #B0B0B0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #FFFFFF;
+}
+
+/* ========================================
+   ESTADOS DE CARGA Y ERROR
+   ======================================== */
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #E5E5E5;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: #FF4757;
+  background: rgba(255, 71, 87, 0.1);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 1024px) {
+  .roulette-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .roulette-title {
+    font-size: 2.5rem;
+  }
+  
+  .bets-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .results-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .roulette-container {
+    padding: 1rem;
+  }
+  
+  .roulette-title {
+    font-size: 2rem;
+  }
+  
+  .roulette-wheel {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .bets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .bets-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .roulette-selector {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .roulette-type-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette-wheel {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .bets-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.25rem;
+  }
+  
+  .bet-slot {
+    padding: 0.5rem;
+  }
+  
+  .bet-slot-number {
+    font-size: 1rem;
+  }
+  
+  .bet-slot-player {
+    font-size: 0.625rem;
+  }
+  
+  .bet-slot-amount {
+    font-size: 0.625rem;
+  }
+}

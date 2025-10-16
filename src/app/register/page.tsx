@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Header } from '@/components/layout/Header';
+import { useRegisterMutation } from '@/store/api/authApi';
+import { useAppDispatch } from '@/lib/store/hooks';
+import { setUser, setError, clearError } from '@/store/slices/authSlice';
+import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 interface FormData {
   fullName: string;
@@ -22,9 +26,14 @@ interface FormErrors {
   password?: string;
   confirmPassword?: string;
   acceptTerms?: string;
+  general?: string;
 }
 
 export default function RegisterPage() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
+
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     username: '',
@@ -129,6 +138,16 @@ export default function RegisterPage() {
     }));
 
     if (type !== 'checkbox') {
+      // Limpiar errores específicos del campo cuando el usuario modifica
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        // Limpiar errores específicos del campo modificado
+        delete newErrors[name];
+        // También limpiar error general si existe
+        delete newErrors.general;
+        return newErrors;
+      });
+      
       validateField(name, value);
     }
   };
@@ -145,18 +164,60 @@ export default function RegisterPage() {
     setIsLoading(true);
     
     try {
-      // Aquí iría la llamada al backend
-      console.log('Registrando usuario:', formData);
+      // Limpiar errores previos
+      dispatch(clearError());
+      setErrors({});
       
-      // Simular llamada API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Preparar datos para el backend (sin confirmPassword y acceptTerms)
+      const registerData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phone: formData.phone || undefined,
+      };
+
+      // Llamar a la API de registro
+      const result = await register(registerData).unwrap();
       
-      // Redirigir a página de éxito o login
-      alert('¡Registro exitoso!');
+      // NO guardar usuario en Redux - solo se registró, no inició sesión
       
-    } catch (error) {
-      console.error('Error en el registro:', error);
-      alert('Error en el registro. Inténtalo de nuevo.');
+      // Mostrar alert de éxito
+      await Swal.fire({
+        title: '¡Registro Exitoso!',
+        text: 'Por favor inicia sesión para continuar',
+        icon: 'success',
+        confirmButtonText: 'Iniciar Sesión',
+        confirmButtonColor: '#00ff9c',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      });
+      
+      // Redirigir al home para iniciar sesión
+      router.push('/');
+      
+    } catch (error: any) {
+      console.error('Error en registro:', error);
+      
+      // Manejar errores de Zod (validación del backend)
+      if (error.errors && Array.isArray(error.errors)) {
+        const zodErrors: Record<string, string> = {};
+        error.errors.forEach((err: any) => {
+          if (err.path && err.path.length > 0) {
+            zodErrors[err.path[0]] = err.message;
+          }
+        });
+        setErrors(zodErrors);
+        return; // No mostrar error general si hay errores de validación
+      }
+      // Manejar errores del backend (RTK Query)
+      else if (error.data?.error) {
+        dispatch(setError(error.data.error));
+        setErrors({ general: error.data.error });
+      } else {
+        dispatch(setError('Error al crear la cuenta. Inténtalo nuevamente.'));
+        setErrors({ general: 'Error al crear la cuenta. Inténtalo nuevamente.' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +249,6 @@ export default function RegisterPage() {
 
   return (
     <div className="main-container">
-      <Header />
       <div className="register-page">
         <div className="register-container">
           {/* Header */}
@@ -219,6 +279,13 @@ export default function RegisterPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="register-form">
+          
+          {/* Error General */}
+          {errors.general && (
+            <div className="error-general">
+              <span className="error-message">{errors.general}</span>
+            </div>
+          )}
           
           {/* Paso 1: Información Personal */}
           {currentStep === 1 && (
@@ -283,7 +350,7 @@ export default function RegisterPage() {
                 type="button" 
                 onClick={nextStep}
                 className="btn-primary"
-                disabled={!formData.fullName || !formData.username || !formData.email || Object.keys(errors).length > 0}
+                disabled={!formData.fullName || !formData.username || !formData.email || errors.fullName || errors.username || errors.email}
               >
                 Continuar
               </button>
@@ -373,7 +440,7 @@ export default function RegisterPage() {
                   type="button" 
                   onClick={nextStep}
                   className="btn-primary"
-                  disabled={!formData.password || !formData.confirmPassword || Object.keys(errors).length > 0}
+                  disabled={!formData.password || !formData.confirmPassword || errors.password || errors.confirmPassword || errors.phone}
                 >
                   Continuar
                 </button>

@@ -1,12 +1,9 @@
-import { Header } from '@/components/layout/Header';
 import { StepsSection } from '@/components/sections/StepsSection';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <div className="main-container">
-      <Header />
-      
       <main className="home-content">
         {/* Sección Principal */}
         <section className="hero-section">
