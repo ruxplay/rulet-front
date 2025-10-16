@@ -8,13 +8,15 @@ interface ProfessionalWinnersModalProps {
   onClose: () => void;
   winners: RouletteWinners | null;
   formatCurrency: (value: number) => string;
+  type: '150' | '300';
 }
 
 export const ProfessionalWinnersModal = ({ 
   show, 
   onClose, 
   winners, 
-  formatCurrency 
+  formatCurrency,
+  type
 }: ProfessionalWinnersModalProps) => {
   const [timeLeft, setTimeLeft] = useState(60); // 1 minuto
   const [isVisible, setIsVisible] = useState(false);
@@ -82,7 +84,7 @@ export const ProfessionalWinnersModal = ({
     return null;
   }
 
-  const betAmount = winners.type === '150' ? 150 : 300;
+  const betAmount = type === '150' ? 150 : 300;
   const totalApostado = winners.totals.totalApostado;
 
   return (

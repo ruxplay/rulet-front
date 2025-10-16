@@ -121,6 +121,7 @@ function Roulette300Content() {
           onClose={setShowWinnerModal}
           winners={lastWinners}
           formatCurrency={formatCurrency}
+          type="300"
         />
       </div>
     </div>
