@@ -83,8 +83,17 @@ export const authApi = createApi({
         method: 'GET',
       }),
       transformResponse: (response: { user?: unknown; data?: { user?: unknown } } | unknown) => {
-        if (response.user) return response;
-        if (response.data?.user) return response.data;
+        // Verificar que response es un objeto antes de acceder a sus propiedades
+        if (response && typeof response === 'object' && 'user' in response) {
+          const responseObj = response as { user?: unknown; data?: { user?: unknown } };
+          return { user: responseObj.user || null };
+        }
+        if (response && typeof response === 'object' && 'data' in response) {
+          const responseObj = response as { data?: { user?: unknown } };
+          if (responseObj.data?.user) {
+            return { user: responseObj.data.user };
+          }
+        }
         return { user: null };
       },
       providesTags: ['Auth'],
