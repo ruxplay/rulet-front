@@ -203,9 +203,10 @@ export default function RegisterPage() {
       // Manejar errores de Zod (validación del backend)
       if ((error as { errors?: unknown[] })?.errors && Array.isArray((error as { errors?: unknown[] }).errors)) {
         const zodErrors: Record<string, string> = {};
-        (error as { errors: unknown[] }).errors.forEach((err: { path?: string[]; message?: string }) => {
-          if (err.path && err.path.length > 0) {
-            zodErrors[err.path[0]] = err.message || 'Error de validación';
+        (error as { errors: unknown[] }).errors.forEach((err: unknown) => {
+          const errorObj = err as { path?: string[]; message?: string };
+          if (errorObj.path && errorObj.path.length > 0) {
+            zodErrors[errorObj.path[0]] = errorObj.message || 'Error de validación';
           }
         });
         setErrors(zodErrors);
