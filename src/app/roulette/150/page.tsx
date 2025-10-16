@@ -63,7 +63,7 @@ function Roulette150Content() {
                 <strong>Usuario:</strong> {authState.user?.username || 'No definido'}
               </div>
               <div>
-                <strong>Saldo:</strong> {(authState.user as { balance?: number | string })?.balance !== undefined ? formatCurrency((authState.user as { balance?: number | string }).balance!) : 'No definido'}
+                <strong>Saldo:</strong> {(authState.user as { balance?: number | string })?.balance !== undefined ? formatCurrency(Number((authState.user as { balance?: number | string }).balance!)) : 'No definido'}
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@ function Roulette150Content() {
               onPlaceBet={placeBet}
               isPlacingBet={isPlacingBet}
               isLoading={isLoading || isSpinning}
-              error={error}
+              error={(error as { status?: number; data?: { code?: string } } | null) || null}
             />
           </div>
 
@@ -118,7 +118,7 @@ function Roulette150Content() {
         {/* Modal profesional de ganadores */}
         <ProfessionalWinnersModal
           show={showWinnerModal}
-          onClose={() => setShowWinnerModal(false)}
+          onClose={setShowWinnerModal}
           winners={lastWinners}
           formatCurrency={formatCurrency}
         />
