@@ -50,7 +50,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
 
     switch (name) {
       case 'amount':
-        if (!value || value < 50) {
+        if (!value || Number(value) < 50) {
           newErrors.amount = 'El monto mínimo es 50 BS';
         } else {
           delete newErrors.amount;

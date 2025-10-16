@@ -68,9 +68,9 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
     switch (name) {
       case 'usdtAmount':
-        if (!value || value <= 0) {
+        if (!value || Number(value) <= 0) {
           newErrors.usdtAmount = 'La cantidad en USDT debe ser mayor a 0';
-        } else if (value < 1) {
+        } else if (Number(value) < 1) {
           newErrors.usdtAmount = 'El monto mínimo es 1 USDT';
         } else {
           delete newErrors.usdtAmount;
