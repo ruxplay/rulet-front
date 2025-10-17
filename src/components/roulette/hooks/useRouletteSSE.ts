@@ -178,13 +178,9 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         console.log('🔔 SSE user.balance.updated recibido:', { data, currentUsername });
         if (!data || !data.username) return;
         if (data.username === currentUsername) {
-          console.log('✅ Actualizando stats del usuario:', { balance: data.balance, losses: data.losses, wins: data.wins });
-          // Usar el nuevo reducer combinado para actualizar múltiples campos
-          dispatch(updateUserStats({
-            balance: data.balance,
-            losses: data.losses,
-            wins: data.wins
-          }));
+          console.log('✅ Actualizando balance del usuario:', { balance: data.balance });
+          // Actualizar solo el balance ya que losses y wins no están en el payload
+          dispatch(updateUserBalance(data.balance));
         }
       } catch (error) {
         console.error('❌ Error parsing user.balance.updated:', error);

@@ -18,41 +18,17 @@ export const ProfessionalWinnersModal = ({
   formatCurrency,
   type
 }: ProfessionalWinnersModalProps) => {
-  const [timeLeft, setTimeLeft] = useState(45); // 45 segundos
   const [isVisible, setIsVisible] = useState(false);
 
-  // Debug: Log cuando el modal se muestra
-  useEffect(() => {
-    if (show) {
-      console.log('🎯 Modal se está mostrando:', { show, winners: !!winners, isVisible });
-    }
-  }, [show, winners, isVisible]);
-
-  // Auto-cierre después de 45 segundos
+  // Mostrar modal cuando show es true
   useEffect(() => {
     if (show && winners) {
-      // Mostrar modal inmediatamente (el delay se maneja en el SSE)
-      console.log('🎯 ProfessionalWinnersModal - Mostrando modal inmediatamente');
+      console.log('🎯 ProfessionalWinnersModal - Mostrando modal');
       setIsVisible(true);
-      setTimeLeft(45);
-      
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            setIsVisible(false);
-            setTimeout(() => onClose(), 300); // Delay para animación
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
     } else {
-      // Ocultar modal si no hay show o winners
       setIsVisible(false);
     }
-  }, [show, winners, onClose]);
+  }, [show, winners]);
 
   // Manejar tecla Escape y scroll
   useEffect(() => {
@@ -112,23 +88,21 @@ export const ProfessionalWinnersModal = ({
       onClick={handleBackdropClick}
     >
       <div className={`professional-modal-container ${isVisible ? 'visible' : ''}`}>
-        {/* Header con timer */}
+        {/* Header */}
         <div className="modal-header">
           <div className="modal-title-section">
-            <h2 className="modal-title">
+            <div className="title-with-icon">
               <span className="title-icon">🏆</span>
-              ¡GANADORES DE LA RULETA {betAmount}!
-            </h2>
+              <h2 className="modal-title">
+                ¡GANADORES DE LA RULETA {betAmount}!
+              </h2>
+            </div>
             <div className="modal-subtitle">
               Mesa #{winners.mesaId} • Total apostado: {formatCurrency(totalApostado ?? 0)}
             </div>
           </div>
           
           <div className="modal-controls">
-            <div className="timer-display">
-              <span className="timer-icon">⏱️</span>
-              <span className="timer-text">{timeLeft}s</span>
-            </div>
             <button
               className="modal-close-btn"
               onClick={handleCloseClick}
@@ -247,10 +221,6 @@ export const ProfessionalWinnersModal = ({
                 <span className="stat-label">Premios Secundarios</span>
                 <span className="stat-value">{formatCurrency((winners.totals.premioSecundario ?? 0) * 2)}</span>
               </div>
-              <div className="stat-item house">
-                <span className="stat-label">Ganancias Casa</span>
-                <span className="stat-value">{formatCurrency(winners.totals.gananciasCasa ?? 0)}</span>
-              </div>
             </div>
           </div>
         </div>
@@ -273,3 +243,4 @@ export const ProfessionalWinnersModal = ({
     </div>
   );
 };
+

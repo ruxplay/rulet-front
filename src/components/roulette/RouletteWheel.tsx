@@ -19,7 +19,7 @@ export interface RouletteWheelRef {
   animateSpin: (finalRotation: number) => Promise<void>;
   highlightSector: (sectorIndex: number) => void;
   clearHighlight: () => void;
-  startPhysicalSpin: () => void;
+  startPhysicalSpin: (winningSector?: number) => void;
   detectWinningSector: () => number;
 }
 
@@ -229,27 +229,76 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       });
     }, [drawWheel]);
 
-    // Función para iniciar giro físico
-    const startPhysicalSpin = useCallback(() => {
+    // Función para calcular la rotación objetivo que haga que los punteros apunten al sector correcto
+    const calculateTargetRotation = useCallback((winningSector: number) => {
+      const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+      
+      // Calcular la rotación para que el sector ganador quede exactamente en 12 en punto (0 grados)
+      // El sector ganador debe estar en la posición 0 grados (12 en punto)
+      let targetRotation = winningSector * anglePerSector;
+      
+      // Ajustar para que el centro del sector quede exactamente en 12 en punto
+      // Restamos la mitad del ángulo del sector para centrarlo
+      targetRotation = targetRotation - (anglePerSector / 2);
+      
+      // Rotar en sentido contrario para que el sector quede en 12 en punto
+      targetRotation = -targetRotation;
+      
+      // Normalizar la rotación para que esté entre 0 y 2π
+      targetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+      
+      console.log('🎯 Calculando rotación objetivo:', {
+        winningSector,
+        anglePerSector,
+        targetRotation: targetRotation,
+        targetRotationDegrees: (targetRotation * 180) / Math.PI,
+        sectorCenterDegrees: (winningSector * anglePerSector * 180) / Math.PI,
+        expectedPosition: '12 en punto (0 grados)'
+      });
+      
+      return targetRotation;
+    }, [NUM_SECTORS]);
+
+    // Función para iniciar giro físico con sector ganador del backend
+    const startPhysicalSpin = useCallback((winningSector?: number) => {
       if (isSpinningRef.current) return;
       
       isSpinningRef.current = true;
       console.log('🎰 Iniciando giro físico de la ruleta...');
       
-      // Simular giro físico con animación
-      const spinDuration = 3000; // 3 segundos
+      if (winningSector === undefined) {
+        console.log('❌ No se proporcionó winningSector del backend');
+        isSpinningRef.current = false;
+        return;
+      }
+      
+      console.log('🎯 Sector ganador del backend:', winningSector);
+      
+      // Simular giro físico con animación hacia el sector específico
+      const spinDuration = 4000; // 4 segundos
       const startTime = Date.now();
       const startRotation = currentRotationRef.current;
-      const finalRotation = startRotation + (Math.random() * 8 + 4) * Math.PI; // 4-12 vueltas
+      
+      // Calcular rotación final para que el sector ganador quede en 12 en punto
+      const targetRotation = calculateTargetRotation(winningSector);
+      const finalRotation = startRotation + (Math.random() * 8 + 4) * Math.PI + (targetRotation - startRotation);
       
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / spinDuration, 1);
         
-        // Easing function para desaceleración natural
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        const currentRotation = startRotation + (finalRotation - startRotation) * easeOut;
+        // Easing function para desaceleración natural con micro-bounce
+        let easeOut;
+        if (progress < 0.8) {
+          // Ease-out cúbico para la mayor parte de la animación
+          easeOut = 1 - Math.pow(1 - progress / 0.8, 3);
+        } else {
+          // Micro-bounce para el final
+          const finalProgress = (progress - 0.8) / 0.2;
+          easeOut = 0.8 + 0.2 * (1 - Math.pow(1 - finalProgress, 4));
+        }
         
+        const currentRotation = startRotation + (finalRotation - startRotation) * easeOut;
         currentRotationRef.current = currentRotation;
         
         const canvas = canvasRef.current;
@@ -263,12 +312,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
-          // Detectar sector ganador ANTES de detener la animación
-          const winningSector = detectWinningSector();
-          console.log('🎯 Sector ganador detectado:', winningSector);
-          
-          // Ajustar la rotación final para que los punteros apunten al sector correcto
-          const targetRotation = calculateTargetRotation(winningSector);
+          // Asegurar que la rotación final sea exacta
           currentRotationRef.current = targetRotation;
           
           // Dibujar la ruleta en la posición final correcta
@@ -280,41 +324,12 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           }
           
           isSpinningRef.current = false;
-          if (onPhysicalSpin) {
-            console.log('🎰 Llamando onPhysicalSpin con sector:', winningSector);
-            onPhysicalSpin(winningSector);
-          } else {
-            console.log('❌ onPhysicalSpin no está definido');
-          }
+          console.log('🎯 Animación completada, sector ganador:', winningSector);
         }
       };
       
       animate();
-    }, [drawWheel, highlightedSector, onPhysicalSpin]);
-
-    // Función para calcular la rotación objetivo que haga que los punteros apunten al sector correcto
-    const calculateTargetRotation = useCallback((winningSector: number) => {
-      const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
-      
-      // Calcular la rotación base para que el sector ganador esté en 12 en punto
-      let targetRotation = winningSector * anglePerSector;
-      
-      // Ajustar para que el sector esté centrado en 12 en punto
-      // El sector 0 debe estar exactamente en 0 grados (12 en punto)
-      targetRotation = targetRotation - (anglePerSector / 2);
-      
-      // Normalizar la rotación para que esté entre 0 y 2π
-      targetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
-      
-      console.log('🎯 Calculando rotación objetivo:', {
-        winningSector,
-        anglePerSector,
-        targetRotation: targetRotation,
-        targetRotationDegrees: (targetRotation * 180) / Math.PI
-      });
-      
-      return targetRotation;
-    }, [NUM_SECTORS]);
+    }, [drawWheel, highlightedSector, calculateTargetRotation]);
 
     // Función para detectar el sector ganador
     const detectWinningSector = useCallback(() => {

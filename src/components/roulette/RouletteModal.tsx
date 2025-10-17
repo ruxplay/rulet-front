@@ -52,7 +52,7 @@ export const RouletteModal = ({
         <div className="winner-modal-content">
           {/* Ganador principal */}
           <div className="winner-item main-winner">
-            <div className="winner-icon">🏆</div>
+            <div className="winner-icon">🥇</div>
             <div className="winner-info">
               <div className="winner-title">Ganador Principal</div>
               <div className="winner-name">{winners.main.username}</div>

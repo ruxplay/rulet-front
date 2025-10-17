@@ -5,11 +5,10 @@ import {
   useGetCurrentMesaQuery,
   usePlaceBetMutation,
   useSpinMesaMutation,
-  useSubmitSpinResultMutation,
   useAdvanceMesaMutation
 } from '@/store/api/rouletteApi';
 import { useAuth } from '@/components/layout/hooks/useAuth';
-import { RouletteType } from '@/types';
+import { RouletteType, RouletteWinners } from '@/types';
 import { useRouletteSSE } from './useRouletteSSE';
 import { useAppDispatch } from '@/lib/store/hooks';
 import { updateUserBalance, updateUserLosses } from '@/store/slices/authSlice';
@@ -36,7 +35,7 @@ export const useRoulette = (type: RouletteType) => {
   const [isAutoSpinning, setIsAutoSpinning] = useState(false);
   const [lastSpunMesaId, setLastSpunMesaId] = useState<string | null>(null);
   const [isWaitingForNewMesa, setIsWaitingForNewMesa] = useState(false);
-  const [persistentWinners, setPersistentWinners] = useState<any>(null);
+  const [persistentWinners, setPersistentWinners] = useState<RouletteWinners | null>(null);
 
   // Queries y mutations
   const { 
@@ -87,7 +86,6 @@ export const useRoulette = (type: RouletteType) => {
 
   const [placeBetMutation, { isLoading: isPlacingBet }] = usePlaceBetMutation();
   const [spinMesaMutation] = useSpinMesaMutation();
-  const [submitSpinResultMutation] = useSubmitSpinResultMutation();
   const [advanceMesaMutation] = useAdvanceMesaMutation();
 
   // Función para formatear moneda
@@ -96,6 +94,13 @@ export const useRoulette = (type: RouletteType) => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
+  }, []);
+
+  // Función para manejar el giro físico de la ruleta
+  const handlePhysicalSpin = useCallback((winningSector: number) => {
+    console.log('🎰 handlePhysicalSpin llamado con sector ganador:', winningSector);
+    // Esta función se puede usar para lógica adicional cuando termine el giro físico
+    // Por ahora solo registra el evento, la animación se maneja desde el componente padre
   }, []);
 
   // Función para realizar apuesta
@@ -165,127 +170,18 @@ export const useRoulette = (type: RouletteType) => {
       
       // Información adicional del error
       if (error && typeof error === 'object') {
-        const errorObj = error as any;
-        console.error('❌ Error status:', errorObj.status);
-        console.error('❌ Error data:', errorObj.data);
-        console.error('❌ Error message:', errorObj.message);
-        console.error('❌ Error name:', errorObj.name);
+        const err = error as { status?: number; data?: { error?: string; message?: string } };
+        console.error('❌ Error status:', err.status);
+        console.error('❌ Error data:', err.data);
+        console.error('❌ Error message:', err.data?.error ?? err.data?.message);
       }
       
       throw error;
     }
   }, [username, selectedSector, mesaData, type, placeBetMutation, refetch, error, dispatch]);
 
-  // Función para manejar giro físico
-  const handlePhysicalSpin = useCallback(async (winningSector: number) => {
-    // Usar mesaId de mesaData si currentMesaIdForSpin no está disponible
-    const mesaIdToUse = currentMesaIdForSpin || mesaData?.mesa?.mesaId;
-    
-    if (!mesaIdToUse) {
-      console.error('❌ No hay mesa activa para girar');
-      return;
-    }
-
-    try {
-      console.log('🎰 Enviando resultado de giro físico:', {
-        mesaId: mesaIdToUse,
-        winningSector,
-        type
-      });
-
-      const payload = {
-        mesaId: mesaIdToUse,
-        winningSector,
-        operatorId: username || 'operator',
-        timestamp: new Date().toISOString()
-      };
-      
-      console.log('🎰 Payload completo:', JSON.stringify(payload, null, 2));
-
-      const result = await submitSpinResultMutation({ type, data: payload }).unwrap();
-
-      console.log('✅ Resultado enviado exitosamente:', result);
-      console.log('🎯 Resultado completo:', JSON.stringify(result, null, 2));
-      
-      // Marcar esta mesa como girada para prevenir doble giro
-      setLastSpunMesaId(mesaIdToUse);
-      
-      // Los ganadores se establecen automáticamente desde el SSE
-      console.log('🎯 Resultado enviado, esperando ganadores desde SSE...');
-      
-      // Limpiar estados después del giro
-      setIsSpinning(false);
-      setIsAutoSpinning(false);
-      setCountdown(null);
-      setSelectedSector(null); // Limpiar selección de sector
-      
-      // DELAY DE 60 SEGUNDOS antes de refrescar datos y crear nueva mesa
-      // (15 segundos para resultados + 45 segundos para modal)
-      console.log('⏰⏰⏰ ESPERANDO 60 SEGUNDOS ANTES DE CREAR NUEVA MESA... ⏰⏰⏰');
-      setIsWaitingForNewMesa(true);
-      // Mantener ganadores visibles durante el delay
-      setPersistentWinners(sseWinners);
-      setTimeout(() => {
-        console.log('🔄🔄🔄 60 SEGUNDOS COMPLETADOS, REFRESCANDO DATOS... 🔄🔄🔄');
-        setIsWaitingForNewMesa(false);
-        setPersistentWinners(null);
-        // Cerrar modal explícitamente
-        setShowModal(false);
-        refetch();
-      }, 60000); // 60 segundos de delay total
-      
-    } catch (error: unknown) {
-      console.error('❌ Error al enviar resultado:', error);
-      
-      // Log detallado del error
-      if (error && typeof error === 'object') {
-        const errorObj = error as { status?: number; data?: any };
-        console.error('❌ Error status:', errorObj.status);
-        console.error('❌ Error data:', errorObj.data);
-        
-        if (errorObj.data) {
-          console.error('❌ Error message:', errorObj.data.error || errorObj.data.message);
-        }
-        
-        // Si es error 400, limpiar estados pero no lanzar error
-        if (errorObj.status === 400) {
-          console.log('⚠️ Error 400 - Limpiando estados y forzando cierre de mesa');
-          
-          // Marcar esta mesa como girada para prevenir doble giro (incluso con error)
-          setLastSpunMesaId(mesaIdToUse);
-          
-          setIsSpinning(false);
-          setIsAutoSpinning(false);
-          setCountdown(null);
-          setSelectedSector(null); // Limpiar selección de sector
-          
-          // Forzar cierre de mesa usando advanceMesa
-          try {
-            console.log('🔄 Intentando cerrar mesa con advanceMesa...');
-            advanceMesaMutation({
-              type,
-              closedMesaId: mesaIdToUse
-            }).then(() => {
-              console.log('✅ Mesa cerrada exitosamente');
-            }).catch((advanceError) => {
-              console.log('⚠️ Error al cerrar mesa:', advanceError);
-            });
-          } catch (advanceError) {
-            console.log('⚠️ Error al cerrar mesa:', advanceError);
-          }
-          
-          refetch();
-          return;
-        }
-      }
-      
-      setIsSpinning(false);
-      setIsAutoSpinning(false);
-      setCountdown(null);
-      setSelectedSector(null); // Limpiar selección de sector
-      throw error;
-    }
-  }, [currentMesaIdForSpin, mesaData?.mesa?.mesaId, submitSpinResultMutation, type, username, refetch]);
+  // Flujo A: el backend decide el ganador. No se envía submit-result desde el front.
+  // El manejo de animación se dispara cuando llega mesa.closed por SSE (winners.main.index)
 
   // Función para manejar clic en sector
   const handleSectorClick = useCallback((sectorIndex: number) => {
@@ -331,9 +227,21 @@ export const useRoulette = (type: RouletteType) => {
 
   // Efecto para manejar el giro automático cuando la mesa se llena
   useEffect(() => {
+    console.log('🔍 Estado de la mesa:', {
+      mesa: mesaData?.mesa,
+      status: mesaData?.mesa?.status,
+      filledCount: mesaData?.mesa?.filledCount,
+      isAutoSpinning,
+      countdown,
+      isSpinning,
+      lastSpunMesaId,
+      mesaId: mesaData?.mesa?.mesaId
+    });
+
     // Solo iniciar countdown si no hay countdown activo, no está girando y no se ha girado esta mesa
     if (mesaData?.mesa && 
-        mesaData.mesa.status === 'waiting_for_result' && 
+        (mesaData.mesa.status === 'waiting_for_result' || 
+         (mesaData.mesa.status === 'open' && mesaData.mesa.filledCount >= 15)) && 
         !isAutoSpinning && 
         !countdown && 
         !isSpinning &&
@@ -378,7 +286,7 @@ export const useRoulette = (type: RouletteType) => {
         setSelectedSector(null); // Limpiar selección de sector
       }
     }
-  }, [mesaData?.mesa?.status, mesaData?.mesa?.mesaId, isAutoSpinning, countdown, isSpinning, lastSpunMesaId]);
+  }, [mesaData?.mesa?.status, mesaData?.mesa?.mesaId, mesaData?.mesa?.filledCount, isAutoSpinning, countdown, isSpinning, lastSpunMesaId, isWaitingForNewMesa]);
 
   // Efecto para limpiar selección cuando cambia el tipo
   useEffect(() => {
@@ -410,8 +318,8 @@ export const useRoulette = (type: RouletteType) => {
     // Funciones
     setSelectedSector: handleSectorClick,
     placeBet,
-    handlePhysicalSpin,
     formatCurrency,
+    handlePhysicalSpin,
     
     // Estados de loading
     isPlacingBet,

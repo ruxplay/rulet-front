@@ -27,7 +27,7 @@ function Roulette150Content() {
     const balance = user?.balance;
     console.log('🔎 Balance (authState.user):', { user, balance });
   }, [authState.user]);
-  
+
   const {
     mesa,
     isLoading,
@@ -50,17 +50,49 @@ function Roulette150Content() {
     handlePhysicalSpin,
     isWaitingForNewMesa
   } = useRoulette('150');
+
+  // Debug: Log del estado de la mesa
+  useEffect(() => {
+    console.log('🔍 Estado de la mesa en página 150:', {
+      mesa,
+      isLoading,
+      error,
+      selectedSector,
+      isSpinning,
+      countdown,
+      isAutoSpinning
+    });
+  }, [mesa, isLoading, error, selectedSector, isSpinning, countdown, isAutoSpinning]);
   
   // Obtener ganadores desde SSE
-  const { winners: sseWinners } = useRouletteSSE('150');
+  const { winners: sseWinners } = useRouletteSSE('150', mesa?.mesaId);
 
   // Efecto para activar el giro físico cuando isSpinning cambia
   useEffect(() => {
     if (isSpinning && rouletteWheelRef.current) {
-      console.log('🎰 Activando giro físico desde la página...');
-      rouletteWheelRef.current.startPhysicalSpin();
+      console.log('🎰 Activando giro físico desde isSpinning:', isSpinning);
+      // Generar un sector temporal para la animación mientras esperamos el resultado del backend
+      const tempSector = Math.floor(Math.random() * 15);
+      console.log('🎯 Sector temporal para animación:', tempSector);
+      rouletteWheelRef.current.startPhysicalSpin(tempSector);
     }
   }, [isSpinning]);
+
+  // Efecto para activar el giro físico cuando llega el resultado del backend
+  useEffect(() => {
+    console.log('🔍 sseWinners cambió:', sseWinners);
+    if (sseWinners && sseWinners.main && rouletteWheelRef.current) {
+      console.log('🎰 Activando giro físico con resultado del backend:', sseWinners.main.index);
+      rouletteWheelRef.current.startPhysicalSpin(sseWinners.main.index);
+    } else {
+      console.log('❌ No se puede activar giro:', {
+        hasSseWinners: !!sseWinners,
+        hasMain: !!(sseWinners && sseWinners.main),
+        hasRef: !!rouletteWheelRef.current,
+        sseWinners
+      });
+    }
+  }, [sseWinners]);
 
   // Función para manejar el giro físico desde el botón
   const handlePhysicalSpinFromButton = () => {
