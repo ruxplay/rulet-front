@@ -1,14 +1,18 @@
-import { useUserData } from './hooks/useUserData';
+import { useAuth } from '@/components/layout/hooks/useAuth';
 import { useState } from 'react';
 import Link from 'next/link';
 
 export const DashboardSidebar = () => {
-  const { data: userData, isLoading } = useUserData();
+  const { authState } = useAuth();
   const [showUserInfo, setShowUserInfo] = useState(false);
 
   const toggleUserInfo = () => {
     setShowUserInfo(!showUserInfo);
   };
+
+  const user = authState.user;
+  const phone = (user as { phone?: string }).phone;
+  const createdAt = (user as { createdAt?: string }).createdAt;
 
   return (
     <div className="dashboard-sidebar">
@@ -26,29 +30,25 @@ export const DashboardSidebar = () => {
           <div className="info-item">
             <span>Nombre:</span>
             <span>
-              {isLoading ? 'Cargando...' : 
-               showUserInfo ? (userData?.user?.fullName || 'N/A') : '••••••••••••••••••••'}
+              {showUserInfo ? (user?.fullName || 'N/A') : '••••••••••••••••••••'}
             </span>
           </div>
           <div className="info-item">
             <span>Email:</span>
             <span>
-              {isLoading ? 'Cargando...' : 
-               showUserInfo ? (userData?.user?.email || 'N/A') : '••••••••••••••••••••'}
+              {showUserInfo ? (user?.email || 'N/A') : '••••••••••••••••••••'}
             </span>
           </div>
           <div className="info-item">
             <span>Teléfono:</span>
             <span>
-              {isLoading ? 'Cargando...' : 
-               showUserInfo ? (userData?.user?.phone || 'N/A') : '••••••••••••••••••••'}
+              {showUserInfo ? (phone || 'N/A') : '••••••••••••••••••••'}
             </span>
           </div>
           <div className="info-item">
             <span>Miembro desde:</span>
             <span>
-              {isLoading ? 'Cargando...' : 
-               showUserInfo ? (userData?.user?.createdAt ? new Date(userData.user.createdAt).toLocaleDateString('es-ES') : 'N/A') : '••••••••••••••••••••'}
+              {showUserInfo ? (createdAt ? new Date(createdAt).toLocaleDateString('es-ES') : 'N/A') : '••••••••••••••••••••'}
             </span>
           </div>
         </div>

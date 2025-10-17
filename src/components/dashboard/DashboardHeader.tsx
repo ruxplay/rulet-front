@@ -1,9 +1,7 @@
-import { useUserData } from './hooks/useUserData';
+import { useAuth } from '@/components/layout/hooks/useAuth';
 
 export const DashboardHeader = () => {
-  const { data: userData, isLoading } = useUserData();
-
-  // Debug: ver qué datos llegan
+  const { authState } = useAuth();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -16,6 +14,9 @@ export const DashboardHeader = () => {
     });
   };
 
+  const user = authState.user;
+  const lastLogin = (user as { lastLogin?: string }).lastLogin;
+
   return (
     <div className="dashboard-header">
       <div className="dashboard-brand">
@@ -24,15 +25,14 @@ export const DashboardHeader = () => {
             Dashboard RubPlay
           </div>
           <div className="dashboard-brand-title">
-            Bienvenido, {isLoading ? 'Cargando...' : userData?.user?.fullName || 'Usuario'}
+            Bienvenido, {user?.fullName || 'Usuario'}
           </div>
         </div>
       </div>
       <div className="dashboard-user">
         <div className="dashboard-meta">
           <div>
-            Último acceso: {isLoading ? 'Cargando...' : 
-              userData?.user?.lastLogin ? formatDate(userData.user.lastLogin) : 'N/A'}
+            Último acceso: {lastLogin ? formatDate(lastLogin) : 'N/A'}
           </div>
           <div>Zona horaria: GMT-4</div>
         </div>

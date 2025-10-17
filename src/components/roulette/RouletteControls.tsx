@@ -10,6 +10,9 @@ interface RouletteControlsProps {
   isPlacingBet: boolean;
   isLoading: boolean;
   error: { status?: number; data?: { code?: string } } | null;
+  isWaitingForResult?: boolean;
+  onPhysicalSpin?: () => void;
+  isPhysicalMode?: boolean;
 }
 
 export const RouletteControls = ({
@@ -19,7 +22,10 @@ export const RouletteControls = ({
   onPlaceBet,
   isPlacingBet,
   isLoading,
-  error
+  error,
+  isWaitingForResult = false,
+  onPhysicalSpin,
+  isPhysicalMode = false
 }: RouletteControlsProps) => {
   const betAmount = type === '150' ? 150 : 300;
 
@@ -28,6 +34,12 @@ export const RouletteControls = ({
       await onPlaceBet();
     } catch (error) {
       console.error('Error al apostar:', error);
+    }
+  };
+
+  const handlePhysicalSpin = () => {
+    if (onPhysicalSpin) {
+      onPhysicalSpin();
     }
   };
 
@@ -132,6 +144,18 @@ export const RouletteControls = ({
         >
           {getButtonText()}
         </button>
+        
+        {/* Botón para giro físico */}
+        {isPhysicalMode && isWaitingForResult && (
+          <button
+            className="spin-button"
+            onClick={handlePhysicalSpin}
+            disabled={isLoading || isPlacingBet}
+            type="button"
+          >
+            🎰 GIRAR RULETA
+          </button>
+        )}
         
         <div className={`status-message ${statusMessage.type}`}>
           {statusMessage.text}

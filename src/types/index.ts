@@ -155,6 +155,44 @@ export interface UserBalanceUpdatedEvent {
   };
 }
 
+// Eventos SSE para ruleta física
+export interface MesaWaitingForResultEvent {
+  type: 'mesa.waiting_for_result';
+  payload: {
+    mesaId: string;
+    type: RouletteType;
+    filledCount: number;
+    status: 'waiting_for_result';
+  };
+}
+
+export interface MesaResultSubmittedEvent {
+  type: 'mesa.result_submitted';
+  payload: {
+    mesaId: string;
+    type: RouletteType;
+    winningSector: number;
+    operatorId: string;
+    timestamp: string;
+  };
+}
+
+// Request para enviar resultado de ruleta física
+export interface SubmitSpinResultRequest {
+  mesaId: string;
+  winningSector: number;
+  operatorId: string;
+  timestamp: string;
+}
+
+// Response del submit-result
+export interface SubmitSpinResultResponse {
+  success: boolean;
+  mesaId: string;
+  winningSector: number;
+  message: string;
+}
+
 export interface RouletteSnapshotEvent {
   type: 'snapshot';
   payload: {

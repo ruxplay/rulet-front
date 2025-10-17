@@ -10,19 +10,25 @@ interface RouletteWheelProps {
   highlightedSector?: number | null;
   onSectorClick: (sectorIndex: number) => void;
   isLoading?: boolean;
+  isPhysicalMode?: boolean;
+  onPhysicalSpin?: (winningSector: number) => void;
+  shouldAutoSpin?: boolean;
 }
 
 export interface RouletteWheelRef {
   animateSpin: (finalRotation: number) => Promise<void>;
   highlightSector: (sectorIndex: number) => void;
   clearHighlight: () => void;
+  startPhysicalSpin: () => void;
+  detectWinningSector: () => number;
 }
 
 export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
-  ({ sectors, rotation, highlightedSector, onSectorClick, isLoading }, ref) => {
+  ({ sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationRef = useRef<number | null>(null);
     const currentRotationRef = useRef(rotation);
+    const isSpinningRef = useRef(false);
 
     const NUM_SECTORS = 15;
 
@@ -141,27 +147,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       ctx.lineWidth = 5;
       ctx.stroke();
 
-      // Dibujar punteros
-      const drawPointer = (x: number, y: number, rotation: number) => {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(rotation);
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(-15, -30);
-        ctx.lineTo(15, -30);
-        ctx.closePath();
-        ctx.fillStyle = '#e74c3c';
-        ctx.fill();
-        ctx.restore();
-      };
-
-      // Puntero principal
-      drawPointer(centerX, centerY - 20, 0);
-      
-      // Punteros laterales
-      drawPointer(centerX - 90, centerY + 10, -0.5);
-      drawPointer(centerX + 90, centerY + 10, 0.5);
+      // Los punteros ahora se dibujan como elementos HTML/CSS fuera del canvas
     }, [sectors]);
 
     // Función para manejar clic en el canvas
@@ -187,20 +173,30 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       onSectorClick(selectedSector);
     }, [onSectorClick]);
 
-    // Función para animar el giro
+    // Función para animar el giro con desaceleración realista
     const animateSpin = useCallback((finalRotation: number): Promise<void> => {
       return new Promise((resolve) => {
         const startRotation = currentRotationRef.current;
         const rotationDelta = finalRotation - startRotation;
-        const duration = 6000; // 6 segundos (como el archivo original)
+        const duration = 4000; // 4 segundos para más emoción
         const startTime = performance.now();
 
         const animate = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
           
-          // Easing function (ease-out)
-          const easeOut = 1 - Math.pow(1 - progress, 3);
+          // Función de desaceleración más realista (ease-out-cubic con bounce)
+          let easeOut;
+          if (progress < 0.8) {
+            // Primera fase: desaceleración suave
+            easeOut = 1 - Math.pow(1 - progress / 0.8, 4);
+          } else {
+            // Segunda fase: desaceleración final con micro-bounce
+            const finalProgress = (progress - 0.8) / 0.2;
+            const bounce = Math.sin(finalProgress * Math.PI * 3) * 0.1 * (1 - finalProgress);
+            easeOut = 0.8 + (0.2 * finalProgress) + bounce;
+          }
+          
           const currentRotation = startRotation + rotationDelta * easeOut;
           
           currentRotationRef.current = currentRotation;
@@ -216,6 +212,15 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
+            // Asegurar que termine exactamente en la rotación final
+            currentRotationRef.current = finalRotation;
+            const canvas = canvasRef.current;
+            if (canvas) {
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                drawWheel(ctx, canvas, finalRotation);
+              }
+            }
             resolve();
           }
         };
@@ -223,6 +228,127 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         animationRef.current = requestAnimationFrame(animate);
       });
     }, [drawWheel]);
+
+    // Función para iniciar giro físico
+    const startPhysicalSpin = useCallback(() => {
+      if (isSpinningRef.current) return;
+      
+      isSpinningRef.current = true;
+      console.log('🎰 Iniciando giro físico de la ruleta...');
+      
+      // Simular giro físico con animación
+      const spinDuration = 3000; // 3 segundos
+      const startTime = Date.now();
+      const startRotation = currentRotationRef.current;
+      const finalRotation = startRotation + (Math.random() * 8 + 4) * Math.PI; // 4-12 vueltas
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / spinDuration, 1);
+        
+        // Easing function para desaceleración natural
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentRotation = startRotation + (finalRotation - startRotation) * easeOut;
+        
+        currentRotationRef.current = currentRotation;
+        
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            drawWheel(ctx, canvas, currentRotation, highlightedSector);
+          }
+        }
+        
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          // Detectar sector ganador ANTES de detener la animación
+          const winningSector = detectWinningSector();
+          console.log('🎯 Sector ganador detectado:', winningSector);
+          
+          // Ajustar la rotación final para que los punteros apunten al sector correcto
+          const targetRotation = calculateTargetRotation(winningSector);
+          currentRotationRef.current = targetRotation;
+          
+          // Dibujar la ruleta en la posición final correcta
+          if (canvasRef.current) {
+            const ctx = canvasRef.current.getContext('2d');
+            if (ctx) {
+              drawWheel(ctx, canvasRef.current, targetRotation, highlightedSector);
+            }
+          }
+          
+          isSpinningRef.current = false;
+          if (onPhysicalSpin) {
+            console.log('🎰 Llamando onPhysicalSpin con sector:', winningSector);
+            onPhysicalSpin(winningSector);
+          } else {
+            console.log('❌ onPhysicalSpin no está definido');
+          }
+        }
+      };
+      
+      animate();
+    }, [drawWheel, highlightedSector, onPhysicalSpin]);
+
+    // Función para calcular la rotación objetivo que haga que los punteros apunten al sector correcto
+    const calculateTargetRotation = useCallback((winningSector: number) => {
+      const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+      
+      // Calcular la rotación base para que el sector ganador esté en 12 en punto
+      let targetRotation = winningSector * anglePerSector;
+      
+      // Ajustar para que el sector esté centrado en 12 en punto
+      // El sector 0 debe estar exactamente en 0 grados (12 en punto)
+      targetRotation = targetRotation - (anglePerSector / 2);
+      
+      // Normalizar la rotación para que esté entre 0 y 2π
+      targetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+      
+      console.log('🎯 Calculando rotación objetivo:', {
+        winningSector,
+        anglePerSector,
+        targetRotation: targetRotation,
+        targetRotationDegrees: (targetRotation * 180) / Math.PI
+      });
+      
+      return targetRotation;
+    }, [NUM_SECTORS]);
+
+    // Función para detectar el sector ganador
+    const detectWinningSector = useCallback(() => {
+      const currentRotation = currentRotationRef.current;
+      
+      // Normalizar la rotación
+      const normalizedRotation = ((currentRotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      
+      // Calcular el sector basado en la rotación
+      const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+      
+      // Ajustar para que el sector 0 esté en 12 en punto
+      const adjustedRotation = normalizedRotation + (anglePerSector / 2);
+      const sector = Math.floor(adjustedRotation / anglePerSector) % NUM_SECTORS;
+      
+      console.log('🔍 Detección física:', {
+        rotation: currentRotation,
+        normalizedRotation,
+        adjustedRotation,
+        sector,
+        anglePerSector
+      });
+      
+      return sector;
+    }, [NUM_SECTORS]);
+
+    // Efecto para giro automático (DESHABILITADO - se maneja desde useRoulette)
+    // useEffect(() => {
+    //   console.log('🎰 shouldAutoSpin cambió:', { shouldAutoSpin, isSpinning: isSpinningRef.current });
+    //   if (shouldAutoSpin && !isSpinningRef.current) {
+    //     console.log('🎰 Giro automático activado');
+    //     startPhysicalSpin();
+    //   }
+    // }, [shouldAutoSpin, startPhysicalSpin]);
 
     // Exponer métodos al componente padre
     useImperativeHandle(ref, () => ({
@@ -244,8 +370,10 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
             drawWheel(ctx, canvas, currentRotationRef.current);
           }
         }
-      }
-    }));
+      },
+      startPhysicalSpin,
+      detectWinningSector
+    }), [animateSpin, drawWheel, startPhysicalSpin, detectWinningSector]);
 
     // Efecto para dibujar la ruleta cuando cambian las props
     useEffect(() => {
@@ -274,25 +402,24 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       };
     }, []);
 
-    return (
-      <div className="wheel-container">
-        <div className="wheel-shadow"></div>
-        <canvas
-          ref={canvasRef}
-          width={400}
-          height={400}
-          className="wheel"
-          onClick={handleCanvasClick}
-        />
-        <div className="wheel-center"></div>
-        {isLoading && rotation === 0 && (
-          <div className="wheel-loading">
-            <div className="loading-spinner"></div>
-            <div className="loading-text">Cargando...</div>
-          </div>
-        )}
-      </div>
-    );
+  return (
+    <div className="roulette-wheel-container">
+      <div className="roulette-wheel-shadow"></div>
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={400}
+        className="roulette-wheel-canvas"
+        onClick={handleCanvasClick}
+      />
+      <div className="roulette-wheel-center"></div>
+      
+      {/* Punteros profesionales para los 3 ganadores */}
+      <div className="roulette-pointer roulette-main-pointer"></div>
+      <div className="roulette-pointer roulette-left-pointer"></div>
+      <div className="roulette-pointer roulette-right-pointer"></div>
+    </div>
+  );
   }
 );
 

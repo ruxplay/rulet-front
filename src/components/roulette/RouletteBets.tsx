@@ -11,7 +11,10 @@ interface RouletteBetsProps {
 export const RouletteBets = ({ type, sectors, filledCount }: RouletteBetsProps) => {
   const betAmount = type === '150' ? 150 : 300;
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number | null | undefined): string => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.00';
+    }
     return value.toLocaleString('es-VE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -83,7 +86,7 @@ export const RouletteBets = ({ type, sectors, filledCount }: RouletteBetsProps) 
                   }
                 </div>
                 <div className="bet-amount">
-                  {formatCurrency(sector.bet)}
+                  {formatCurrency(sector.bet ?? 0)}
                 </div>
               </div>
             ) : (

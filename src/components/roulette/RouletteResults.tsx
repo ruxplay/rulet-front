@@ -30,14 +30,14 @@ export const RouletteResults = ({ type, winners, formatCurrency }: RouletteResul
           <div className="winner-header">
             <span className="winner-label">Ganador Principal</span>
             <span className="winner-prize">
-              {formatCurrency(winners.main.prize)}
+              {formatCurrency(winners.main.prize ?? 0)}
             </span>
           </div>
           <div className="winner-details">
             <div className="winner-name">{winners.main.username}</div>
             <div className="winner-info">
               Número <strong>{winners.main.index + 1}</strong> - 
-              Apuesta: <strong>{formatCurrency(winners.main.bet)}</strong>
+              Apuesta: <strong>{formatCurrency(winners.main.bet ?? 0)}</strong>
             </div>
           </div>
         </div>
@@ -48,14 +48,14 @@ export const RouletteResults = ({ type, winners, formatCurrency }: RouletteResul
             <div className="winner-header">
               <span className="winner-label">Ganador Secundario Izquierdo</span>
               <span className="winner-prize">
-                {formatCurrency(winners.left.prize)}
+                {formatCurrency(winners.left.prize ?? 0)}
               </span>
             </div>
             <div className="winner-details">
               <div className="winner-name">{winners.left.username}</div>
               <div className="winner-info">
                 Número <strong>{winners.left.index + 1}</strong> - 
-                Apuesta: <strong>{formatCurrency(winners.left.bet)}</strong>
+                Apuesta: <strong>{formatCurrency(winners.left.bet ?? 0)}</strong>
               </div>
             </div>
           </div>
@@ -64,14 +64,14 @@ export const RouletteResults = ({ type, winners, formatCurrency }: RouletteResul
             <div className="winner-header">
               <span className="winner-label">Ganador Secundario Derecho</span>
               <span className="winner-prize">
-                {formatCurrency(winners.right.prize)}
+                {formatCurrency(winners.right.prize ?? 0)}
               </span>
             </div>
             <div className="winner-details">
               <div className="winner-name">{winners.right.username}</div>
               <div className="winner-info">
                 Número <strong>{winners.right.index + 1}</strong> - 
-                Apuesta: <strong>{formatCurrency(winners.right.bet)}</strong>
+                Apuesta: <strong>{formatCurrency(winners.right.bet ?? 0)}</strong>
               </div>
             </div>
           </div>
@@ -83,28 +83,28 @@ export const RouletteResults = ({ type, winners, formatCurrency }: RouletteResul
         <div className="summary-item">
           <span className="summary-label">Total apostado:</span>
           <span className="summary-value">
-            {formatCurrency(winners.totals.totalApostado)}
+            {formatCurrency(winners.totals.totalApostado ?? 0)}
           </span>
         </div>
         
         <div className="summary-item">
           <span className="summary-label">Premio principal:</span>
           <span className="summary-value">
-            {formatCurrency(winners.totals.premioPrincipal)}
+            {formatCurrency(winners.totals.premioPrincipal ?? 0)}
           </span>
         </div>
         
         <div className="summary-item">
           <span className="summary-label">Premios secundarios:</span>
           <span className="summary-value">
-            {formatCurrency(winners.totals.premioSecundario * 2)}
+            {formatCurrency((winners.totals.premioSecundario ?? 0) * 2)}
           </span>
         </div>
         
         <div className="summary-item house">
           <span className="summary-label">Ganancias de la casa:</span>
           <span className="summary-value">
-            {formatCurrency(winners.totals.gananciasCasa)}
+            {formatCurrency(winners.totals.gananciasCasa ?? 0)}
           </span>
         </div>
       </div>

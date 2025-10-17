@@ -18,20 +18,23 @@ export const ProfessionalWinnersModal = ({
   formatCurrency,
   type
 }: ProfessionalWinnersModalProps) => {
-  const [timeLeft, setTimeLeft] = useState(60); // 1 minuto
+  const [timeLeft, setTimeLeft] = useState(45); // 45 segundos
   const [isVisible, setIsVisible] = useState(false);
 
   // Debug: Log cuando el modal se muestra
   useEffect(() => {
     if (show) {
+      console.log('🎯 Modal se está mostrando:', { show, winners: !!winners, isVisible });
     }
-  }, [show, winners]);
+  }, [show, winners, isVisible]);
 
-  // Auto-cierre después de 1 minuto
+  // Auto-cierre después de 45 segundos
   useEffect(() => {
     if (show && winners) {
+      // Mostrar modal inmediatamente (el delay se maneja en el SSE)
+      console.log('🎯 ProfessionalWinnersModal - Mostrando modal inmediatamente');
       setIsVisible(true);
-      setTimeLeft(60);
+      setTimeLeft(45);
       
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
@@ -45,28 +48,44 @@ export const ProfessionalWinnersModal = ({
       }, 1000);
 
       return () => clearInterval(timer);
+    } else {
+      // Ocultar modal si no hay show o winners
+      setIsVisible(false);
     }
   }, [show, winners, onClose]);
 
-  // Manejar tecla Escape
+  // Manejar tecla Escape y scroll
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && show) {
+      if (e.key === 'Escape' && isVisible) {
         setIsVisible(false);
         setTimeout(() => onClose(), 300);
       }
     };
 
-    if (show) {
+    if (isVisible) {
       document.addEventListener('keydown', handleEscape);
+      // Guardar el scroll actual
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      // Restaurar scroll
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
     };
-  }, [show, onClose]);
+  }, [isVisible, onClose]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -101,7 +120,7 @@ export const ProfessionalWinnersModal = ({
               ¡GANADORES DE LA RULETA {betAmount}!
             </h2>
             <div className="modal-subtitle">
-              Mesa #{winners.mesaId} • Total apostado: {formatCurrency(totalApostado)}
+              Mesa #{winners.mesaId} • Total apostado: {formatCurrency(totalApostado ?? 0)}
             </div>
           </div>
           
@@ -133,7 +152,7 @@ export const ProfessionalWinnersModal = ({
                 <span className="rank-text">GANADOR PRINCIPAL</span>
               </div>
               <div className="winner-prize">
-                {formatCurrency(winners.main.prize)}
+                {formatCurrency(winners.main.prize ?? 0)}
               </div>
             </div>
             
@@ -146,7 +165,7 @@ export const ProfessionalWinnersModal = ({
                 </span>
                 <span className="info-item">
                   <span className="info-label">Apuesta:</span>
-                  <span className="info-value">{formatCurrency(winners.main.bet)}</span>
+                  <span className="info-value">{formatCurrency(winners.main.bet ?? 0)}</span>
                 </span>
               </div>
             </div>
@@ -165,7 +184,7 @@ export const ProfessionalWinnersModal = ({
                     <span className="rank-text">IZQUIERDO</span>
                   </div>
                   <div className="winner-prize">
-                    {formatCurrency(winners.left.prize)}
+                    {formatCurrency(winners.left.prize ?? 0)}
                   </div>
                 </div>
                 
@@ -178,7 +197,7 @@ export const ProfessionalWinnersModal = ({
                     </span>
                     <span className="info-item">
                       <span className="info-label">Apuesta:</span>
-                      <span className="info-value">{formatCurrency(winners.left.bet)}</span>
+                      <span className="info-value">{formatCurrency(winners.left.bet ?? 0)}</span>
                     </span>
                   </div>
                 </div>
@@ -192,7 +211,7 @@ export const ProfessionalWinnersModal = ({
                     <span className="rank-text">DERECHO</span>
                   </div>
                   <div className="winner-prize">
-                    {formatCurrency(winners.right.prize)}
+                    {formatCurrency(winners.right.prize ?? 0)}
                   </div>
                 </div>
                 
@@ -205,7 +224,7 @@ export const ProfessionalWinnersModal = ({
                     </span>
                     <span className="info-item">
                       <span className="info-label">Apuesta:</span>
-                      <span className="info-value">{formatCurrency(winners.right.bet)}</span>
+                      <span className="info-value">{formatCurrency(winners.right.bet ?? 0)}</span>
                     </span>
                   </div>
                 </div>
@@ -218,19 +237,19 @@ export const ProfessionalWinnersModal = ({
             <div className="stats-grid">
               <div className="stat-item">
                 <span className="stat-label">Total Apostado</span>
-                <span className="stat-value">{formatCurrency(winners.totals.totalApostado)}</span>
+                <span className="stat-value">{formatCurrency(winners.totals.totalApostado ?? 0)}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Premio Principal</span>
-                <span className="stat-value">{formatCurrency(winners.totals.premioPrincipal)}</span>
+                <span className="stat-value">{formatCurrency(winners.totals.premioPrincipal ?? 0)}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Premios Secundarios</span>
-                <span className="stat-value">{formatCurrency(winners.totals.premioSecundario * 2)}</span>
+                <span className="stat-value">{formatCurrency((winners.totals.premioSecundario ?? 0) * 2)}</span>
               </div>
               <div className="stat-item house">
                 <span className="stat-label">Ganancias Casa</span>
-                <span className="stat-value">{formatCurrency(winners.totals.gananciasCasa)}</span>
+                <span className="stat-value">{formatCurrency(winners.totals.gananciasCasa ?? 0)}</span>
               </div>
             </div>
           </div>

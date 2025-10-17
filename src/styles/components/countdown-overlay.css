@@ -1,0 +1,101 @@
+/* ===== COUNTDOWN OVERLAY ===== */
+
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.countdown-content {
+  text-align: center;
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+.countdown-number {
+  font-size: 8rem;
+  font-weight: bold;
+  color: #e74c3c;
+  text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+  margin-bottom: 1rem;
+  animation: bounce 1s infinite;
+}
+
+.countdown-spinning {
+  font-size: 6rem;
+  animation: spin 0.5s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.countdown-text {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #f39c12;
+  text-shadow: 0 0 10px rgba(243, 156, 18, 0.8);
+}
+
+/* Animación para cuando está girando la ruleta */
+.countdown-spinning.girando {
+  animation: spin 0.1s linear infinite;
+}
+
+.countdown-text.girando {
+  color: #e74c3c;
+  animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .countdown-number {
+    font-size: 6rem;
+  }
+  
+  .countdown-text {
+    font-size: 1.5rem;
+  }
+  
+  .countdown-spinning {
+    font-size: 4rem;
+  }
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   RouletteWheel,
   RouletteControls,
@@ -8,14 +8,19 @@ import {
   RouletteResults,
   ProfessionalWinnersModal,
   RoulettePageSelector,
-  useRoulette
+  useRoulette,
+  useRouletteSSE
 } from '@/components/roulette';
+import { RouletteWheelRef } from '@/components/roulette/RouletteWheel';
 import { useAuth } from '@/components/layout/hooks/useAuth';
 import { ProtectedPage } from '@/components/auth/ProtectedPage';
 
 function Roulette150Content() {
   // Obtener información del usuario
   const { authState } = useAuth();
+  
+  // Referencia para la ruleta
+  const rouletteWheelRef = useRef<RouletteWheelRef>(null);
   
   useEffect(() => {
     const user = authState.user as { balance?: number | string };
@@ -36,8 +41,37 @@ function Roulette150Content() {
     setShowWinnerModal,
     formatCurrency,
     isSpinning,
-    rotation
+    rotation,
+    isPhysicalMode,
+    countdown,
+    isAutoSpinning,
+    isWaitingForResult,
+    currentMesaIdForSpin,
+    handlePhysicalSpin,
+    isWaitingForNewMesa
   } = useRoulette('150');
+  
+  // Obtener ganadores desde SSE
+  const { winners: sseWinners } = useRouletteSSE('150');
+
+  // Efecto para activar el giro físico cuando isSpinning cambia
+  useEffect(() => {
+    if (isSpinning && rouletteWheelRef.current) {
+      console.log('🎰 Activando giro físico desde la página...');
+      rouletteWheelRef.current.startPhysicalSpin();
+    }
+  }, [isSpinning]);
+
+  // Función para manejar el giro físico desde el botón
+  const handlePhysicalSpinFromButton = () => {
+    console.log('🎰 Botón GIRAR RULETA presionado');
+    if (rouletteWheelRef.current) {
+      console.log('🎯 Iniciando giro físico...');
+      rouletteWheelRef.current.startPhysicalSpin();
+    } else {
+      console.error('❌ Referencia de ruleta no disponible');
+    }
+  };
 
   return (
     <div className="roulette-page">
@@ -50,23 +84,24 @@ function Roulette150Content() {
           <RoulettePageSelector currentType="150" />
           
           {/* Información del usuario */}
-          <div className="user-info" style={{
-            background: 'rgba(255,255,255,0.1)',
-            padding: '15px',
-            borderRadius: '10px',
-            marginBottom: '20px',
-            color: 'white',
-            fontSize: '14px'
-          }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <div>
-                <strong>Usuario:</strong> {authState.user?.username || 'No definido'}
-              </div>
-              <div>
-                <strong>Saldo:</strong> {(authState.user as { balance?: number | string })?.balance !== undefined ? formatCurrency(Number((authState.user as { balance?: number | string }).balance!)) : 'No definido'}
-              </div>
-            </div>
+          <div className="roulette-user-info">
+            <span>Usuario: {authState.user?.username || 'No definido'}</span>
+            <span className="balance">Saldo: {(authState.user as { balance?: number | string })?.balance !== undefined ? formatCurrency(Number((authState.user as { balance?: number | string }).balance!)) : 'No definido'}</span>
           </div>
+          
+          {/* Countdown simple */}
+          {countdown && (
+            <div className="countdown-display">
+              ¡La ruleta gira en {countdown}!
+            </div>
+          )}
+          
+          {/* Indicador de espera después del giro */}
+          {isWaitingForNewMesa && (
+            <div className="waiting-display">
+              ⏰ Preparando nueva mesa en 60 segundos...
+            </div>
+          )}
         </div>
 
         {/* Contenido principal */}
@@ -74,12 +109,15 @@ function Roulette150Content() {
           {/* Ruleta */}
           <div className="roulette-wheel-section">
             <RouletteWheel
+              ref={rouletteWheelRef}
               type="150"
               sectors={mesa?.sectors || Array(15).fill(null)}
               rotation={rotation}
               highlightedSector={selectedSector}
               onSectorClick={setSelectedSector}
               isLoading={isLoading || isSpinning}
+              isPhysicalMode={isPhysicalMode}
+              onPhysicalSpin={handlePhysicalSpin}
             />
           </div>
 
@@ -106,14 +144,14 @@ function Roulette150Content() {
           </div>
         </div>
 
-        {/* Resultados */}
-        <div className="roulette-results-section">
+        {/* Resultados - OCULTADO: Solo se muestra el modal profesional */}
+        {/* <div className="roulette-results-section">
           <RouletteResults
             type="150"
             winners={lastWinners}
             formatCurrency={formatCurrency}
           />
-        </div>
+        </div> */}
 
         {/* Modal profesional de ganadores */}
         <ProfessionalWinnersModal

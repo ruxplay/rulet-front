@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_CONFIG } from '@/lib/api/config';
+import { SubmitSpinResultRequest, SubmitSpinResultResponse } from '@/types';
 
 // Base URL de tu API
 const baseUrl = API_CONFIG.BASE_URL;
@@ -41,7 +42,20 @@ export const rouletteApi = createApi({
       ],
     }),
 
-    // Girar la ruleta
+    // Enviar resultado de ruleta física
+    submitSpinResult: builder.mutation<SubmitSpinResultResponse, { type: '150' | '300'; data: SubmitSpinResultRequest }>({
+      query: ({ type, data }) => ({
+        url: `${API_CONFIG.ENDPOINTS.RULETA}/${type}/submit-result`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { type }) => [
+        { type: 'RouletteMesa', id: type },
+        { type: 'Roulette', id: type }
+      ],
+    }),
+
+    // Girar la ruleta (OBSOLETO - usar submitSpinResult)
     spinMesa: builder.mutation({
       query: ({ type, mesaId }) => ({
         url: `${API_CONFIG.ENDPOINTS.RULETA}/${type}/spin`,
@@ -95,6 +109,7 @@ export const rouletteApi = createApi({
 export const {
   useGetCurrentMesaQuery,
   usePlaceBetMutation,
+  useSubmitSpinResultMutation,
   useSpinMesaMutation,
   useAdvanceMesaMutation,
   useGetHouseReportQuery,

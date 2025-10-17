@@ -20,7 +20,7 @@ export const API_CONFIG = {
       '300': 300
     },
     SSE_ENDPOINTS: {
-      STREAM: '/api/roulette/stream',
+      STREAM: '/api/roulette/150/stream',
       TYPE_STREAM: (type: '150' | '300') => `/api/roulette/${type}/stream`
     }
   }
