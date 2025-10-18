@@ -1,6 +1,6 @@
 // lib/api/config.ts
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://ruleta-backend-12.onrender.com',
   ENDPOINTS: {
     AUTH: '/api/auth',
     USER: '/api/user',

@@ -1,0 +1,84 @@
+# 🧠 Reglas de Código - Frontend Escalable con Next.js 15 + TypeScript
+
+Proyecto: Frontend escalable, tipado y mantenible
+Objetivo: Código limpio, reutilizable, seguro y compatible con Server Components
+Autor: Gabriel Beltrán
+
+---
+
+## ⚙️ TypeScript
+✅ "strict": true en tsconfig.json  
+✅ NUNCA uses 'any' — usa tipos específicos o genéricos tipados  
+✅ Usa `interface` en lugar de `type` cuando representes objetos  
+✅ Define tipos de retorno explícitos en todas las funciones  
+✅ Prefiere `unknown` sobre `any` cuando el tipo no se conoce  
+✅ Usa **type guards** (`typeof`, `instanceof`, predicados) en lugar de type casting  
+✅ Define `Props` y `State` explícitos en componentes  
+✅ Usa `enum` o `as const` para valores fijos  
+✅ Evita el uso de `!` (non-null assertion) salvo justificación técnica
+
+---
+
+## ⚛️ React / Next.js 15 - Buenas Prácticas
+✅ Usa `useCallback` y `useMemo` para funciones o cálculos pasados como props  
+✅ Siempre incluye dependencias completas en `useEffect`  
+✅ Usa `forwardRef` y `useImperativeHandle` cuando sea necesario  
+✅ Prefiere composición sobre herencia  
+✅ Usa **Server Components por defecto** — Client Components solo cuando se requieran hooks o APIs del navegador  
+✅ Marca con `'use client'` solo los componentes que lo necesiten  
+✅ Usa `async/await` directamente en Server Components para data fetching  
+✅ Implementa `loading.tsx` y `error.tsx` para una mejor UX  
+✅ Usa `generateStaticParams` para páginas dinámicas estáticas  
+✅ Prefiere `next/image` sobre `<img>`  
+✅ Usa la **Metadata API** (`metadata` o `generateMetadata`) en lugar de `<Head>` para SEO  
+✅ Implementa streaming con `Suspense` para mejorar performance  
+✅ Usa `middleware.ts` para lógica de rutas compartida (autenticación, redirecciones, headers)  
+✅ Usa el **App Router** (`app/`) — evita el Pages Router (`pages/`)  
+✅ Crea endpoints con **Route Handlers** (`app/api/route.ts`) en lugar de `pages/api`
+
+---
+
+## 🎨 Estilo de Código
+✅ Usa nombres descriptivos y consistentes (`camelCase` para variables, `PascalCase` para componentes)  
+✅ Comenta solo código complejo o con contexto adicional  
+✅ Mantén funciones pequeñas, puras y enfocadas en una sola responsabilidad  
+✅ No dejes `console.log` en producción  
+✅ Aplica Prettier y ESLint (airbnb o next/core-web-vitals)
+
+---
+
+## 🧩 Componentización y Estilos
+✅ **Siempre componentiza**: evita componentes monolíticos o con demasiada lógica  
+✅ Separa los estilos de cada componente en su propio archivo CSS módulo (`.module.css` o `.module.scss`)  
+✅ Usa `@apply` con Tailwind si está habilitado  
+✅ Agrupa estilos por funcionalidad:
+   - `/components/`
+   - `/layout/`
+   - `/themes/`
+✅ Usa clases CSS descriptivas, consistentes y con convenciones (`btn-primary`, `card-container`, etc.)  
+✅ Evita estilos inline salvo para variables dinámicas o CSS-in-JS específicos  
+✅ No mezcles librerías de estilos (por ejemplo, Tailwind + Bootstrap) salvo justificación técnica
+
+---
+
+## 📦 Librerías y Dependencias
+✅ NUNCA uses librerías deprecadas o sin mantenimiento activo  
+✅ Verifica compatibilidad con **Next.js 15** antes de instalar  
+✅ Prefiere librerías modernas y seguras (`react-hook-form`, `zod`, `tanstack/react-query`, etc.)  
+✅ Evita dependencias pesadas o duplicadas  
+✅ Antes de agregar una dependencia, verifica:
+   - Última actualización < 6 meses  
+   - Buen soporte y comunidad activa  
+   - Sin vulnerabilidades críticas en `npm audit`
+
+---
+
+## 🧪 Testing (recomendado)
+✅ Usa **Jest**, **Vitest** o **Playwright** para pruebas unitarias y E2E  
+✅ Cubre componentes críticos y hooks personalizados  
+✅ Mockea fetch o API routes en pruebas  
+✅ Asegura una cobertura mínima del 80% en componentes de negocio
+
+---
+
+
