@@ -81,4 +81,46 @@ Autor: Gabriel Beltrán
 
 ---
 
+## 🧠 Memoria del Proyecto
+✅ SIEMPRE actualiza el archivo `memoria-front.md` después de implementar cualquier funcionalidad nueva  
+✅ El archivo debe contener ÚNICAMENTE lo que YA está implementado y funcionando  
+✅ NO incluyas tareas pendientes, bugs conocidos, o próximas implementaciones  
+✅ Documenta cada cambio con fecha y descripción de lo implementado  
+✅ Mantén actualizada la sección de "Historial de Cambios" con cada modificación  
+✅ El archivo sirve como registro histórico del desarrollo completado  
+✅ NUNCA crees archivos o funciones duplicadas en el proyecto  
+✅ Antes de crear un nuevo componente/función, verifica que no exista uno similar  
+✅ Reutiliza componentes existentes en lugar de crear nuevos similares  
+✅ Mantén una arquitectura limpia sin redundancias de código
+
+---
+
+## 🚨 Autorización de Componentes
+✅ ANTES de crear cualquier componente nuevo, SIEMPRE pregunta al usuario y muestra:  
+✅ **Nombre del componente** que se va a crear  
+✅ **Ubicación exacta** donde se creará (ruta completa)  
+✅ **Propósito y funcionalidad** del componente  
+✅ **Componentes existentes** que se van a reutilizar  
+✅ **Archivos que se van a crear** (componente + estilos + tipos)  
+✅ **Dependencias** que se necesitarán  
+✅ **Integración** con el sistema existente  
+✅ ESPERA la autorización explícita del usuario antes de proceder  
+✅ Si el usuario rechaza, propón alternativas o modificaciones  
+✅ NUNCA crees componentes sin autorización previa
+
+---
+
+## 🔗 Validación Backend-Frontend
+✅ ANTES de implementar cualquier funcionalidad que consuma APIs, SIEMPRE consulta `memoria-backend.md`
+✅ Verifica los endpoints disponibles y su estructura de respuesta
+✅ Valida los tipos de datos que el frontend va a recibir
+✅ Confirma que los servicios del backend estén implementados
+✅ Si no existe `memoria-backend.md`, pregunta al usuario sobre la estructura del backend
+✅ Mantén sincronización entre la documentación del backend y la implementación del frontend
+✅ NUNCA asumas la estructura de datos sin verificar la memoria del backend
+✅ Valida que los tipos TypeScript coincidan con la estructura del backend
+✅ Confirma que las rutas de API estén correctamente documentadas
+
+---
+
 

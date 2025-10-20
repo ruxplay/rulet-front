@@ -1,6 +1,22 @@
 // lib/api/config.ts
+// Configuración automática por entorno
+const getBaseURL = (): string => {
+  // Si existe variable de entorno, usarla (para override manual)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  
+  // Detectar entorno automáticamente
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://ruleta-backend-12.onrender.com';
+  }
+  
+  // Desarrollo local por defecto
+  return 'http://localhost:3001';
+};
+
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://ruleta-backend-12.onrender.com',
+  BASE_URL: getBaseURL(),
   ENDPOINTS: {
     AUTH: '/api/auth',
     USER: '/api/user',
@@ -10,6 +26,7 @@ export const API_CONFIG = {
     SUPPORT: '/api/support',
     DEPOSITS: '/api/deposits',
     USDT_RATES: '/api/usdt-rates'
+    
   },
   // Configuración específica para ruleta
   RULETA: {
