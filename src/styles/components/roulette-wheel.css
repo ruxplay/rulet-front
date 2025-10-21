@@ -1,9 +1,9 @@
 /* ========================================
-   RULETA PROFESIONAL - ESTILOS DEL WHEEL.HTML
-   Aplicando los mismos estilos profesionales
+   RULETA PROFESIONAL RESPONSIVE
+   Sistema completo para todas las pantallas
    ======================================== */
 
-/* Variables CSS profesionales */
+/* Variables CSS profesionales con breakpoints */
 :root {
   --roulette-primary-color: #2c3e50;
   --roulette-secondary-color: #3498db;
@@ -14,18 +14,33 @@
   --roulette-danger-color: #e74c3c;
   --roulette-light-color: #ecf0f1;
   --roulette-dark-color: #2c3e50;
+  
+  /* Variables responsive para la ruleta */
+  --roulette-size-desktop: 400px;
+  --roulette-size-tablet: 320px;
+  --roulette-size-mobile: 280px;
+  
+  /* Variables para triángulos */
+  --pointer-size-desktop: 12.6px;
+  --pointer-size-tablet: 10.8px;
+  --pointer-size-mobile: 9px;
+  
+  --pointer-height-desktop: 25.2px;
+  --pointer-height-tablet: 21.6px;
+  --pointer-height-mobile: 18px;
 }
 
-/* Contenedor principal de la ruleta */
+/* Contenedor principal de la ruleta - Responsive */
 .roulette-wheel-container {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: var(--roulette-size-desktop);
   margin: 0 auto 40px;
   perspective: 1000px;
+  aspect-ratio: 1;
 }
 
-/* Sombra de la ruleta */
+/* Sombra de la ruleta - Responsive */
 .roulette-wheel-shadow {
   position: absolute;
   width: 110%;
@@ -37,30 +52,31 @@
   z-index: -1;
 }
 
-/* Canvas de la ruleta */
+/* Canvas de la ruleta - Responsive */
 .roulette-wheel-canvas {
   width: 100%;
-  height: auto;
+  height: 100%;
   border-radius: 50%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
   transform-style: preserve-3d;
   position: relative;
   z-index: 1;
+  object-fit: contain;
 }
 
 .roulette-wheel-canvas:hover {
   transform: rotate(5deg);
 }
 
-/* Punteros profesionales para los 3 ganadores */
+/* Punteros profesionales para los 3 ganadores - Responsive */
 .roulette-pointer {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 21px solid transparent;  /* 40% más grande */
-  border-right: 21px solid transparent; /* 40% más grande */
-  border-top: 42px solid var(--roulette-accent-color); /* 40% más grande */
+  border-left: var(--pointer-size-desktop) solid transparent;
+  border-right: var(--pointer-size-desktop) solid transparent;
+  border-top: var(--pointer-height-desktop) solid var(--roulette-accent-color);
   z-index: 10;
   filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
   transition: all 0.3s ease;
@@ -68,32 +84,32 @@
 
 /* Puntero principal - 12 en punto (GANADOR PRINCIPAL - 70%) */
 .roulette-main-pointer {
-  top: -25px; /* Subido mucho más para que esté bien separado de la ruleta */
-  left: calc(50% + 1rem); /* 1rem a la derecha del centro */
+  top: -10px;
+  left: calc(50% + 1rem);
   transform: translateX(-50%);
-  border-top-color: #00FF9C; /* Color VERDE NEÓN del botón de ruleta 150 */
+  border-top-color: #00FF9C;
 }
 
 /* Puntero derecho - Sector DERECHO del principal (SEGUNDO GANADOR - 10%) */
 .roulette-right-pointer {
-  top: 0px; /* Apenas roza la ruleta con la punta */
-  left: calc(50% + 6.2rem - 5px + 0.5rem); /* 6.2rem a la derecha del centro, corrido 5px hacia atrás + 0.5rem más a la derecha */
-  transform: translateX(-50%) rotate(24deg); /* 24° = 360°/15 sectores */
-  border-top-color: #e74c3c; /* Color ladrillo intenso */
+  top: 15px;
+  left: calc(50% + 6.2rem - 5px + 0.5rem);
+  transform: translateX(-50%) rotate(24deg);
+  border-top-color: #dc2626; /* Color ROJO INTENSO */
 }
 
 /* Puntero izquierdo - Sector IZQUIERDO del principal (TERCER GANADOR - 10%) */
 .roulette-left-pointer {
-  top: -15px;
-  left: calc(50% - 4.2rem); /* 4.2rem a la izquierda del centro (corrido 0.3rem hacia la derecha) */
-  transform: translateX(-50%) rotate(-24deg); /* -24° = 360°/15 sectores */
+  top: 0px;
+  left: calc(50% - 4.2rem);
+  transform: translateX(-50%) rotate(-24deg);
   border-top-color: #dc2626; /* Color ROJO INTENSO */
 }
 
 /* Efectos cuando hay ganadores */
 .roulette-pointer.winner-active {
   animation: pointer-glow 1.5s infinite alternate;
-  border-top-color: #f39c12; /* Color dorado para ganadores */
+  border-top-color: #f39c12;
 }
 
 @keyframes pointer-glow {
@@ -107,7 +123,7 @@
   }
 }
 
-/* Centro de la ruleta */
+/* Centro de la ruleta - Responsive */
 .roulette-wheel-center {
   position: absolute;
   width: 30px;
@@ -151,7 +167,7 @@
   to { box-shadow: 0 0 20px rgba(52, 152, 219, 0.7); }
 }
 
-/* Contenedor de información del usuario */
+/* Contenedor de información del usuario - Responsive */
 .roulette-user-info {
   display: flex;
   justify-content: space-between;
@@ -175,7 +191,7 @@
   font-size: 1.05rem;
 }
 
-/* Título de la ruleta */
+/* Título de la ruleta - Responsive */
 .roulette-title {
   color: white;
   margin-bottom: 30px;
@@ -184,7 +200,7 @@
   text-align: center;
 }
 
-/* Contenedor principal */
+/* Contenedor principal - Responsive */
 .roulette-main-container {
   max-width: 900px;
   width: 100%;
@@ -196,7 +212,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Countdown display */
+/* Countdown display - Responsive */
 .countdown-display {
   font-size: 2rem;
   font-weight: bold;
@@ -212,7 +228,7 @@
   to { transform: scale(1.1); }
 }
 
-/* Indicador de espera después del giro */
+/* Indicador de espera después del giro - Responsive */
 .waiting-display {
   font-size: 1.2rem;
   font-weight: bold;
@@ -238,24 +254,35 @@
   }
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE BREAKPOINTS PROFESIONALES
+   ======================================== */
+
+/* Tablet - 768px y menos */
 @media (max-width: 768px) {
+  :root {
+    --roulette-size-desktop: var(--roulette-size-tablet);
+    --pointer-size-desktop: var(--pointer-size-tablet);
+    --pointer-height-desktop: var(--pointer-height-tablet);
+  }
+  
   .roulette-wheel-container {
-    max-width: 300px;
+    max-width: var(--roulette-size-tablet);
+    margin-bottom: 30px;
   }
   
   .roulette-pointer {
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 36px solid var(--roulette-accent-color);
+    border-left: var(--pointer-size-tablet) solid transparent;
+    border-right: var(--pointer-size-tablet) solid transparent;
+    border-top: var(--pointer-height-tablet) solid var(--roulette-accent-color);
   }
   
   .roulette-left-pointer {
-    left: -15px;
+    left: calc(50% - 3.5rem);
   }
   
   .roulette-right-pointer {
-    right: 50px;
+    left: calc(50% + 5rem);
   }
   
   .roulette-title {
@@ -265,21 +292,157 @@
   .roulette-user-info {
     flex-direction: column;
     gap: 10px;
+    padding: 12px 16px;
   }
-}
-
-@media (max-width: 480px) {
+  
   .roulette-main-container {
     padding: 15px;
   }
   
+  .countdown-display {
+    font-size: 1.8rem;
+  }
+  
+  .waiting-display {
+    font-size: 1.1rem;
+    padding: 8px 16px;
+  }
+}
+
+/* Mobile - 480px y menos */
+@media (max-width: 480px) {
+  :root {
+    --roulette-size-desktop: var(--roulette-size-mobile);
+    --pointer-size-desktop: var(--pointer-size-mobile);
+    --pointer-height-desktop: var(--pointer-height-mobile);
+  }
+  
+  .roulette-wheel-container {
+    max-width: var(--roulette-size-mobile);
+    margin-bottom: 20px;
+  }
+  
+  .roulette-pointer {
+    border-left: var(--pointer-size-mobile) solid transparent;
+    border-right: var(--pointer-size-mobile) solid transparent;
+    border-top: var(--pointer-height-mobile) solid var(--roulette-accent-color);
+  }
+  
+  /* Mantener el triángulo principal verde en móviles y acercarlo al borde */
+  .roulette-main-pointer {
+    border-top-color: #00FF9C !important;
+    top: -5px; /* Más cerca del borde de la ruleta */
+  }
+  
+  .roulette-left-pointer {
+    left: calc(50% - 3rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+  }
+  
+  .roulette-right-pointer {
+    left: calc(50% + 5rem - 10px); /* 10px hacia el centro */
+  }
+  
+  .roulette-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .roulette-user-info {
+    padding: 10px 12px;
+    margin-bottom: 20px;
+  }
+  
+  .roulette-user-info span {
+    font-size: 0.9rem;
+  }
+  
+  .roulette-user-info .balance {
+    font-size: 1rem;
+  }
+  
+  .roulette-main-container {
+    padding: 12px;
+  }
+  
+  .countdown-display {
+    font-size: 1.5rem;
+  }
+  
+  .waiting-display {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+  
+  .roulette-wheel-center {
+    width: 25px;
+    height: 25px;
+    border-width: 3px;
+  }
+}
+
+/* Mobile pequeño - 360px y menos */
+@media (max-width: 360px) {
   .roulette-wheel-container {
     max-width: 250px;
   }
   
-  .roulette-pointer {
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 30px solid var(--roulette-accent-color);
+  .roulette-title {
+    font-size: 1.6rem;
+  }
+  
+  .roulette-user-info {
+    padding: 8px 10px;
+  }
+  
+  .roulette-main-container {
+    padding: 10px;
+  }
+  
+  .countdown-display {
+    font-size: 1.3rem;
+  }
+  
+  .waiting-display {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+  }
+}
+
+/* Overlay de botones sectoriales - COMPLETAMENTE RESPONSIVE */
+.sector-buttons-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  z-index: 5;
+  border-radius: 50%;
+}
+
+/* Responsive para Tablet */
+@media (max-width: 768px) {
+  .sector-buttons-overlay {
+    /* Asegurar que el SVG se adapte correctamente en tablets */
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Responsive para Mobile */
+@media (max-width: 480px) {
+  .sector-buttons-overlay {
+    /* Optimización específica para móviles */
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Mobile pequeño */
+@media (max-width: 360px) {
+  .sector-buttons-overlay {
+    /* Optimización para pantallas muy pequeñas */
+    width: 100%;
+    height: 100%;
   }
 }

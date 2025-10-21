@@ -67,25 +67,23 @@ function Roulette150Content() {
   // Obtener ganadores desde SSE
   const { winners: sseWinners } = useRouletteSSE('150', mesa?.mesaId);
 
-  // Efecto para activar el giro físico cuando isSpinning cambia
+  // Efecto para activar el giro prolongado cuando isSpinning cambia
   useEffect(() => {
     if (isSpinning && rouletteWheelRef.current) {
-      console.log('🎰 Activando giro físico desde isSpinning:', isSpinning);
-      // Generar un sector temporal para la animación mientras esperamos el resultado del backend
-      const tempSector = Math.floor(Math.random() * 15);
-      console.log('🎯 Sector temporal para animación:', tempSector);
-      rouletteWheelRef.current.startPhysicalSpin(tempSector);
+      console.log('🎰 Activando giro prolongado desde isSpinning:', isSpinning);
+      // Iniciar giro prolongado (sin sector específico, esperando resultado del backend)
+      rouletteWheelRef.current.startPhysicalSpin();
     }
   }, [isSpinning]);
 
-  // Efecto para activar el giro físico cuando llega el resultado del backend
+  // Efecto para ajustar al sector final cuando llega el resultado del backend
   useEffect(() => {
     console.log('🔍 sseWinners cambió:', sseWinners);
     if (sseWinners && sseWinners.main && rouletteWheelRef.current) {
-      console.log('🎰 Activando giro físico con resultado del backend:', sseWinners.main.index);
+      console.log('🎯 Ajustando al sector final del backend:', sseWinners.main.index);
       rouletteWheelRef.current.startPhysicalSpin(sseWinners.main.index);
     } else {
-      console.log('❌ No se puede activar giro:', {
+      console.log('❌ No se puede ajustar al sector final:', {
         hasSseWinners: !!sseWinners,
         hasMain: !!(sseWinners && sseWinners.main),
         hasRef: !!rouletteWheelRef.current,

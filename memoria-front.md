@@ -85,6 +85,7 @@ src/
 - [x] Modal de ganadores profesionales
 - [x] Selector de salas (150, 300)
 - [x] Overlay de countdown
+- [x] **Indicadores LED profesionales** - Sistema moderno de luces LED para señalar ganadores
 
 ---
 

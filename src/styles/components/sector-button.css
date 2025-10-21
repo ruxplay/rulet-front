@@ -1,0 +1,118 @@
+/* Estilos para los botones sectoriales - MUY DELICADOS Y ELEGANTES */
+
+.sector-button {
+  /* Transición suave para todos los efectos */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Efecto de pulsación muy sutil */
+  transform-origin: center;
+  
+  /* ELIMINAR COMPORTAMIENTOS NO DESEADOS EN MÓVILES */
+  -webkit-tap-highlight-color: transparent;  /* Eliminar highlight azul */
+  -webkit-touch-callout: none;               /* Eliminar menú contextual */
+  -webkit-user-select: none;                 /* Eliminar selección de texto */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.sector-button:hover {
+  /* Efecto hover muy delicado - SIN SOMBRAS */
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.sector-button:active {
+  /* Efecto de presión muy sutil - SIN SOMBRAS */
+  transform: scale(0.98);
+  filter: brightness(1.2);
+}
+
+/* Efectos específicos para tablets */
+@media (max-width: 768px) {
+  .sector-button {
+    /* En tablets, efectos moderados */
+    transition: all 0.18s ease-out;
+  }
+  
+  .sector-button:hover {
+    transform: scale(1.03);
+    filter: brightness(1.12);
+  }
+  
+  .sector-button:active {
+    transform: scale(0.97);
+    filter: brightness(1.22);
+  }
+}
+
+/* Efectos específicos para móviles */
+@media (max-width: 480px) {
+  .sector-button {
+    /* En móviles, efectos más pronunciados para mejor feedback táctil */
+    transition: all 0.15s ease-out;
+  }
+  
+  .sector-button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+  }
+  
+  .sector-button:active {
+    transform: scale(0.95);
+    filter: brightness(1.25);
+  }
+}
+
+/* Mobile pequeño */
+@media (max-width: 360px) {
+  .sector-button {
+    /* En móviles pequeños, efectos aún más pronunciados */
+    transition: all 0.12s ease-out;
+  }
+  
+  .sector-button:hover {
+    transform: scale(1.06);
+    filter: brightness(1.18);
+  }
+  
+  .sector-button:active {
+    transform: scale(0.94);
+    filter: brightness(1.28);
+  }
+}
+
+/* Efectos para sectores resaltados */
+.sector-button.highlighted {
+  fill-opacity: 0.3 !important;
+  filter: brightness(1.1);
+  animation: sector-pulse 2s ease-in-out infinite;
+}
+
+@keyframes sector-pulse {
+  0%, 100% {
+    fill-opacity: 0.3;
+    filter: brightness(1.1);
+  }
+  50% {
+    fill-opacity: 0.4;
+    filter: brightness(1.2);
+  }
+}
+
+/* Efectos de accesibilidad */
+.sector-button:focus {
+  outline: none;
+  filter: brightness(1.2);
+}
+
+/* Efectos para dispositivos con preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .sector-button {
+    transition: none;
+  }
+  
+  .sector-button.highlighted {
+    animation: none;
+  }
+}

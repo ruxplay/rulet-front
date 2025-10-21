@@ -1,7 +1,9 @@
 'use client';
 
-import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState } from 'react';
 import { RouletteType, RouletteSector } from '@/types';
+import { SectorButton } from './SectorButton';
+import '@/styles/components/sector-button.css';
 
 interface RouletteWheelProps {
   type: RouletteType;
@@ -29,6 +31,10 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     const animationRef = useRef<number | null>(null);
     const currentRotationRef = useRef(rotation);
     const isSpinningRef = useRef(false);
+    
+    // Estado para forzar re-render de botones SVG durante la animación
+    const [currentAnimationRotation, setCurrentAnimationRotation] = useState(rotation);
+    const [forceRender, setForceRender] = useState(0); // Estado adicional para forzar re-render
 
     const NUM_SECTORS = 15;
 
@@ -150,35 +156,151 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       // Los punteros ahora se dibujan como elementos HTML/CSS fuera del canvas
     }, [sectors]);
 
-    // Función para manejar clic en el canvas
+    // Sistema anti-doble clic SIMPLIFICADO
+    const lastClickTimeRef = useRef<number>(0);
+    const lastClickSectorRef = useRef<number>(-1);
+    const CLICK_DEBOUNCE_TIME = 100; // 100ms entre clics (reducido)
+
+    // Función para manejar clic en el canvas - SISTEMA RESPONSIVE MEJORADO
     const handleCanvasClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
+      // PREVENIR DOBLE CLIC: Verificar tiempo y sector
+      const currentTime = Date.now();
       const rect = canvas.getBoundingClientRect();
+      
+      // DETECCIÓN DE DISPOSITIVO MÓVIL
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      
+      // COORDENADAS RESPONSIVE: Ajustar para móviles
+      let clickX, clickY;
+      
+      if (isMobile) {
+        // Para móviles: usar coordenadas escaladas
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        clickX = (event.clientX - rect.left) * scaleX - canvas.width / 2;
+        clickY = (event.clientY - rect.top) * scaleY - canvas.height / 2;
+        
+        console.log('📱 Coordenadas móviles:', {
+          clientX: event.clientX,
+          clientY: event.clientY,
+          rectLeft: rect.left,
+          rectTop: rect.top,
+          rectWidth: rect.width,
+          rectHeight: rect.height,
+          canvasWidth: canvas.width,
+          canvasHeight: canvas.height,
+          scaleX: scaleX,
+          scaleY: scaleY,
+          clickX: Math.round(clickX),
+          clickY: Math.round(clickY)
+        });
+      } else {
+        // Para desktop: usar coordenadas normales
+        clickX = event.clientX - rect.left - canvas.width / 2;
+        clickY = event.clientY - rect.top - canvas.height / 2;
+      }
+      
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const radius = canvas.width / 2 - 20;
+      const distance = Math.sqrt(clickX * clickX + clickY * clickY);
 
-      const x = event.clientX - rect.left - centerX;
-      const y = event.clientY - rect.top - centerY;
-      const distance = Math.sqrt(x * x + y * y);
+      // ÁREA COMPLETA: Permitir clics en toda la forma del sector
+      const maxRadius = radius + 40; // Expandir hacia afuera
+      const minRadius = 20; // Permitir clics cerca del centro
+      
+      // Verificar que el clic esté en el área válida
+      if (distance >= maxRadius || distance <= minRadius) return;
 
-      if (distance >= radius) return;
+      // SISTEMA DE DETECCIÓN COMPLETA - TODA LA FORMA DEL SECTOR
+      const selectedSector = getSectorFromClickPositionComplete(clickX, clickY, radius, currentRotationRef.current);
+      
+      // ANTI-DOBLE CLIC SIMPLIFICADO: Solo bloquear si es exactamente el mismo sector y muy reciente
+      if (currentTime - lastClickTimeRef.current < CLICK_DEBOUNCE_TIME && 
+          lastClickSectorRef.current === selectedSector) {
+        console.log('🚫 Doble clic prevenido:', {
+          sector: selectedSector + 1,
+          timeDiff: currentTime - lastClickTimeRef.current,
+          lastSector: lastClickSectorRef.current + 1
+        });
+        return;
+      }
 
-      const angle = Math.atan2(y, x);
-      const normalizedAngle = (angle - currentRotationRef.current + 2 * Math.PI) % (2 * Math.PI);
-      const selectedSector = Math.floor(normalizedAngle / (2 * Math.PI / NUM_SECTORS));
+      // Actualizar referencias de tiempo y sector
+      lastClickTimeRef.current = currentTime;
+      lastClickSectorRef.current = selectedSector;
+      
+      // Debug visual - mostrar información detallada del clic
+      console.log('🎯 Clic detectado (Responsive):', {
+        dispositivo: isMobile ? 'MÓVIL' : 'DESKTOP',
+        clickX: Math.round(clickX),
+        clickY: Math.round(clickY),
+        distance: Math.round(distance),
+        minRadius: minRadius,
+        radius: Math.round(radius),
+        maxRadius: Math.round(maxRadius),
+        clickAngle: Math.round((Math.atan2(clickY, clickX) * 180) / Math.PI),
+        selectedSector: selectedSector,
+        numeroVisual: selectedSector + 1,
+        currentRotation: Math.round((currentRotationRef.current * 180) / Math.PI),
+        timeSinceLastClick: currentTime - lastClickTimeRef.current,
+        devicePixelRatio: devicePixelRatio
+      });
 
       onSectorClick(selectedSector);
     }, [onSectorClick]);
 
-    // Función para animar el giro con desaceleración realista
+    // Función para determinar el sector - DETECCIÓN SIMPLIFICADA Y CONFIABLE
+    const getSectorFromClickPositionComplete = useCallback((clickX: number, clickY: number, radius: number, currentRotation: number): number => {
+      // Calcular el ángulo del clic
+      const clickAngle = Math.atan2(clickY, clickX);
+      
+      // Normalizar el ángulo para que esté entre 0 y 2π
+      const normalizedClickAngle = (clickAngle + 2 * Math.PI) % (2 * Math.PI);
+      
+      // Calcular el ángulo ajustado por la rotación actual
+      const adjustedAngle = (normalizedClickAngle - currentRotation + 2 * Math.PI) % (2 * Math.PI);
+      
+      // Calcular el sector basado en el ángulo ajustado - SIN CORRECCIÓN INCORRECTA
+      const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+      const sector = Math.floor(adjustedAngle / anglePerSector);
+      
+      // Debug específico para sectores problemáticos
+      if (sector >= 9 && sector <= 13) { // Sectores 10, 11, 12, 13, 14
+        console.log('🔍 Debug sector (REVERTIDO):', {
+          sector: sector,
+          numeroVisual: sector + 1,
+          clickAngle: Math.round((clickAngle * 180) / Math.PI),
+          normalizedAngle: Math.round((normalizedClickAngle * 180) / Math.PI),
+          adjustedAngle: Math.round((adjustedAngle * 180) / Math.PI),
+          currentRotation: Math.round((currentRotation * 180) / Math.PI),
+          clickX: Math.round(clickX),
+          clickY: Math.round(clickY)
+        });
+      }
+      
+      // Asegurar que el sector esté en el rango correcto
+      return Math.max(0, Math.min(NUM_SECTORS - 1, sector));
+    }, [NUM_SECTORS]);
+
+    // Función para animar el giro con desaceleración realista (COMPORTAMIENTO ORIGINAL)
     const animateSpin = useCallback((finalRotation: number): Promise<void> => {
       return new Promise((resolve) => {
+        // Cancelar cualquier animación actual
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+          animationRef.current = null;
+        }
+        
+        isSpinningRef.current = true; // Marcar que estamos girando
         const startRotation = currentRotationRef.current;
         const rotationDelta = finalRotation - startRotation;
-        const duration = 4000; // 4 segundos para más emoción
+        const duration = 6000; // 6 segundos para giro emocionante (como era antes)
         const startTime = performance.now();
 
         const animate = (currentTime: number) => {
@@ -200,6 +322,14 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           const currentRotation = startRotation + rotationDelta * easeOut;
           
           currentRotationRef.current = currentRotation;
+          // Actualizar estado para sincronizar botones SVG con la animación
+          setCurrentAnimationRotation(currentRotation);
+          setForceRender(prev => prev + 1); // Forzar re-render de botones SVG
+          
+          // Debug: Log cada frame para verificar sincronización
+          if (Math.floor(elapsed / 1000) !== Math.floor((elapsed - 16) / 1000)) {
+            console.log('🔄 animateSpin - Segundo:', Math.floor(elapsed / 1000), 'currentRotation:', Math.round(currentRotation * 100) / 100);
+          }
 
           const canvas = canvasRef.current;
           if (canvas) {
@@ -213,14 +343,18 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
             animationRef.current = requestAnimationFrame(animate);
           } else {
             // Asegurar que termine exactamente en la rotación final
-            currentRotationRef.current = finalRotation;
+            const finalCalculatedRotation = startRotation + rotationDelta;
+            currentRotationRef.current = finalCalculatedRotation;
+            setCurrentAnimationRotation(finalCalculatedRotation);
+            setForceRender(prev => prev + 1); // Forzar re-render final
             const canvas = canvasRef.current;
             if (canvas) {
               const ctx = canvas.getContext('2d');
               if (ctx) {
-                drawWheel(ctx, canvas, finalRotation);
+                drawWheel(ctx, canvas, finalCalculatedRotation);
               }
             }
+            isSpinningRef.current = false; // Marcar que terminó el giro
             resolve();
           }
         };
@@ -233,73 +367,111 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     const calculateTargetRotation = useCallback((winningSector: number) => {
       const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
       
-      // Calcular la rotación para que el sector ganador quede exactamente en 12 en punto (0 grados)
-      // El sector ganador debe estar en la posición 0 grados (12 en punto)
-      let targetRotation = winningSector * anglePerSector;
+      // CORRECCIÓN: Calcular la rotación para que el CENTRO del sector ganador quede en 12 en punto (0 grados)
+      // El centro del sector está en: sectorIndex * anglePerSector + (anglePerSector / 2)
+      const sectorCenterAngle = winningSector * anglePerSector + (anglePerSector / 2);
       
-      // Ajustar para que el centro del sector quede exactamente en 12 en punto
-      // Restamos la mitad del ángulo del sector para centrarlo
-      targetRotation = targetRotation - (anglePerSector / 2);
-      
-      // Rotar en sentido contrario para que el sector quede en 12 en punto
-      targetRotation = -targetRotation;
+      // Calcular la rotación necesaria para llevar el centro del sector a 0 grados (12 en punto)
+      // Necesitamos rotar en sentido contrario para que el centro quede en 0 grados
+      let targetRotation = -sectorCenterAngle;
       
       // Normalizar la rotación para que esté entre 0 y 2π
       targetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
       
-      console.log('🎯 Calculando rotación objetivo:', {
+      console.log('🎯 Calculando rotación objetivo CORREGIDO:', {
         winningSector,
         anglePerSector,
+        sectorCenterAngle: sectorCenterAngle,
+        sectorCenterDegrees: (sectorCenterAngle * 180) / Math.PI,
         targetRotation: targetRotation,
         targetRotationDegrees: (targetRotation * 180) / Math.PI,
-        sectorCenterDegrees: (winningSector * anglePerSector * 180) / Math.PI,
-        expectedPosition: '12 en punto (0 grados)'
+        expectedPosition: 'Centro del sector en 12 en punto (0 grados)',
+        flechaVerde: 'Apuntará al CENTRO del sector ganador'
       });
       
       return targetRotation;
     }, [NUM_SECTORS]);
 
-    // Función para iniciar giro físico con sector ganador del backend
-    const startPhysicalSpin = useCallback((winningSector?: number) => {
-      if (isSpinningRef.current) return;
-      
-      isSpinningRef.current = true;
-      console.log('🎰 Iniciando giro físico de la ruleta...');
-      
-      if (winningSector === undefined) {
-        console.log('❌ No se proporcionó winningSector del backend');
-        isSpinningRef.current = false;
-        return;
-      }
-      
-      console.log('🎯 Sector ganador del backend:', winningSector);
-      
-      // Simular giro físico con animación hacia el sector específico
-      const spinDuration = 4000; // 4 segundos
+    // Función para giro prolongado (sin sector específico)
+    const startProlongedSpin = useCallback(() => {
+      console.log('🔄 Iniciando giro prolongado...');
       const startTime = Date.now();
       const startRotation = currentRotationRef.current;
       
-      // Calcular rotación final para que el sector ganador quede en 12 en punto
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        
+        // Giro dinámico con velocidad alta inicial
+        let rotationSpeed;
+        if (elapsed < 4000) {
+          // Primera fase: velocidad alta constante (4 segundos)
+          rotationSpeed = 0.8; // Velocidad muy alta
+        } else if (elapsed < 7000) {
+          // Segunda fase: velocidad media (3 segundos más)
+          rotationSpeed = 0.5; // Velocidad media
+        } else if (elapsed < 10000) {
+          // Tercera fase: velocidad baja (3 segundos más)
+          rotationSpeed = 0.3; // Velocidad baja
+        } else {
+          // Cuarta fase: velocidad muy baja continua (hasta que llegue el backend)
+          rotationSpeed = 0.15; // Velocidad muy baja pero continua
+        }
+        
+        // Calcular rotación con velocidad mucho más alta
+        const currentRotation = startRotation + (elapsed * rotationSpeed * 0.15);
+        
+        // Debug: Log cada segundo
+        if (Math.floor(elapsed / 1000) !== Math.floor((elapsed - 16) / 1000)) {
+          console.log('🔄 Giro prolongado - Segundo:', Math.floor(elapsed / 1000), 'isSpinning:', isSpinningRef.current, 'currentRotation:', Math.round(currentRotation * 100) / 100);
+        }
+        
+        currentRotationRef.current = currentRotation;
+        setCurrentAnimationRotation(currentRotation);
+        
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            drawWheel(ctx, canvas, currentRotation, highlightedSector);
+          }
+        }
+        
+        // Continuar girando hasta que llegue el resultado del backend
+        if (isSpinningRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          console.log('🛑 Giro prolongado detenido - isSpinningRef.current = false');
+        }
+      };
+      
+      animate();
+    }, [drawWheel, highlightedSector]);
+
+    // Función para ajustar al sector final cuando llegue el resultado del backend
+    const adjustToFinalSector = useCallback((winningSector: number) => {
+      console.log('🎯 Ajustando al sector final:', winningSector);
+      
+      // Cancelar cualquier animación actual
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      
+      const startRotation = currentRotationRef.current;
       const targetRotation = calculateTargetRotation(winningSector);
-      const finalRotation = startRotation + (Math.random() * 8 + 4) * Math.PI + (targetRotation - startRotation);
+      const adjustmentDuration = 4000; // 4 segundos para el ajuste final más suave
+      const startTime = Date.now();
       
       const animate = () => {
         const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / spinDuration, 1);
+        const progress = Math.min(elapsed / adjustmentDuration, 1);
         
-        // Easing function para desaceleración natural con micro-bounce
-        let easeOut;
-        if (progress < 0.8) {
-          // Ease-out cúbico para la mayor parte de la animación
-          easeOut = 1 - Math.pow(1 - progress / 0.8, 3);
-        } else {
-          // Micro-bounce para el final
-          const finalProgress = (progress - 0.8) / 0.2;
-          easeOut = 0.8 + 0.2 * (1 - Math.pow(1 - finalProgress, 4));
-        }
+        // Easing suave para el ajuste final
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentRotation = startRotation + (targetRotation - startRotation) * easeOut;
         
-        const currentRotation = startRotation + (finalRotation - startRotation) * easeOut;
         currentRotationRef.current = currentRotation;
+        setCurrentAnimationRotation(currentRotation);
         
         const canvas = canvasRef.current;
         if (canvas) {
@@ -312,10 +484,10 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
-          // Asegurar que la rotación final sea exacta
+          // Asegurar que termine exactamente en la posición correcta
           currentRotationRef.current = targetRotation;
+          setCurrentAnimationRotation(targetRotation);
           
-          // Dibujar la ruleta en la posición final correcta
           if (canvasRef.current) {
             const ctx = canvasRef.current.getContext('2d');
             if (ctx) {
@@ -324,12 +496,41 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           }
           
           isSpinningRef.current = false;
-          console.log('🎯 Animación completada, sector ganador:', winningSector);
+          console.log('🎯 Giro prolongado completado, sector ganador:', winningSector);
         }
       };
       
       animate();
     }, [drawWheel, highlightedSector, calculateTargetRotation]);
+
+    // Función para iniciar giro físico (COMPORTAMIENTO ORIGINAL RESTAURADO)
+    const startPhysicalSpin = useCallback((winningSector?: number) => {
+      if (isSpinningRef.current) return;
+      
+      isSpinningRef.current = true;
+      console.log('🎰 Iniciando giro físico de la ruleta...');
+      
+      // COMPORTAMIENTO ORIGINAL: Siempre girar inmediatamente sin esperar backend
+      if (winningSector === undefined) {
+        console.log('🎲 Giro inmediato con sector aleatorio (comportamiento original)');
+        // Generar sector aleatorio para giro inmediato
+        const randomSector = Math.floor(Math.random() * 15);
+        const targetRotation = calculateTargetRotation(randomSector);
+        // Agregar giros adicionales para hacer más emocionante
+        const extraRotations = (Math.random() * 8 + 4) * Math.PI;
+        const finalRotation = targetRotation + extraRotations;
+        animateSpin(finalRotation);
+        return;
+      }
+      
+      // Si hay sector específico del backend, usar ese sector
+      console.log('🎯 Giro con sector del backend:', winningSector);
+      const targetRotation = calculateTargetRotation(winningSector);
+      // Agregar giros adicionales para hacer más emocionante
+      const extraRotations = (Math.random() * 8 + 4) * Math.PI;
+      const finalRotation = targetRotation + extraRotations;
+      animateSpin(finalRotation);
+    }, [animateSpin, calculateTargetRotation]);
 
     // Función para detectar el sector ganador
     const detectWinningSector = useCallback(() => {
@@ -404,9 +605,18 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       } else {
         // Dibujar ruleta estática
         currentRotationRef.current = rotation;
+        setCurrentAnimationRotation(rotation);
         drawWheel(ctx, canvas, rotation, highlightedSector);
       }
     }, [rotation, highlightedSector, drawWheel, animateSpin]);
+
+    // Efecto para sincronizar el estado interno cuando cambia la prop rotation
+    useEffect(() => {
+      // Solo actualizar si no estamos en medio de una animación Y no hay animación activa
+      if (!isSpinningRef.current && !animationRef.current) {
+        setCurrentAnimationRotation(rotation);
+      }
+    }, [rotation]);
 
     // Limpiar animación al desmontar
     useEffect(() => {
@@ -427,6 +637,54 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         className="roulette-wheel-canvas"
         onClick={handleCanvasClick}
       />
+      
+      {/* SVG con botones sectoriales delicados - COMPLETAMENTE RESPONSIVE */}
+      <svg
+        className="sector-buttons-overlay"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'auto',
+          zIndex: 5
+        }}
+        viewBox="0 0 400 400"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {Array.from({ length: NUM_SECTORS }, (_, i) => {
+          const colors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
+            '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
+          ];
+          const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+          // SINCRONIZAR con la rotación actual del canvas durante la animación - CRÍTICO para mantener coincidencia visual
+          const startAngle = currentAnimationRotation + i * anglePerSector;
+          
+          // Debug: Log cada renderizado de botones SVG
+          if (i === 0) {
+            console.log('🎯 Botones SVG renderizando - currentAnimationRotation:', Math.round(currentAnimationRotation * 100) / 100, 'isSpinning:', isSpinningRef.current, 'forceRender:', forceRender);
+          }
+          
+          return (
+            <SectorButton
+              key={i}
+              sectorIndex={i}
+              color={colors[i % colors.length]}
+              angle={startAngle}
+              radius={180}
+              centerX={200}
+              centerY={200}
+              anglePerSector={anglePerSector}
+              onClick={onSectorClick}
+              isHighlighted={highlightedSector === i}
+            />
+          );
+        })}
+      </svg>
+      
       <div className="roulette-wheel-center"></div>
       
       {/* Punteros profesionales para los 3 ganadores */}
