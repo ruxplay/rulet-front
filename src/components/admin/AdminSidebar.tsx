@@ -26,12 +26,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen = true }) => 
         <Link href="/admin/withdrawals" className="admin-nav-link">
           💸 Retiros
         </Link>
-        <Link href="/admin/roulette" className="admin-nav-link">
-          🎰 Ruleta
-        </Link>
-        <Link href="/admin/reports" className="admin-nav-link">
-          📈 Reportes
-        </Link>
       </nav>
     </aside>
   );
