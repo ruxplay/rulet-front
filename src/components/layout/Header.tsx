@@ -6,6 +6,7 @@ import { useAuth } from './hooks/useAuth';
 import { AuthForm } from './AuthForm';
 import { UserInfo } from './UserInfo';
 import { MobileMenu } from './MobileMenu';
+import { useRouletteSSE } from '@/components/roulette/hooks/useRouletteSSE';
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,6 +22,10 @@ export const Header = () => {
     handleLogin,
     handleLogout,
   } = useAuth();
+  
+  // Conectar al SSE para recibir eventos en tiempo real en TODAS las páginas
+  // El hook interno ya verifica si el usuario está autenticado antes de conectar
+  useRouletteSSE('150', null);
 
   return (
     <header className="header">
@@ -43,6 +48,11 @@ export const Header = () => {
               <Link href="/dashboard" className="nav-link">
                 Dashboard
               </Link>
+              {authState.user?.role === 'admin' && (
+                <Link href="/admin" className="nav-link admin-link">
+                  Dashboard Admin
+                </Link>
+              )}
               <Link href="/roulette/150" className="nav-link">
                 Ruleta
               </Link>

@@ -48,47 +48,34 @@ function Roulette150Content() {
     isWaitingForResult,
     currentMesaIdForSpin,
     handlePhysicalSpin,
-    isWaitingForNewMesa
+    isWaitingForNewMesa,
+    sseWinners // ← AGREGADO: Obtener sseWinners desde useRoulette
   } = useRoulette('150');
 
   // Debug: Log del estado de la mesa
   useEffect(() => {
-    console.log('🔍 Estado de la mesa en página 150:', {
-      mesa,
-      isLoading,
-      error,
-      selectedSector,
-      isSpinning,
-      countdown,
-      isAutoSpinning
-    });
-  }, [mesa, isLoading, error, selectedSector, isSpinning, countdown, isAutoSpinning]);
+    // Log eliminado para reducir spam
+  }, [mesa, isLoading, error, selectedSector, isSpinning, countdown, isAutoSpinning, sseWinners]);
   
-  // Obtener ganadores desde SSE
-  const { winners: sseWinners } = useRouletteSSE('150', mesa?.mesaId);
+  // Obtener ganadores desde SSE (usando el hook de useRoulette, no duplicado)
+  // const { winners: sseWinners } = useRouletteSSE('150', mesa?.mesaId); // ← ELIMINADO: Duplicado
 
-  // Efecto para activar el giro prolongado cuando isSpinning cambia
-  useEffect(() => {
-    if (isSpinning && rouletteWheelRef.current) {
-      console.log('🎰 Activando giro prolongado desde isSpinning:', isSpinning);
-      // Iniciar giro prolongado (sin sector específico, esperando resultado del backend)
-      rouletteWheelRef.current.startPhysicalSpin();
-    }
-  }, [isSpinning]);
+  // ELIMINADO: Este useEffect causaba el primer giro innecesario
+  // Ahora solo esperamos el resultado del backend para hacer UN SOLO GIRO
 
   // Efecto para ajustar al sector final cuando llega el resultado del backend
   useEffect(() => {
-    console.log('🔍 sseWinners cambió:', sseWinners);
     if (sseWinners && sseWinners.main && rouletteWheelRef.current) {
-      console.log('🎯 Ajustando al sector final del backend:', sseWinners.main.index);
-      rouletteWheelRef.current.startPhysicalSpin(sseWinners.main.index);
-    } else {
-      console.log('❌ No se puede ajustar al sector final:', {
-        hasSseWinners: !!sseWinners,
-        hasMain: !!(sseWinners && sseWinners.main),
-        hasRef: !!rouletteWheelRef.current,
-        sseWinners
-      });
+      console.log('🎯 sseWinners recibidos, esperando 3 segundos antes de girar...');
+      
+      // Delay de 3 segundos después de recibir los datos del backend
+      const timeoutId = setTimeout(() => {
+        console.log('🎯 Iniciando giro después del delay de 3 segundos');
+        rouletteWheelRef.current?.startPhysicalSpin(sseWinners.main.index);
+      }, 3000);
+      
+      // Cleanup del timeout si el componente se desmonta
+      return () => clearTimeout(timeoutId);
     }
   }, [sseWinners]);
 

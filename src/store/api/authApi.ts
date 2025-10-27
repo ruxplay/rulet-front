@@ -68,7 +68,20 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           if (data?.user) {
-            dispatch(setUser(data.user as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
+            // Verificar si el usuario está activo antes de establecer el estado
+            const user = data.user;
+            const isUserActive = user && typeof user === 'object' && 'isActive' in user 
+              ? (user as Record<string, unknown>).isActive 
+              : true; // Si no viene isActive, asumir que está activo
+            
+            // Solo establecer el usuario si está activo
+            if (isUserActive !== false) {
+              dispatch(setUser(data.user as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
+            } else {
+              // Si está inactivo, limpiar el estado y lanzar error
+              dispatch(clearUser());
+              throw new Error('Usuario inactivo');
+            }
           }
         } catch {
           dispatch(clearUser());

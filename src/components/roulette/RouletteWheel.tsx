@@ -300,24 +300,15 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         isSpinningRef.current = true; // Marcar que estamos girando
         const startRotation = currentRotationRef.current;
         const rotationDelta = finalRotation - startRotation;
-        const duration = 6000; // 6 segundos para giro emocionante (como era antes)
+        const duration = 6000; // 6 segundos con giro rápido
         const startTime = performance.now();
 
         const animate = (currentTime: number) => {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
           
-          // Función de desaceleración más realista (ease-out-cubic con bounce)
-          let easeOut;
-          if (progress < 0.8) {
-            // Primera fase: desaceleración suave
-            easeOut = 1 - Math.pow(1 - progress / 0.8, 4);
-          } else {
-            // Segunda fase: desaceleración final con micro-bounce
-            const finalProgress = (progress - 0.8) / 0.2;
-            const bounce = Math.sin(finalProgress * Math.PI * 3) * 0.1 * (1 - finalProgress);
-            easeOut = 0.8 + (0.2 * finalProgress) + bounce;
-          }
+          // Función de desaceleración suave sin bounce (ease-out-cubic simple)
+          const easeOut = 1 - Math.pow(1 - progress, 3);
           
           const currentRotation = startRotation + rotationDelta * easeOut;
           
@@ -328,7 +319,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           
           // Debug: Log cada frame para verificar sincronización
           if (Math.floor(elapsed / 1000) !== Math.floor((elapsed - 16) / 1000)) {
-            console.log('🔄 animateSpin - Segundo:', Math.floor(elapsed / 1000), 'currentRotation:', Math.round(currentRotation * 100) / 100);
+            // Log eliminado para reducir spam en consola
           }
 
           const canvas = canvasRef.current;
@@ -503,31 +494,30 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       animate();
     }, [drawWheel, highlightedSector, calculateTargetRotation]);
 
-    // Función para iniciar giro físico (COMPORTAMIENTO ORIGINAL RESTAURADO)
+    // Función para iniciar giro físico - TRANSICIÓN SUAVE AL RESULTADO DEL BACKEND
     const startPhysicalSpin = useCallback((winningSector?: number) => {
       if (isSpinningRef.current) return;
       
       isSpinningRef.current = true;
       console.log('🎰 Iniciando giro físico de la ruleta...');
       
-      // COMPORTAMIENTO ORIGINAL: Siempre girar inmediatamente sin esperar backend
-      if (winningSector === undefined) {
-        console.log('🎲 Giro inmediato con sector aleatorio (comportamiento original)');
-        // Generar sector aleatorio para giro inmediato
-        const randomSector = Math.floor(Math.random() * 15);
-        const targetRotation = calculateTargetRotation(randomSector);
-        // Agregar giros adicionales para hacer más emocionante
-        const extraRotations = (Math.random() * 8 + 4) * Math.PI;
+      // Si hay sector específico del backend, hacer transición suave
+      if (winningSector !== undefined) {
+        console.log('🎯 Transición suave al sector del backend:', winningSector);
+        const targetRotation = calculateTargetRotation(winningSector);
+        // SOLO agregar 2-3 vueltas para transición suave, no múltiples vueltas
+        const extraRotations = (Math.random() * 4 + 6) * Math.PI; // 6-10 vueltas para giro rápido
         const finalRotation = targetRotation + extraRotations;
         animateSpin(finalRotation);
         return;
       }
       
-      // Si hay sector específico del backend, usar ese sector
-      console.log('🎯 Giro con sector del backend:', winningSector);
-      const targetRotation = calculateTargetRotation(winningSector);
+      // COMPORTAMIENTO ORIGINAL: Giro aleatorio con múltiples vueltas
+      console.log('🎲 Giro inmediato con sector aleatorio (comportamiento original)');
+      const randomSector = Math.floor(Math.random() * 15);
+      const targetRotation = calculateTargetRotation(randomSector);
       // Agregar giros adicionales para hacer más emocionante
-      const extraRotations = (Math.random() * 8 + 4) * Math.PI;
+      const extraRotations = (Math.random() * 6 + 8) * Math.PI; // 8-14 vueltas para giro rápido
       const finalRotation = targetRotation + extraRotations;
       animateSpin(finalRotation);
     }, [animateSpin, calculateTargetRotation]);
@@ -538,6 +528,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       
       // Normalizar la rotación
       const normalizedRotation = ((currentRotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      
       
       // Calcular el sector basado en la rotación
       const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
@@ -591,7 +582,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       detectWinningSector
     }), [animateSpin, drawWheel, startPhysicalSpin, detectWinningSector]);
 
-    // Efecto para dibujar la ruleta cuando cambian las props
+    // Efecto para dibujar la ruleta estática cuando rotation = 0
     useEffect(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -599,24 +590,16 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Si hay rotación > 0, ejecutar animación
-      if (rotation > 0) {
-        animateSpin(rotation);
-      } else {
-        // Dibujar ruleta estática
+      // Solo dibujar ruleta estática cuando rotation = 0 (sin animación)
+      if (rotation === 0) {
         currentRotationRef.current = rotation;
         setCurrentAnimationRotation(rotation);
         drawWheel(ctx, canvas, rotation, highlightedSector);
       }
-    }, [rotation, highlightedSector, drawWheel, animateSpin]);
+    }, [rotation, highlightedSector, drawWheel]);
 
-    // Efecto para sincronizar el estado interno cuando cambia la prop rotation
-    useEffect(() => {
-      // Solo actualizar si no estamos en medio de una animación Y no hay animación activa
-      if (!isSpinningRef.current && !animationRef.current) {
-        setCurrentAnimationRotation(rotation);
-      }
-    }, [rotation]);
+    // ELIMINADO: Este useEffect causaba interferencias con la animación
+    // La sincronización se maneja directamente en animateSpin
 
     // Limpiar animación al desmontar
     useEffect(() => {
@@ -665,7 +648,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           
           // Debug: Log cada renderizado de botones SVG
           if (i === 0) {
-            console.log('🎯 Botones SVG renderizando - currentAnimationRotation:', Math.round(currentAnimationRotation * 100) / 100, 'isSpinning:', isSpinningRef.current, 'forceRender:', forceRender);
+            // Log eliminado para reducir spam en consola
           }
           
           return (

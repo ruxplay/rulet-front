@@ -19,6 +19,7 @@ interface MobileMenuProps {
     user: {
       fullName?: string;
       username?: string;
+      role?: string;
     } | null;
   };
   handleLogout: () => void;
@@ -50,6 +51,11 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             <Link href="/dashboard" className="mobile-nav-link" onClick={onClose}>
               Dashboard
             </Link>
+            {authState.user?.role === 'admin' && (
+              <Link href="/admin" className="mobile-nav-link admin-link" onClick={onClose}>
+                Dashboard Admin
+              </Link>
+            )}
             <Link href="/roulette/150" className="mobile-nav-link" onClick={onClose}>
               Ruleta
             </Link>

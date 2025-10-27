@@ -152,6 +152,31 @@
   transform: translateY(-1px);
 }
 
+/* Estilos específicos para enlace de admin */
+.nav-link.admin-link {
+  background: linear-gradient(135deg, rgba(199, 160, 8, 0.1), rgba(199, 160, 8, 0.05));
+  border: 1px solid rgba(199, 160, 8, 0.3);
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.nav-link.admin-link::before {
+  background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+}
+
+.nav-link.admin-link::after {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent);
+}
+
+.nav-link.admin-link:hover {
+  background: linear-gradient(135deg, rgba(199, 160, 8, 0.2), rgba(199, 160, 8, 0.1));
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(199, 160, 8, 0.3);
+}
+
 /* Formulario de Login Desktop */
 .header-login-form {
   display: flex;
@@ -489,6 +514,33 @@
 .mobile-nav-link:hover {
   color: var(--text-primary);
   transform: translateX(5px);
+}
+
+/* Estilos específicos para enlace de admin en móvil */
+.mobile-nav-link.admin-link {
+  background: linear-gradient(135deg, rgba(199, 160, 8, 0.1), rgba(199, 160, 8, 0.05));
+  border: 1px solid rgba(199, 160, 8, 0.3);
+  color: var(--text-accent);
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.mobile-nav-link.admin-link::before {
+  background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
+}
+
+.mobile-nav-link.admin-link::after {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent), 0 0 12px var(--accent);
+}
+
+.mobile-nav-link.admin-link:hover {
+  background: linear-gradient(135deg, rgba(199, 160, 8, 0.2), rgba(199, 160, 8, 0.1));
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateX(8px);
+  box-shadow: 0 2px 8px rgba(199, 160, 8, 0.3);
 }
 
 .mobile-nav-link:last-child {

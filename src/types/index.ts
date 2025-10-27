@@ -148,10 +148,121 @@ export interface UserBalanceUpdatedEvent {
   type: 'user.balance.updated';
   payload: {
     username: string;
-    balance: number | string;
-    reason?: 'bet' | 'spin_prize' | 'deposit' | 'withdrawal' | string;
-    type?: RouletteType;
+    balance: string;        // Balance actualizado
+    blockedBalance?: string; // Balance bloqueado (para retiros)
+    losses: number;         // Pérdidas totales
+    wins: number;          // Victorias totales
+    reason: 'deposit_approved' | 'bet' | 'spin_prize' | 'withdrawal_approved' | 'withdrawal_rejected' | string;
+    
+    // Solo para depósitos
+    depositId?: number;
+    depositAmount?: number;
+    
+    // Solo para apuestas
+    betAmount?: number;
+    type?: '150' | '300';
+    
+    // Solo para premios
     prize?: number;
+    
+    // Solo para retiros
+    withdrawalId?: number;
+    withdrawalAmount?: number;
+  };
+}
+
+// ===== EVENTOS SSE PARA DEPÓSITOS =====
+
+export type DepositPaymentMethod = 'bank_transfer' | 'usdt' | 'pago_movil';
+export type DepositStatus = 'pending' | 'approved' | 'rejected';
+
+export interface DepositEventPayload {
+  id: number;
+  username: string;
+  fullName?: string | null;
+  amount: number;
+  reference: string;
+  bank: string;
+  receiptUrl: string;
+  receiptPublicId: string;
+  receiptFormat: string;
+  receiptBytes: number;
+  status: DepositStatus;
+  paymentMethod: DepositPaymentMethod;
+  usdtAmount?: number | null;
+  exchangeRate?: number | null;
+  walletAddress?: string | null;
+  transactionHash?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  processedAt?: string | null;
+  processedBy?: string | null;
+  notes?: string | null;
+}
+
+export interface DepositCreatedEvent {
+  type: 'deposit.created';
+  payload: DepositEventPayload;
+}
+
+export interface DepositApprovedEvent {
+  type: 'deposit.approved';
+  payload: DepositEventPayload;
+}
+
+export interface DepositRejectedEvent {
+  type: 'deposit.rejected';
+  payload: DepositEventPayload;
+}
+
+export interface DepositStatusChangedEvent {
+  type: 'deposit.status_changed';
+  payload: {
+    deposit: DepositEventPayload;
+    oldStatus: DepositStatus;
+    newStatus: DepositStatus;
+  };
+}
+
+// ===== EVENTOS SSE PARA RETIROS =====
+
+export interface WithdrawalEventPayload {
+  id: number;
+  username: string;
+  cedula: string;
+  telefono: string;
+  banco: string;
+  monto: number;
+  status: WithdrawalStatus;
+  payment_method: WithdrawalPaymentMethod;
+  createdAt: string;
+  updatedAt: string;
+  processedAt?: string | null;
+  processedBy?: string | null;
+  notes?: string | null;
+}
+
+export interface WithdrawalCreatedEvent {
+  type: 'withdrawal.created';
+  payload: WithdrawalEventPayload;
+}
+
+export interface WithdrawalApprovedEvent {
+  type: 'withdrawal.approved';
+  payload: WithdrawalEventPayload;
+}
+
+export interface WithdrawalRejectedEvent {
+  type: 'withdrawal.rejected';
+  payload: WithdrawalEventPayload;
+}
+
+export interface WithdrawalStatusChangedEvent {
+  type: 'withdrawal.status_changed';
+  payload: {
+    withdrawal: WithdrawalEventPayload;
+    oldStatus: WithdrawalStatus;
+    newStatus: WithdrawalStatus;
   };
 }
 
@@ -249,4 +360,56 @@ export interface RouletteMesaUpdatedEvent {
     mesaId: string;
     filledCount: number;
   };
+}
+
+// ===== TIPOS PARA RETIROS (WITHDRAWALS) =====
+
+export type WithdrawalPaymentMethod = 'usdt' | 'bank_transfer' | 'pago_movil';
+export type WithdrawalStatus = 'pending' | 'approved' | 'rejected';
+
+export interface Withdrawal {
+  id: number;
+  username: string;
+  cedula: string;
+  telefono: string;
+  banco: string;
+  monto: number;
+  payment_method: WithdrawalPaymentMethod;
+  status: WithdrawalStatus;
+  createdAt: string;
+  updatedAt: string;
+  processedAt: string | null;
+  processedBy: string | null;
+  notes: string | null;
+}
+
+export interface CreateWithdrawalRequest {
+  username: string;
+  cedula: string;
+  telefono: string;
+  banco: string;
+  monto: number;
+  payment_method: WithdrawalPaymentMethod;
+}
+
+export interface CreateWithdrawalResponse {
+  withdrawal: Withdrawal;
+}
+
+export interface WithdrawalEligibilityResponse {
+  eligible: boolean;
+  allowedMethods?: string[];
+  balance?: number;
+  blockedBalance?: number;
+  availableBalance?: number;
+  wins?: number;
+  reason?: string;
+}
+
+export interface AllowedMethodsResponse {
+  allowedMethods: WithdrawalPaymentMethod[];
+}
+
+export interface GetWithdrawalsResponse {
+  withdrawals: Withdrawal[];
 }

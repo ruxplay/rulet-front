@@ -30,3 +30,11 @@
 @import '../styles/components/countdown-overlay.css';
 @import '../styles/components/roulette-selector.css';
 @import '../styles/components/roulette-responsive.css';
+@import '../styles/components/admin-dashboard.css';
+@import '../styles/components/users-table.css';
+@import '../styles/components/deposit-modal.css';
+@import '../styles/components/deposit-form.css';
+@import '../styles/components/deposit-history.css';
+@import '../styles/components/deposits-table.css';
+@import '../styles/components/withdrawals-table.css';
+@import '../styles/components/withdraw-form.css';

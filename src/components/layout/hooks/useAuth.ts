@@ -62,6 +62,10 @@ export const useAuth = () => {
                 fullName: data.user.username // Siempre usar username
               };
               
+              // Debug: Verificar que el role esté llegando
+              console.log('🔍 useAuth - Usuario recibido del backend:', data.user);
+              console.log('🔍 useAuth - Role del usuario:', data.user.role);
+              
               dispatch(setUser(userWithFallback));
             }
           }
@@ -99,11 +103,29 @@ export const useAuth = () => {
 
       if (!user) throw new Error('Respuesta inesperada del servidor');
       
+      // Verificar si el usuario está activo
+      const isUserActive = user && typeof user === 'object' && 'isActive' in user 
+        ? (user as Record<string, unknown>).isActive 
+        : true; // Si no viene isActive, asumir que está activo
+      
+      console.log('🔍 useAuth LOGIN - Usuario recibido del backend:', user);
+      console.log('🔍 useAuth LOGIN - isActive del usuario:', isUserActive);
+      
+      // Si el usuario está inactivo, mostrar error y no permitir login
+      if (isUserActive === false) {
+        dispatch(clearUser());
+        setErrors({ general: 'Usuario inactivo - Tu cuenta ha sido desactivada' });
+        return;
+      }
+      
       // Siempre usar username para consistencia
       const userWithConsistentName = {
         ...user,
         fullName: (user as { username?: string }).username // Siempre usar username
       };
+      
+      // Debug: Verificar que el role esté llegando en login
+      console.log('🔍 useAuth LOGIN - Role del usuario:', user && typeof user === 'object' && 'role' in user ? (user as Record<string, unknown>).role : 'No disponible');
       
       dispatch(setUser(userWithConsistentName as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
 

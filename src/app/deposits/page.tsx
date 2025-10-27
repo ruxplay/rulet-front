@@ -14,7 +14,9 @@ const DepositHistory: React.FC = () => {
     skip: !username,
   });
 
-  const deposits = depositsData?.deposits || [];
+  const deposits = [...(depositsData?.deposits || [])].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,8 +26,6 @@ const DepositHistory: React.FC = () => {
         return '#00ff9c';
       case 'rejected':
         return '#ff4757';
-      case 'completed':
-        return '#6c8cff';
       default:
         return '#6c757d';
     }
@@ -39,8 +39,6 @@ const DepositHistory: React.FC = () => {
         return 'Aprobado';
       case 'rejected':
         return 'Rechazado';
-      case 'completed':
-        return 'Completado';
       default:
         return status;
     }
@@ -128,7 +126,7 @@ const DepositHistory: React.FC = () => {
                   <div className="deposit-header">
                     <div className="deposit-info">
                       <h3 className="deposit-amount">
-                        {Number(deposit.amount).toFixed(2)} BS
+                        {Number(deposit.amount).toFixed(2)} RUB
                       </h3>
                       <span className="deposit-reference">
                         Ref: {deposit.reference}

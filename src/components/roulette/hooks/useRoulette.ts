@@ -63,7 +63,7 @@ export const useRoulette = (type: RouletteType) => {
 
   // Debug: rastrear cambios en el modal
   useEffect(() => {
-    console.log('🔍 useRoulette - sseShowModal cambió:', sseShowModal);
+    // Log eliminado
   }, [sseShowModal]);
 
   // Sincronizar ganadores persistentes con SSE
@@ -225,68 +225,8 @@ export const useRoulette = (type: RouletteType) => {
     }
   }, [mesaData?.mesa]);
 
-  // Efecto para manejar el giro automático cuando la mesa se llena
-  useEffect(() => {
-    console.log('🔍 Estado de la mesa:', {
-      mesa: mesaData?.mesa,
-      status: mesaData?.mesa?.status,
-      filledCount: mesaData?.mesa?.filledCount,
-      isAutoSpinning,
-      countdown,
-      isSpinning,
-      lastSpunMesaId,
-      mesaId: mesaData?.mesa?.mesaId
-    });
-
-    // Solo iniciar countdown si no hay countdown activo, no está girando y no se ha girado esta mesa
-    if (mesaData?.mesa && 
-        (mesaData.mesa.status === 'waiting_for_result' || 
-         (mesaData.mesa.status === 'open' && mesaData.mesa.filledCount >= 15)) && 
-        !isAutoSpinning && 
-        !countdown && 
-        !isSpinning &&
-        lastSpunMesaId !== mesaData.mesa.mesaId) {
-      console.log('🎰 Mesa lista para girar - iniciando countdown:', mesaData.mesa.mesaId);
-      setIsAutoSpinning(true);
-      setCountdown(3);
-      
-      // Countdown de 3 segundos
-      const countdownInterval = setInterval(() => {
-        setCountdown(prev => {
-          if (prev === null || prev <= 1) {
-            clearInterval(countdownInterval);
-            console.log('🎯 ¡GIRANDO RULETA!');
-            setCountdown(null);
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      // Después del countdown, activar giro físico de la ruleta
-      setTimeout(() => {
-        console.log('🎰 Iniciando giro físico de la ruleta...');
-        setIsSpinning(true);
-        
-        // Llamar directamente al giro físico de la ruleta
-        // Esto se manejará desde el componente padre que tiene la ref
-      }, 3000);
-      
-    } else if (mesaData?.mesa && mesaData.mesa.status === 'spinning') {
-      console.log('🎰 Mesa girando:', mesaData.mesa.mesaId);
-      setIsSpinning(true);
-      setSelectedSector(null); // Limpiar selección cuando empieza a girar
-    } else if (mesaData?.mesa && mesaData.mesa.status === 'closed') {
-      console.log('🎰 Mesa cerrada:', mesaData.mesa.mesaId);
-      // Solo limpiar estados si no estamos esperando nueva mesa
-      if (!isWaitingForNewMesa) {
-        setIsSpinning(false);
-        setIsAutoSpinning(false);
-        setCountdown(null);
-        setSelectedSector(null); // Limpiar selección de sector
-      }
-    }
-  }, [mesaData?.mesa?.status, mesaData?.mesa?.mesaId, mesaData?.mesa?.filledCount, isAutoSpinning, countdown, isSpinning, lastSpunMesaId, isWaitingForNewMesa]);
+  // ELIMINADO COMPLETAMENTE: Este useEffect estaba causando el giro automático
+  // Ahora el giro se activará SOLO cuando lleguen los sseWinners desde el backend
 
   // Efecto para limpiar selección cuando cambia el tipo
   useEffect(() => {
@@ -314,6 +254,7 @@ export const useRoulette = (type: RouletteType) => {
     isWaitingForResult,
     currentMesaIdForSpin,
     isWaitingForNewMesa,
+    sseWinners, // ← AGREGADO: Exponer sseWinners directamente
     
     // Funciones
     setSelectedSector: handleSectorClick,

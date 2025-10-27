@@ -36,8 +36,8 @@ class ExchangeRateService {
       
       const data = await response.json();
       
-      if (data.currentRate && data.currentRate.rate) {
-        const rate = Number(data.currentRate.rate);
+      if (data.currentRate && (typeof data.currentRate === 'number' || typeof data.currentRate === 'string')) {
+        const rate = Number(data.currentRate);
         return rate;
       }
       
@@ -84,20 +84,20 @@ class ExchangeRateService {
   }
 
   /**
-   * Convierte USDT a BS usando la tasa final
+   * Convierte USDT a RUB usando la tasa final
    */
-  public async convertUsdtToBs(usdtAmount: number): Promise<number> {
+  public async convertUsdtToRub(usdtAmount: number): Promise<number> {
     const rateData = await this.getCurrentRate();
-    const bsAmount = usdtAmount * rateData.finalRate;
-    return Math.round(bsAmount * 100) / 100; // Redondear a 2 decimales
+    const rubAmount = usdtAmount * rateData.finalRate;
+    return Math.round(rubAmount * 100) / 100; // Redondear a 2 decimales
   }
 
   /**
-   * Convierte BS a USDT usando la tasa final
+   * Convierte RUB a USDT usando la tasa final
    */
-  public async convertBsToUsdt(bsAmount: number): Promise<number> {
+  public async convertRubToUsdt(rubAmount: number): Promise<number> {
     const rateData = await this.getCurrentRate();
-    const usdtAmount = bsAmount / rateData.finalRate;
+    const usdtAmount = rubAmount / rateData.finalRate;
     return Math.round(usdtAmount * 100) / 100; // Redondear a 2 decimales
   }
 
@@ -149,20 +149,20 @@ export const useExchangeRate = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const convertUsdtToBs = React.useCallback(async (usdtAmount: number) => {
+  const convertUsdtToRub = React.useCallback(async (usdtAmount: number) => {
     try {
-      return await exchangeRateService.convertUsdtToBs(usdtAmount);
+      return await exchangeRateService.convertUsdtToRub(usdtAmount);
     } catch (err) {
-      console.error('Error converting USDT to BS:', err);
+      console.error('Error converting USDT to RUB:', err);
       return 0;
     }
   }, []);
 
-  const convertBsToUsdt = React.useCallback(async (bsAmount: number) => {
+  const convertRubToUsdt = React.useCallback(async (rubAmount: number) => {
     try {
-      return await exchangeRateService.convertBsToUsdt(bsAmount);
+      return await exchangeRateService.convertRubToUsdt(rubAmount);
     } catch (err) {
-      console.error('Error converting BS to USDT:', err);
+      console.error('Error converting RUB to USDT:', err);
       return 0;
     }
   }, []);
@@ -183,8 +183,8 @@ export const useExchangeRate = () => {
     rateData,
     loading,
     error,
-    convertUsdtToBs,
-    convertBsToUsdt,
+    convertUsdtToRub,
+    convertRubToUsdt,
     forceUpdate
   };
 };

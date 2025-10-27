@@ -30,7 +30,7 @@ interface UsdtDepositFormProps {
 export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) => {
   const { authState } = useAuth();
   const [createDeposit, { isLoading }] = useCreateDepositMutation();
-  const { rateData, loading: isLoadingRate, convertUsdtToBs } = useExchangeRate();
+  const { rateData, loading: isLoadingRate, convertUsdtToRub } = useExchangeRate();
 
   const [formData, setFormData] = useState<UsdtDepositFormData>({
     usdtAmount: 0,
@@ -48,13 +48,13 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Calcular monto en BS usando la nueva tasa con margen
+  // Calcular monto en RUB usando la nueva tasa con margen
   const [calculatedAmount, setCalculatedAmount] = useState(0);
 
   useEffect(() => {
     const calculateAmount = async () => {
       if (formData.usdtAmount > 0 && rateData) {
-        const amount = await convertUsdtToBs(formData.usdtAmount);
+        const amount = await convertUsdtToRub(formData.usdtAmount);
         setCalculatedAmount(amount);
       } else {
         setCalculatedAmount(0);
@@ -62,7 +62,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
     };
 
     calculateAmount();
-  }, [formData.usdtAmount, rateData, convertUsdtToBs]);
+  }, [formData.usdtAmount, rateData, convertUsdtToRub]);
 
   const validateField = (name: string, value: string | number) => {
     const newErrors = { ...errors };
@@ -184,7 +184,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
         bank: 'USDT Wallet',
         paymentMethod: 'usdt' as const,
         usdtAmount: formData.usdtAmount,
-        exchangeRate: rateData.finalRate, // Envía tasa con margen (297.0045 BS/USDT)
+        exchangeRate: rateData.finalRate, // Envía tasa con margen (297.0045 RUB/USDT)
         walletAddress: formData.walletAddress,
         transactionHash: formData.transactionHash,
         ...receiptData,
@@ -196,7 +196,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
       await Swal.fire({
         title: '¡Depósito USDT Enviado!',
-        text: `Tu solicitud de depósito de ${formData.usdtAmount} USDT por ${calculatedAmount.toFixed(2)} BS ha sido enviada y será revisada por nuestro equipo.`,
+        text: `Tu solicitud de depósito de ${formData.usdtAmount} USDT por ${calculatedAmount.toFixed(2)} RUB ha sido enviada y será revisada por nuestro equipo.`,
         icon: 'success',
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#00ff9c',
@@ -248,14 +248,14 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                        <span>Tasa oficial: </span>
                        <span className="rate-value">
                          {isLoadingRate ? 'Cargando...' : 
-                          rateData ? `${rateData.officialRate} BS/USDT` : 'No disponible'}
+                          rateData ? `${rateData.officialRate} RUB/USDT` : 'No disponible'}
                        </span>
                      </div>
                      <div className="rate-info">
                        <span>Tasa final (con margen): </span>
                        <span className="rate-value-final">
                          {isLoadingRate ? 'Cargando...' : 
-                          rateData ? `${rateData.finalRate} BS/USDT` : 'No disponible'}
+                          rateData ? `${rateData.finalRate} RUB/USDT` : 'No disponible'}
                        </span>
                      </div>
                      <div className="rate-info">
@@ -328,7 +328,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               
                      {formData.usdtAmount > 0 && rateData && (
                        <div className="conversion-info">
-                         <strong className="conversion-amount">Recibirás: {calculatedAmount.toFixed(2)} BS</strong>
+                         <strong className="conversion-amount">Recibirás: {calculatedAmount.toFixed(2)} RUB</strong>
                        </div>
                      )}
             </div>
@@ -434,16 +434,16 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               </div>
               <div className="summary-item">
                 <span className="summary-label">Equivale a:</span>
-                <span className="summary-value">{calculatedAmount.toFixed(2)} BS</span>
+                <span className="summary-value">{calculatedAmount.toFixed(2)} RUB</span>
               </div>
               <div className="summary-item">
                 <span className="summary-label">Tasa Final:</span>
-                <span className="summary-value">{rateData?.finalRate.toFixed(2) || 'N/A'} BS/USDT</span>
+                <span className="summary-value">{rateData?.finalRate.toFixed(2) || 'N/A'} RUB/USDT</span>
               </div>
               {/* Campos técnicos ocultos para el usuario */}
               {/* <div className="summary-item">
                 <span className="summary-label">Tasa Oficial:</span>
-                <span className="summary-value">{rateData?.officialRate.toFixed(2) || 'N/A'} BS/USDT</span>
+                <span className="summary-value">{rateData?.officialRate.toFixed(2) || 'N/A'} RUB/USDT</span>
               </div>
               <div className="summary-item">
                 <span className="summary-label">Margen:</span>

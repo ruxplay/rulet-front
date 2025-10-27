@@ -41,7 +41,7 @@
   font-weight: 800;
   color: var(--text-primary);
   margin: 0;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #00ff9c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -134,7 +134,7 @@
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 var(--spacing-md);
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #00ff9c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -150,17 +150,20 @@
 /* Deposits List */
 .deposits-list {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
 }
 
 .deposit-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 15, 35, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 255, 156, 0.1) inset;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
@@ -170,23 +173,37 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 156, 0.5) 50%, transparent 100%);
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(0, 255, 156, 0.6) 30%, 
+    rgba(0, 255, 156, 0.8) 50%, 
+    rgba(0, 255, 156, 0.6) 70%, 
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.deposit-card:hover::before {
+  opacity: 1;
 }
 
 .deposit-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-  border-color: rgba(0, 255, 156, 0.3);
+  transform: translateY(-6px);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 255, 156, 0.15);
+  border-color: rgba(0, 255, 156, 0.4);
 }
 
 .deposit-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-xl);
-  background: linear-gradient(135deg, rgba(0, 255, 156, 0.05) 0%, rgba(0, 255, 156, 0.02) 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: flex-start;
+  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   position: relative;
 }
 
@@ -194,10 +211,10 @@
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 15%;
+  right: 15%;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 156, 0.3) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 156, 0.4) 50%, transparent 100%);
 }
 
 .deposit-info {
@@ -207,25 +224,34 @@
 }
 
 .deposit-amount {
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 900;
   color: var(--text-primary);
-  margin: 0;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--secondary) 100%);
+  margin: 0 0 var(--spacing-xs);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #ffffff 0%, #00ff9c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(0, 255, 156, 0.3));
+  position: relative;
+}
+
+.deposit-card:hover .deposit-amount {
+  filter: drop-shadow(0 4px 8px rgba(0, 255, 156, 0.5));
 }
 
 .deposit-reference {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  color: #FFFFFF !important;
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 8px;
-  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: inline-block;
+  backdrop-filter: blur(10px);
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -233,18 +259,21 @@
 }
 
 .deposit-status {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: white;
   text-align: center;
-  min-width: 120px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 110px;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .deposit-status::before {
@@ -263,17 +292,25 @@
 }
 
 .deposit-details {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-xl);
   display: grid;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
+}
+
+.detail-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+  margin: 0 -10px;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .detail-row:last-child {
@@ -282,36 +319,51 @@
 
 .detail-label {
   font-size: 0.875rem;
-  color: var(--text-secondary);
-  font-weight: 600;
+  color: #ffffff !important;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .detail-label::before {
-  content: '•';
-  color: var(--secondary);
-  font-weight: bold;
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--secondary);
+  opacity: 0.7;
 }
 
 .detail-value {
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  font-weight: 600;
+  font-size: 1rem;
+  color: #ffffff !important;
+  font-weight: 800;
   text-align: right;
   max-width: 60%;
   word-break: break-word;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.35) !important;
+  padding: 10px 16px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+  opacity: 1 !important;
 }
 
 .deposit-pending {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: rgba(255, 165, 2, 0.1);
-  border-top: 1px solid rgba(255, 165, 2, 0.3);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 165, 2, 0.08) 50%, 
+    transparent 100%
+  );
+  border-top: 1px solid rgba(255, 165, 2, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .pending-indicator {
@@ -319,8 +371,9 @@
   align-items: center;
   gap: var(--spacing-sm);
   color: #ffa502;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .pending-dot {
@@ -380,6 +433,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .deposits-list {
+    grid-template-columns: 1fr;
+  }
+
   .deposit-history {
     padding: 0 var(--spacing-md);
   }

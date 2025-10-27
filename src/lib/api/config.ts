@@ -25,8 +25,8 @@ export const API_CONFIG = {
     RULETA: '/api/roulette',
     SUPPORT: '/api/support',
     DEPOSITS: '/api/deposits',
-    USDT_RATES: '/api/usdt-rates'
-    
+    USDT_RATES: '/api/usdt-rates',
+    WITHDRAWALS: '/api/withdrawals'
   },
   // Configuración específica para ruleta
   RULETA: {
@@ -37,7 +37,7 @@ export const API_CONFIG = {
       '300': 300
     },
     SSE_ENDPOINTS: {
-      STREAM: '/api/roulette/150/stream',
+      STREAM: '/api/roulette/stream',  // Stream unificado para ambas ruletas + eventos de usuario
       TYPE_STREAM: (type: '150' | '300') => `/api/roulette/${type}/stream`
     }
   }

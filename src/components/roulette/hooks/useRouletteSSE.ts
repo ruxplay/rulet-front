@@ -1,10 +1,21 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { RouletteType, RouletteWinners, UserBalanceUpdatedEvent, MesaWaitingForResultEvent, MesaResultSubmittedEvent } from '@/types';
+import { 
+  RouletteType, 
+  RouletteWinners, 
+  UserBalanceUpdatedEvent, 
+  MesaWaitingForResultEvent, 
+  MesaResultSubmittedEvent,
+  DepositEventPayload,
+  WithdrawalEventPayload 
+} from '@/types';
 import { API_CONFIG } from '@/lib/api/config';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { updateUserBalance, updateUserWins, updateUserLosses, updateUserStats } from '@/store/slices/authSlice';
+import { useSweetAlert } from '@/hooks/useSweetAlert';
+import { adminDepositsApi } from '@/store/api/adminDepositsApi';
+import { adminWithdrawalsApi } from '@/store/api/adminWithdrawalsApi';
 
 export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null) => {
   const [winners, setWinners] = useState<RouletteWinners | null>(null);
@@ -21,6 +32,8 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
   const modalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
   const currentUsername = useAppSelector((state) => state.auth.user?.username);
+  const currentUserRole = useAppSelector((state) => state.auth.user?.role);
+  const { showSuccess, showInfo, showError } = useSweetAlert();
 
   // Actualizar ref cuando cambie currentMesaId
   useEffect(() => {
@@ -41,7 +54,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
       modalTimeoutRef.current = null;
     }
 
-    // Crear nueva conexión SSE - usar el stream unificado que emite eventos de usuario
+    // Crear nueva conexión SSE - Stream unificado para ambas ruletas + eventos de usuario (depósitos, apuestas, premios)
     const sseUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.RULETA.SSE_ENDPOINTS.STREAM}`;
     
     const eventSource = new EventSource(sseUrl);
@@ -57,7 +70,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
       console.error('❌ ERROR SSE:', error);
     };
 
-    // Log general para todos los eventos SSE
+    // Log general para todos los eventos SSE (sin nombre específico)
     eventSource.onmessage = (event) => {
       console.log('📡 Evento SSE recibido:', event.type, event.data);
     };
@@ -178,9 +191,62 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         console.log('🔔 SSE user.balance.updated recibido:', { data, currentUsername });
         if (!data || !data.username) return;
         if (data.username === currentUsername) {
-          console.log('✅ Actualizando balance del usuario:', { balance: data.balance });
-          // Actualizar solo el balance ya que losses y wins no están en el payload
-          dispatch(updateUserBalance(data.balance));
+          console.log('✅ Actualizando estado del usuario:', { 
+            balance: data.balance, 
+            wins: data.wins, 
+            losses: data.losses 
+          });
+          
+          // Actualizar TODO el estado del usuario (balance, wins, losses)
+          dispatch(updateUserStats({
+            balance: data.balance,
+            wins: data.wins,
+            losses: data.losses
+          }));
+          
+          // Mostrar notificación según la razón
+          switch (data.reason) {
+            case 'deposit_approved':
+              if (data.depositAmount !== undefined) {
+                showSuccess(
+                  '✅ Depósito Aprobado',
+                  `Tu depósito de ${data.depositAmount} RUB ha sido aprobado y agregado a tu balance`
+                );
+              }
+              break;
+            case 'bet':
+              if (data.betAmount !== undefined) {
+                showInfo(
+                  '💸 Apuesta Realizada',
+                  `Has apostado ${data.betAmount} RUB en la ruleta ${data.type || '150'}`
+                );
+              }
+              break;
+            case 'spin_prize':
+              if (data.prize !== undefined) {
+                showSuccess(
+                  '🎉 ¡Ganaste!',
+                  `¡Felicitaciones! Has ganado ${data.prize} RUB`
+                );
+              }
+              break;
+            case 'withdrawal_approved':
+              if (data.withdrawalAmount !== undefined) {
+                showInfo(
+                  '✅ Retiro Aprobado',
+                  `Tu retiro de ${data.withdrawalAmount} RUB ha sido aprobado y procesado`
+                );
+              }
+              break;
+            case 'withdrawal_rejected':
+              if (data.withdrawalAmount !== undefined) {
+                showInfo(
+                  'ℹ️ Retiro Rechazado',
+                  `Tu retiro de ${data.withdrawalAmount} RUB ha sido rechazado. El balance bloqueado ha sido devuelto`
+                );
+              }
+              break;
+          }
         }
       } catch (error) {
         console.error('❌ Error parsing user.balance.updated:', error);
@@ -206,6 +272,132 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
       }
     });
 
+    // Evento: nuevo depósito creado
+    eventSource.addEventListener('deposit.created', (event) => {
+      try {
+        const deposit: DepositEventPayload = JSON.parse(event.data);
+        console.log('💰 SSE deposit.created recibido:', { deposit });
+        
+        // Invalidar cache de RTK Query para refrescar la tabla de depósitos
+        dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showInfo(
+            '💰 Nuevo Depósito Pendiente',
+            `${deposit.fullName || deposit.username} - ${deposit.amount} RUB (${deposit.paymentMethod})`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing deposit.created:', error);
+      }
+    });
+
+    // Evento: depósito aprobado
+    eventSource.addEventListener('deposit.approved', (event) => {
+      try {
+        const deposit: DepositEventPayload = JSON.parse(event.data);
+        console.log('✅ SSE deposit.approved recibido:', { deposit });
+        
+        // Invalidar cache de RTK Query
+        dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showSuccess(
+            '✅ Depósito Aprobado',
+            `${deposit.username} - ${deposit.amount} RUB`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing deposit.approved:', error);
+      }
+    });
+
+    // Evento: depósito rechazado
+    eventSource.addEventListener('deposit.rejected', (event) => {
+      try {
+        const deposit: DepositEventPayload = JSON.parse(event.data);
+        console.log('❌ SSE deposit.rejected recibido:', { deposit });
+        
+        // Invalidar cache de RTK Query
+        dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showError(
+            '❌ Depósito Rechazado',
+            `${deposit.username} - ${deposit.amount} RUB`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing deposit.rejected:', error);
+      }
+    });
+
+    // Evento: nuevo retiro creado
+    eventSource.addEventListener('withdrawal.created', (event) => {
+      try {
+        const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
+        console.log('💸 SSE withdrawal.created recibido:', { withdrawal });
+        
+        // Invalidar cache de RTK Query para refrescar la tabla de retiros
+        dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showInfo(
+            '💸 Nuevo Retiro Pendiente',
+            `${withdrawal.username} - ${withdrawal.monto} RUB (${withdrawal.payment_method})`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing withdrawal.created:', error);
+      }
+    });
+
+    // Evento: retiro aprobado
+    eventSource.addEventListener('withdrawal.approved', (event) => {
+      try {
+        const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
+        console.log('✅ SSE withdrawal.approved recibido:', { withdrawal });
+        
+        // Invalidar cache de RTK Query
+        dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showSuccess(
+            '✅ Retiro Aprobado',
+            `${withdrawal.username} - ${withdrawal.monto} RUB`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing withdrawal.approved:', error);
+      }
+    });
+
+    // Evento: retiro rechazado
+    eventSource.addEventListener('withdrawal.rejected', (event) => {
+      try {
+        const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
+        console.log('❌ SSE withdrawal.rejected recibido:', { withdrawal });
+        
+        // Invalidar cache de RTK Query
+        dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
+        
+        // Mostrar notificación al admin
+        if (currentUserRole === 'admin') {
+          showError(
+            '❌ Retiro Rechazado',
+            `${withdrawal.username} - ${withdrawal.monto} RUB`
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error parsing withdrawal.rejected:', error);
+      }
+    });
+
     // Cleanup al desmontar
     return () => {
       console.log('🧹 useRouletteSSE - Limpiando conexión SSE');
@@ -218,7 +410,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         modalTimeoutRef.current = null;
       }
     };
-  }, [type, currentUsername, dispatch]);
+  }, [type, currentUsername, currentUserRole, dispatch, showSuccess, showInfo, showError]);
 
   // Función para cerrar modal
   const closeModal = () => {

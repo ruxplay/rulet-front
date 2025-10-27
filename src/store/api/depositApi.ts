@@ -12,8 +12,8 @@ export interface Deposit {
   receiptPublicId: string;
   receiptFormat: string;
   receiptBytes: number;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
-  paymentMethod: 'bank_transfer' | 'usdt';
+  status: 'pending' | 'approved' | 'rejected';
+  paymentMethod: 'bank_transfer' | 'usdt' | 'pago_movil';
   usdtAmount?: number;
   exchangeRate?: number;
   walletAddress?: string;
@@ -34,7 +34,7 @@ export interface CreateDepositRequest {
   receiptPublicId: string;
   receiptFormat: string;
   receiptBytes: number;
-  paymentMethod: 'bank_transfer' | 'usdt';
+  paymentMethod: 'bank_transfer' | 'usdt' | 'pago_movil';
   usdtAmount?: number;
   exchangeRate?: number;
   walletAddress?: string;

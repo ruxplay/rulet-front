@@ -11,10 +11,10 @@ interface DepositModalProps {
 }
 
 export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) => {
-  const [selectedMethod, setSelectedMethod] = useState<'bank_transfer' | 'usdt' | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<'bank_transfer' | 'usdt' | 'pago_movil' | null>(null);
   const router = useRouter();
 
-  const handleMethodSelect = (method: 'bank_transfer' | 'usdt') => {
+  const handleMethodSelect = (method: 'bank_transfer' | 'usdt' | 'pago_movil') => {
     setSelectedMethod(method);
   };
 
@@ -42,12 +42,43 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
 
         <div className="modal-content">
           {!selectedMethod ? (
-            <div className="method-selection">
-              <p className="method-description">
-                Selecciona el método de pago que prefieras para recargar tu saldo
-              </p>
-              
-              <div className="method-options">
+            <div 
+              className="method-selection deposit-modal-centered"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                width: '100%',
+                margin: '0 auto'
+              }}
+            >
+              <div 
+                className="method-options"
+                style={{
+                  display: 'grid',
+                  width: '100%',
+                  margin: '0 auto',
+                  justifyContent: 'center',
+                  justifyItems: 'center'
+                }}
+              >
+                {/* Card informativa no clicable */}
+                <div 
+                  className="method-option info-card"
+                >
+                  <div className="method-icon">
+                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M12,8C16.42,8 20,9.79 20,12C20,14.21 16.42,16 12,16C7.58,16 4,14.21 4,12C4,9.79 7.58,8 12,8M12,18C7.58,18 4,16.21 4,14V16C4,18.21 7.58,20 12,20C16.42,20 20,18.21 20,16V14C20,16.21 16.42,18 12,18Z" />
+                    </svg>
+                  </div>
+                  <div className="method-info">
+                    <h3>💵 Recargar Saldo</h3>
+                    <p>Selecciona el método de pago que prefieras para recargar tu saldo</p>
+                  </div>
+                </div>
+
                 <div 
                   className="method-option"
                   onClick={() => handleMethodSelect('bank_transfer')}
@@ -87,6 +118,26 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     </ul>
                   </div>
                 </div>
+
+                <div 
+                  className="method-option"
+                  onClick={() => handleMethodSelect('pago_movil')}
+                >
+                  <div className="method-icon">
+                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M7,2A2,2 0 0,0 5,4V20A2,2 0 0,0 7,22H17A2,2 0 0,0 19,20V4A2,2 0 0,0 17,2H7M7,4H17V18H7V4M12,19A1.5,1.5 0 0,1 13.5,20.5A1.5,1.5 0 0,1 12,22A1.5,1.5 0 0,1 10.5,20.5A1.5,1.5 0 0,1 12,19Z" />
+                    </svg>
+                  </div>
+                  <div className="method-info">
+                    <h3>📱 Pago Móvil</h3>
+                    <p>Depósito rápido desde tu banco en Venezuela</p>
+                    <ul>
+                      <li>Validación con comprobante</li>
+                      <li>Referencia de Pago Móvil (PM…)</li>
+                      <li>Revisión por administración</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -96,15 +147,21 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                   ← Volver a métodos
                 </button>
                 <h3>
-                  {selectedMethod === 'bank_transfer' ? '💳 Transferencia Bancaria' : '₿ USDT (Criptomoneda)'}
+                {selectedMethod === 'bank_transfer' && '💳 Transferencia Bancaria'}
+                {selectedMethod === 'usdt' && '₿ USDT (Criptomoneda)'}
+                {selectedMethod === 'pago_movil' && '📱 Pago Móvil'}
                 </h3>
               </div>
               
-              {selectedMethod === 'bank_transfer' ? (
-                <DepositForm onSuccess={handleClose} />
-              ) : (
-                <UsdtDepositForm onSuccess={handleClose} />
-              )}
+            {selectedMethod === 'bank_transfer' && (
+              <DepositForm onSuccess={handleClose} />
+            )}
+            {selectedMethod === 'pago_movil' && (
+              <DepositForm onSuccess={handleClose} variant="pago_movil" />
+            )}
+            {selectedMethod === 'usdt' && (
+              <UsdtDepositForm onSuccess={handleClose} />
+            )}
             </div>
           )}
         </div>

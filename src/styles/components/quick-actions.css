@@ -7,17 +7,23 @@
 }
 
 .action-btn {
-  display: grid;
-  place-items: center;
-  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
   border-radius: 12px;
   border: 1px solid var(--dashboard-border);
   background: linear-gradient(180deg, #0e1630, #0b142b);
   color: #c7d2ff;
   font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  min-height: 48px;
+  word-wrap: break-word;
+  line-height: 1.2;
 }
 
 .action-btn:hover {
@@ -29,10 +35,20 @@
   .quick-actions {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  .action-btn {
+    font-size: 0.85rem;
+    padding: 10px 6px;
+  }
 }
 
 @media (max-width: 560px) {
   .quick-actions {
     grid-template-columns: 1fr;
+  }
+  
+  .action-btn {
+    font-size: 0.9rem;
+    padding: 12px 8px;
   }
 }

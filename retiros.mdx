@@ -1,0 +1,583 @@
+# 💸 Sistema de Retiros - ADMIN
+
+## 📋 Descripción General
+
+Esta documentación contiene **SOLO** los endpoints y funcionalidades para que el **ADMINISTRADOR** gestione los retiros de usuarios.
+
+---
+
+## 🎯 Modelo de Datos
+
+```typescript
+interface WithdrawalAttributes {
+  id: number;
+  username: string;
+  cedula: string;                    // Cédula de identidad
+  telefono: string;                  // Teléfono de contacto
+  banco: string;                     // Banco destino
+  monto: number;                     // DECIMAL(10,2)
+  payment_method: 'bank_transfer'|'usdt'|'pago_movil';
+  status: 'pending'|'approved'|'rejected';
+  processedAt?: Date;
+  processedBy?: string;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+---
+
+## 📡 Endpoints del Administrador
+
+### **Estados de Retiro**
+
+| Estado | Descripción | Efecto en Balance del Usuario |
+|--------|-------------|-------------------------------|
+| **`pending`** | Pendiente de revisión | 🔒 Saldo BLOQUEADO (no disponible) |
+| **`approved`** | Aprobado y procesado | ✅ Se RESTA del balance total |
+| **`rejected`** | Rechazado | ✅ Se DESBLOQUEA (vuelve a balance disponible) |
+
+**Flujo:** `pending` → `approved` (resta dinero) O `rejected` (desbloquea dinero)
+
+---
+
+### **1. Ver Retiros Pendientes**
+
+**Endpoint:** `GET /api/withdrawals/pending`
+
+**Descripción:** Obtener todos los retiros que están esperando aprobación del admin
+
+**Headers:** Cookie con `authToken` (requiere autenticación admin)
+
+**Response (200 OK):**
+```json
+{
+  "withdrawals": [
+    {
+      "id": 1,
+      "username": "usuario123",
+      "cedula": "V-12345678",
+      "telefono": "+584121234567",
+      "banco": "Banesco",
+      "monto": 500.00,
+      "payment_method": "bank_transfer",
+      "status": "pending",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "user": {
+        "fullName": "Usuario Ejemplo",
+        "email": "usuario@email.com"
+      }
+    },
+    {
+      "id": 2,
+      "username": "usuario456",
+      "cedula": "V-87654321",
+      "telefono": "+584129876543",
+      "banco": "Binance",
+      "monto": 300.00,
+      "payment_method": "usdt",
+      "status": "pending",
+      "createdAt": "2024-01-15T11:00:00Z",
+      "updatedAt": "2024-01-15T11:00:00Z",
+      "user": {
+        "fullName": "Usuario Dos",
+        "email": "usuario2@email.com"
+      }
+    }
+  ]
+}
+```
+
+**Nota:** Incluye información del usuario (nombre completo, email)
+
+---
+
+### **2. Ver Todos los Retiros (Con Filtros)**
+
+**Endpoint:** `GET /api/withdrawals/all`
+
+**Descripción:** Obtener todos los retiros con filtros opcionales
+
+**Headers:** Cookie con `authToken` (requiere autenticación admin)
+
+**Query Parameters (todos opcionales):**
+- `status`: Filtrar por estado (`pending`, `approved`, `rejected`)
+- `username`: Buscar por username (búsqueda parcial con LIKE)
+- `dateFrom`: Fecha desde (ISO 8601)
+- `dateTo`: Fecha hasta (ISO 8601)
+
+**Ejemplos:**
+
+**Obtener todos:**
+```
+GET /api/withdrawals/all
+```
+
+**Filtrar por estado:**
+```
+GET /api/withdrawals/all?status=approved
+```
+
+**Filtrar por usuario:**
+```
+GET /api/withdrawals/all?username=usuario123
+```
+
+**Filtrar por fecha:**
+```
+GET /api/withdrawals/all?dateFrom=2024-01-01&dateTo=2024-01-31
+```
+
+**Combinar filtros:**
+```
+GET /api/withdrawals/all?status=pending&dateFrom=2024-01-15
+```
+
+**Response (200 OK):**
+```json
+{
+  "withdrawals": [
+    {
+      "id": 1,
+      "username": "usuario123",
+      "cedula": "V-12345678",
+      "telefono": "+584121234567",
+      "banco": "Banesco",
+      "monto": 500.00,
+      "payment_method": "bank_transfer",
+      "status": "approved",
+      "processedAt": "2024-01-15T11:30:00Z",
+      "processedBy": "admin_user",
+      "notes": "Retiro procesado exitosamente",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T11:30:00Z",
+      "user": {
+        "fullName": "Usuario Ejemplo",
+        "email": "usuario@email.com"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### **3. Aprobar o Rechazar un Retiro**
+
+**Endpoint:** `PUT /api/withdrawals/:id/status`
+
+**Descripción:** Actualizar el estado de un retiro (aprobar o rechazar)
+
+**Headers:** Cookie con `authToken` (requiere autenticación admin)
+
+**Path Parameters:**
+- `id`: ID del retiro
+
+**Request Body:**
+```json
+{
+  "status": "approved",
+  "processedBy": "admin_user",
+  "notes": "Retiro procesado exitosamente"
+}
+```
+
+**Campos:**
+- `status` (required): `"approved"` o `"rejected"` o `"completed"`
+- `processedBy` (required): Username del admin que procesa
+- `notes` (opcional): Notas o comentarios adicionales
+
+---
+
+#### **Aprobar un Retiro**
+
+**Request:**
+```json
+{
+  "status": "approved",
+  "processedBy": "admin_user",
+  "notes": "Transferencia realizada exitosamente"
+}
+```
+
+**Efectos:**
+1. ✅ Se RESTA el monto del balance total del usuario
+2. ✅ Se DESBLOQUEA el saldo (vuelve a 0 el blockedBalance)
+3. ✅ El retiro queda en estado `approved`
+4. ✅ Se registra quién lo procesó y cuándo
+
+**Response (200 OK):**
+```json
+{
+  "withdrawal": {
+    "id": 1,
+    "username": "usuario123",
+    "cedula": "V-12345678",
+    "telefono": "+584121234567",
+    "banco": "Banesco",
+    "monto": 500.00,
+    "payment_method": "bank_transfer",
+    "status": "approved",
+    "processedAt": "2024-01-15T11:30:00Z",
+    "processedBy": "admin_user",
+    "notes": "Transferencia realizada exitosamente",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T11:30:00Z"
+  }
+}
+```
+
+---
+
+#### **Rechazar un Retiro**
+
+**Request:**
+```json
+{
+  "status": "rejected",
+  "processedBy": "admin_user",
+  "notes": "Información bancaria incorrecta"
+}
+```
+
+**Efectos:**
+1. ✅ Se DESBLOQUEA el saldo (devuelve el dinero a balance disponible)
+2. ✅ NO se resta del balance total
+3. ✅ El retiro queda en estado `rejected`
+4. ✅ Se registra quién lo rechazó y deservecho
+
+**Response (200 OK):**
+```json
+{
+  "withdrawal": {
+    "id": 1,
+    "username": "usuario123",
+    "cedula": "V-12345678",
+    "telefono": "+584121234567",
+    "banco": "Banesco",
+    "monto": 500.00,
+    "payment_method": "bank_transfer",
+    "status": "rejected",
+    "processedAt": "2024-01-15T11:30:00Z",
+    "processedBy": "admin_user",
+    "notes": "Información bancaria incorrecta",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T11:30:00Z"
+  }
+}
+```
+
+---
+
+#### **Errores (400 Bad Request):**
+
+- `WITHDRAWAL_NOT_FOUND`: El retiro no existe
+- `WITHDRAWAL_NOT_PENDING`: El retiro ya fue procesado (solo se pueden aprobar/rechazar retiros en estado `pending`)
+- `INSUFFICIENT_FUNDS`: (Solo al aprobar) El usuario no tiene suficiente saldo
+
+---
+
+## 🎯 Lógica del Backend
+
+### **Cuando se APRUEBA un Retiro:**
+
+```typescript
+// 1. Validar que el retiro esté en estado 'pending'
+if (withdrawal.status !== 'pending') {
+  throw new Error('WITHDRAWAL_NOT_PENDING');
+}
+
+// 2. Obtener el usuario
+const user = await SqlUser.findOne({ where: { username: withdrawal.username } });
+
+// 3. RESTAR del balance total
+const newBalance = Number(user.balance) - withdrawal.monto;
+
+// 4. DESBLOQUEAR el saldo
+const newBlockedBalance = Number(user.blockedBalance) - withdrawal.monto;
+
+// 5. Actualizar usuario
+await user.update({
+  balance: newBalance,
+  blockedBalance: newBlockedBalance
+});
+
+// 6. Actualizar retiro
+await withdrawal.update({
+  status: 'approved',
+  processedBy: adminUsername,
+  processedAt: new Date(),
+  notes: notes
+});
+```
+
+**Ejemplo:**
+```
+Balance antes: 5000 BS
+BlockedBalance: 500 BS
+Retiro: 500 BS
+
+Balance después: 4500 BS
+BlockedBalance: 0 BS
+```
+
+---
+
+### **Cuando se RECHAZA un Retiro:**
+
+```typescript
+// 1. Validar que el retiro esté en estado 'pending'
+if (withdrawal.status !== 'pending') {
+  throw new Error('WITHDRAWAL_NOT_PENDING');
+}
+
+// 2. Obtener el usuario
+const user = await SqlUser.findOne({ where: { username: withdrawal.username } });
+
+// 3. Solo DESBLOQUEAR (NO restar del balance)
+const newBlockedBalance = Number(user.blockedBalance) - withdrawal.monto;
+
+// 4. Actualizar usuario
+await user.update({
+  blockedBalance: newBlockedBalance
+});
+
+// 5. Actualizar retiro
+await withdrawal.update({
+  status: 'rejected',
+  processedBy: adminUsername,
+  processedAt: new Date(),
+  notes: notes
+});
+```
+
+**Ejemplo:**
+```
+Balance antes: 5000 BS
+BlockedBalance: 500 BS
+Retiro rechazado: 500 BS
+
+Balance después: 5000 BS (NO cambia)
+BlockedBalance: 0 BS (se desbloquea)
+```
+
+---
+
+## 📊 Implementación Frontend para Admin
+
+### **1. Ver Retiros Pendientes**
+
+```typescript
+const getPendingWithdrawals = async () => {
+  const response = await fetch('/api/withdrawals/pending', {
+    credentials: 'include' // Incluye cookies de autenticación
+  });
+  
+  const { withdrawals } = await response.json();
+  return withdrawals;
+};
+```
+
+---
+
+### **2. Filtrar Retiros**
+
+```typescript
+const getAllWithdrawals = async (filters?: {
+  status?: string;
+  username?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}) => {
+  const params = new URLSearchParams();
+  if (filters?.status) params.append('status', filters.status);
+  if (filters?.username) params.append('username', filters.username);
+  if (filters?.dateFrom) params.append('dateFrom', filters.dateFrom);
+  if (filters?.dateTo) params.append('dateTo', filters.dateTo);
+  
+  const response = await fetch(`/api/withdrawals/all?${params.toString()}`, {
+    credentials: 'include'
+  });
+  
+  const { withdrawals } = await response.json();
+  return withdrawals;
+};
+```
+
+---
+
+### **3. Aprobar Retiro**
+
+```typescript
+const approveWithdrawal = async (
+  withdrawalId: number,
+  adminUsername: string,
+  notes?: string
+) => {
+  const response = await fetch(`/api/withdrawals/${withdrawalId}/status`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({
+      status: 'approved',
+      processedBy: adminUsername,
+      notes: notes || ''
+    })
+  });
+  
+  if (response.ok) {
+    const { withdrawal } = await response.json();
+    showSuccess('Retiro aprobado exitosamente');
+    return withdrawal;
+  } else {
+    const { error } = await response.json();
+    showError(`Error: ${error}`);
+  }
+};
+```
+
+---
+
+### **4. Rechazar Retiro**
+
+```typescript
+const rejectWithdrawal = async (
+  withdrawalId: number,
+  adminUsername: string,
+  reason?: string
+) => {
+  const response = await fetch(`/api/withdrawals/${withdrawalId}/status`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({
+      status: 'rejected',
+      processedBy: adminUsername,
+      notes: reason || 'Retiro rechazado'
+    })
+  });
+  
+  if (response.ok) {
+    const { withdrawal } = await response.json();
+    showSuccess('Retiro rechazado');
+    return withdrawal;
+  } else {
+    const { error } = await response.json();
+    showError(`Error: ${error}`);
+  }
+};
+```
+
+---
+
+### **5. Componente React Completo**
+
+```typescript
+const WithdrawalAdminPanel = () => {
+  const [pendingWithdrawals, setPendingWithdrawals] = useState([]);
+  const [allWithdrawals, setAllWithdrawals] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [adminUsername] = useState('admin_user');
+  
+  useEffect(() => {
+    loadPendingWithdrawals();
+    loadAllWithdrawals();
+  }, []);
+  
+  const loadPendingWithdrawals = async () => {
+    const data = await getPendingWithdrawals();
+    setPendingWithdrawals(data);
+  };
+  
+  const loadAllWithdrawals = async () => {
+    const data = await getAllWithdrawals(filters);
+    setAllWithdrawals(data);
+  };
+  
+  const handleApprove = async (id: number) => {
+    if (confirm('¿Estás seguro de aprobar este retiro?')) {
+      await approveWithdrawal(id, adminUsername);
+      loadPendingWithdrawals();
+      loadAllWithdrawals();
+    }
+  };
+  
+  const handleReject = async (id: number) => {
+    const reason = prompt('Motivo del rechazo:');
+    if (reason) {
+      await rejectWithdrawal(id, adminUsername, reason);
+      loadPendingWithdrawals();
+      loadAllWithdrawals();
+    }
+  };
+  
+  return (
+    <div>
+      <h2>Retiros Pendientes</h2>
+      {pendingWithdrawals.map(withdrawal => (
+        <div key={withdrawal.id}>
+          <h3>{withdrawal.user.fullName}</h3>
+          <p>Username: {withdrawal.username}</p>
+          <p>Email: {withdrawal.user.email}</p>
+          <p>Monto: {withdrawal.monto} BS</p>
+          <p>Método: {withdrawal.payment_method}</p>
+          <p>Banco: {withdrawal.banco}</p>
+          <p>Cédula: {withdrawal.cedula}</p>
+          <p>Teléfono: {withdrawal.telefono}</p>
+          <p>Fecha: {new Date(withdrawal.createdAt).toLocaleString()}</p>
+          
+          <button onClick={() => handleApprove(withdrawal.id)}>
+            Aprobar
+          </button>
+          <button onClick={() => handleReject(withdrawal.id)}>
+            Rechazar
+          </button>
+        </div>
+      ))}
+      
+      <h2>Todos los Retiros</h2>
+      {/* Filtros */}
+      <div>
+        <select onChange={e => setFilters({...filters, status: e.target.value})}>
+          <option value="">Todos los estados</option>
+          <option value="pending">Pendiente</option>
+          <option value="approved">Aprobado</option>
+          <option value="rejected">Rechazado</option>
+        </select>
+      </div>
+      
+      {allWithdrawals.map(withdrawal => (
+        <div key={withdrawal.id}>
+          <p>{withdrawal.username} - {withdrawal.monto} BS - {withdrawal.status}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+```
+
+---
+
+## 📝 Resumen de Acciones Admin
+
+| Acción | Endpoint | Estado Final | Balance Usuario |
+|--------|----------|--------------|-----------------|
+| Aprobar | `PUT /api/withdrawals/:id/status` con `"approved"` | `approved` | Se resta el monto |
+| Rechazar | `PUT /api/withdrawals/:id/status` con `"rejected"` | `rejected` | Se desbloquea, no se resta |
+
+---
+
+## ⚠️ Consideraciones Importantes
+
+1. **Autenticación:** Todos los endpoints requieren cookie `authToken` con rol `admin`
+2. **Estado:** Solo se pueden aprobar/rechazar retiros en estado `pending`
+3. **Transacciones:** El backend usa transacciones de base de datos para garantizar consistencia
+4. **Auditoría:** Siempre se registra quién procesó el retiro y cuándo
+5. **Irreversible:** Una vez aprobado o rechazado, no se puede cambiar el estado
+
+---
+
+**Última actualización:** 2025-01-22  
+**Versión:** 1.0.0

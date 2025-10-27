@@ -23,16 +23,17 @@ interface DepositFormErrors {
 
 interface DepositFormProps {
   onSuccess: () => void;
+  variant?: 'pago_movil';
 }
 
-export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
+export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) => {
   const { authState } = useAuth();
   const [createDeposit, { isLoading }] = useCreateDepositMutation();
 
   const [formData, setFormData] = useState<DepositFormData>({
     amount: 0,
     reference: '',
-    bank: '',
+    bank: variant === 'pago_movil' ? 'Pago Móvil' : '',
   });
 
   const [errors, setErrors] = useState<DepositFormErrors>({});
@@ -52,7 +53,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
     switch (name) {
       case 'amount':
         if (!value || Number(value) < 50) {
-          newErrors.amount = 'El monto mínimo es 50 BS';
+          newErrors.amount = 'El monto mínimo es 50 RUB';
         } else {
           delete newErrors.amount;
         }
@@ -69,8 +70,12 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
         break;
 
       case 'bank':
-        if (!value) {
-          newErrors.bank = 'Debe seleccionar el banco de origen';
+        if (variant !== 'pago_movil') {
+          if (!value) {
+            newErrors.bank = 'Debe seleccionar el banco de origen';
+          } else {
+            delete newErrors.bank;
+          }
         } else {
           delete newErrors.bank;
         }
@@ -84,7 +89,11 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
     const { name, value, type } = e.target;
     const newValue = type === 'number' ? parseFloat(value) || 0 : value;
     
-    setFormData(prev => ({ ...prev, [name]: newValue }));
+    if (variant === 'pago_movil' && name === 'bank') {
+      // Bank es fijo en pago móvil
+    } else {
+      setFormData(prev => ({ ...prev, [name]: newValue }));
+    }
     
     // Limpiar errores específicos del campo
     setErrors(prev => {
@@ -117,7 +126,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
       const step1Errors = [];
       if (!formData.amount || formData.amount < 50) step1Errors.push('amount');
       if (!formData.reference) step1Errors.push('reference');
-      if (!formData.bank) step1Errors.push('bank');
+      if (variant !== 'pago_movil' && !formData.bank) step1Errors.push('bank');
       
       if (step1Errors.length > 0) {
         setErrors(prev => ({
@@ -157,8 +166,8 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
         username: authState.user.username,
         amount: formData.amount,
         reference: formData.reference,
-        bank: formData.bank,
-        paymentMethod: 'bank_transfer' as const,
+        bank: variant === 'pago_movil' ? 'Pago Móvil' : formData.bank,
+        paymentMethod: 'bank_transfer' as const, // Temporal: backend aún no soporta 'pago_movil'
         ...receiptData,
       };
 
@@ -225,15 +234,19 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
               
               <div className="payment-method-info">
                 <div className="method-info">
-                  <h3>💳 Transferencia Bancaria</h3>
-                  <p>Realiza una transferencia bancaria a nuestra cuenta y sube el comprobante</p>
+                  <h3>{variant === 'pago_movil' ? '📱 Pago Móvil' : '💳 Transferencia Bancaria'}</h3>
+                  <p>
+                    {variant === 'pago_movil'
+                      ? 'Realiza un Pago Móvil y sube el comprobante con la referencia PM'
+                      : 'Realiza una transferencia bancaria a nuestra cuenta y sube el comprobante'}
+                  </p>
                   
                   <div className="bank-info">
-                    <h4>Datos de la Cuenta:</h4>
+                    <h4>Datos {variant === 'pago_movil' ? 'de Pago Móvil' : 'de la Cuenta'}:</h4>
                     <div className="bank-details">
                       <div className="bank-item">
                         <span className="bank-label">Banco:</span>
-                        <span className="bank-value">Banco</span>
+                        <span className="bank-value">{variant === 'pago_movil' ? 'Pago Móvil' : 'Banco'}</span>
                       </div>
                       <div className="bank-item">
                         <span className="bank-label">Cuenta:</span>
@@ -276,7 +289,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
 
               <div className="form-group">
                 <label htmlFor="reference" className="form-label">
-                  Número de referencia
+                  {variant === 'pago_movil' ? 'Referencia Pago Móvil (PM...)' : 'Número de referencia'}
                 </label>
                 <input
                   type="text"
@@ -285,7 +298,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
                   value={formData.reference}
                   onChange={handleInputChange}
                   className={`form-input ${errors.reference ? 'error' : ''}`}
-                  placeholder="Número de transferencia"
+                  placeholder={variant === 'pago_movil' ? 'Ej: PM123456789' : 'Número de transferencia'}
                 />
                 {errors.reference && <span className="error-message">{errors.reference}</span>}
               </div>
@@ -301,7 +314,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
                   onChange={handleInputChange}
                   className={`form-select ${errors.bank ? 'error' : ''}`}
                 >
-                  <option value="">Seleccione su banco</option>
+                  <option value="">{variant === 'pago_movil' ? 'Pago Móvil' : 'Seleccione su banco'}</option>
                   <option value="Banesco">Banesco</option>
                   <option value="Venezuela">Banco de Venezuela</option>
                   <option value="Mercantil">Banco Mercantil</option>
@@ -368,7 +381,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess }) => {
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Monto:</span>
-                  <span className="summary-value">{formData.amount.toFixed(2)} BS</span>
+                  <span className="summary-value">{formData.amount.toFixed(2)} RUB</span>
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Referencia:</span>

@@ -12,7 +12,7 @@ import "@/styles/components/roulette-bets.css";
 import "@/styles/components/roulette-results.css";
 import "@/styles/components/roulette-modal.css";
 import "@/styles/components/roulette-selector.css";
-import "@/styles/components/roulette-responsive.css";
+import "@/styles/components/deposits-table.css";
 import { HelpButton } from "@/components/ui/HelpButton";
 import { Header } from "@/components/layout/Header";
 import { Providers } from "@/lib/providers";

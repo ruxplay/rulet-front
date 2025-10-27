@@ -1,13 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { HelpModal } from './HelpModal';
 
 export const HelpButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const pathname = usePathname();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // No mostrar el botón de ayuda en el Dashboard Admin
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <>
