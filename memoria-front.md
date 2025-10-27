@@ -298,11 +298,17 @@ src/
 - ✅ Implementado listener `withdrawal.rejected` para actualizar tabla cuando se rechaza un retiro
 - ✅ **Invalidación automática de cache RTK Query** cuando llegan eventos de retiros
 - ✅ **Notificaciones solo para admin** (verifica role antes de mostrar)
-- ✅ **Actualizado `UserBalanceUpdatedEvent`** para incluir `withdrawal_approved` y `withdrawal_rejected` con campos de retiro
+- ✅ **Actualizado `UserBalanceUpdatedEvent`** para incluir `withdrawal_approved`, `withdrawal_rejected` y `deposit_rejected` con campos de retiro
 - ✅ Notificaciones informativas para retiros creados con detalles del usuario y monto
 - ✅ Notificación de éxito cuando se aprueba un retiro
 - ✅ Notificación de error cuando se rechaza un retiro
 - ✅ Notificaciones para usuarios cuando se aprueba/rechaza su retiro
+- ✅ **Notificación de error para usuarios cuando se rechaza su depósito** (`deposit_rejected`)
+
+### 2024-12-19 - Notificación de Depósito Rechazado para Usuarios
+- ✅ **Implementado caso `deposit_rejected`** en listener `user.balance.updated`
+- ✅ Usuario recibe notificación de error cuando el admin rechaza su depósito
+- ✅ Notificación incluye monto rechazado y mensaje informativo
 
 ### Archivos modificados
 - ✅ `src/types/index.ts` - Tipos de eventos de retiros

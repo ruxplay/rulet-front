@@ -214,6 +214,14 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
                 );
               }
               break;
+            case 'deposit_rejected':
+              if (data.depositAmount !== undefined) {
+                showError(
+                  '❌ Depósito Rechazado',
+                  `Tu depósito de ${data.depositAmount} RUB ha sido rechazado. Revisa los detalles en la sección de depósitos`
+                );
+              }
+              break;
             case 'bet':
               if (data.betAmount !== undefined) {
                 showInfo(
