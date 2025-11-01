@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { RuletaMetrics } from '@/components/dashboard/RuletaMetrics';
 
 interface ActiveMesa {
   type: '150' | '300';
@@ -31,7 +32,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ stats }) => {
           <p>Desde aquí puedes gestionar todos los aspectos de la plataforma.</p>
         </div>
         
-        <div className="admin-stats-grid">
+        <div className="admin-stats-grid admin-stats-grid-top">
           <div className="admin-stat-card">
             <h3>Usuarios Totales</h3>
             <p className="stat-number">{stats?.totalUsers || 0}</p>
@@ -41,17 +42,24 @@ export const AdminContent: React.FC<AdminContentProps> = ({ stats }) => {
             <p className="stat-number">{stats?.pendingDeposits || 0}</p>
           </div>
           <div className="admin-stat-card">
+            <h3>Retiros Pendientes</h3>
+            <p className="stat-number">{stats?.pendingWithdrawals || 0}</p>
+          </div>
+          <div className="admin-stat-card">
             <h3>Ganancias Casa</h3>
             <p className="stat-number">
               {stats?.houseEarnings ? new Intl.NumberFormat('es-VE', {
                 style: 'currency',
-                currency: 'RUB',
+                currency: 'RUX',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
-              }).format(stats.houseEarnings) : '0 RUB'}
+              }).format(stats.houseEarnings) : '0 RUX'}
             </p>
           </div>
-          <div className="admin-stat-card">
+        </div>
+
+        <div className="admin-mesas-container">
+          <div className="admin-stat-card admin-stat-card-fullwidth">
             <h3>Mesas Activas</h3>
             <p className="stat-number">{stats?.activeMesas || 0}</p>
             {stats?.activeMesasDetail && stats.activeMesasDetail.length > 0 && (
@@ -60,7 +68,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ stats }) => {
                   <div key={index} className="mesa-item">
                     <div className="mesa-info">
                       <span className="mesa-type">Ruleta {mesa.type}</span>
-                      <span className="mesa-id">ID: {mesa.mesaId}</span>
+                      <span className="mesa-id">Mesa ID: {mesa.mesaId}</span>
                     </div>
                     <span className="mesa-status">{mesa.status}</span>
                   </div>
@@ -68,6 +76,11 @@ export const AdminContent: React.FC<AdminContentProps> = ({ stats }) => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Componente de Actividad por Mesa */}
+        <div className="admin-mesas-container">
+          <RuletaMetrics />
         </div>
       </div>
     </main>

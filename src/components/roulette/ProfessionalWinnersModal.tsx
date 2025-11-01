@@ -11,26 +11,23 @@ interface ProfessionalWinnersModalProps {
   type: '150' | '300';
 }
 
-export const ProfessionalWinnersModal = ({ 
-  show, 
-  onClose, 
-  winners, 
+export const ProfessionalWinnersModal = ({
+  show,
+  onClose,
+  winners,
   formatCurrency,
   type
 }: ProfessionalWinnersModalProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Mostrar modal cuando show es true
   useEffect(() => {
     if (show && winners) {
-      console.log('🎯 ProfessionalWinnersModal - Mostrando modal');
       setIsVisible(true);
     } else {
       setIsVisible(false);
     }
   }, [show, winners]);
 
-  // Manejar tecla Escape y scroll
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isVisible) {
@@ -41,7 +38,6 @@ export const ProfessionalWinnersModal = ({
 
     if (isVisible) {
       document.addEventListener('keydown', handleEscape);
-      // Guardar el scroll actual
       const scrollY = window.scrollY;
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
@@ -51,7 +47,6 @@ export const ProfessionalWinnersModal = ({
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      // Restaurar scroll
       const scrollY = document.body.style.top;
       document.body.style.position = '';
       document.body.style.top = '';
@@ -75,172 +70,89 @@ export const ProfessionalWinnersModal = ({
     setTimeout(() => onClose(), 300);
   };
 
-  if (!show || !winners) {
-    return null;
-  }
+  if (!show || !winners) return null;
 
   const betAmount = type === '150' ? 150 : 300;
   const totalApostado = winners.totals.totalApostado;
 
   return (
-    <div 
-      className={`professional-modal-backdrop ${isVisible ? 'visible' : ''}`}
+    <div
+      className={`darkpremium-backdrop ${isVisible ? 'visible' : ''}`}
       onClick={handleBackdropClick}
     >
-      <div className={`professional-modal-container ${isVisible ? 'visible' : ''}`}>
-        {/* Header */}
-        <div className="modal-header">
-          <div className="modal-title-section">
-            <div className="title-with-icon">
-              <span className="title-icon">🏆</span>
-              <h2 className="modal-title">
-                ¡GANADORES DE LA RULETA {betAmount}!
-              </h2>
-            </div>
-            <div className="modal-subtitle">
-              Mesa #{winners.mesaId} • Total apostado: {formatCurrency(totalApostado ?? 0)}
-            </div>
+      <div className={`darkpremium-container ${isVisible ? 'visible' : ''}`}>
+        <header className="dp-header">
+          <div className="dp-title">
+            <span className="dp-icon">🏆</span>
+            <h2>GANADORES RULETA {betAmount}</h2>
           </div>
-          
-          <div className="modal-controls">
-            <button
-              className="modal-close-btn"
-              onClick={handleCloseClick}
-              aria-label="Cerrar modal"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Contenido principal */}
-        <div className="modal-content">
-          {/* Ganador principal */}
-          <div className="winner-card main-winner-card">
-            <div className="winner-header">
-              <div className="winner-rank">
-                <span className="rank-icon">🥇</span>
-                <span className="rank-text">GANADOR PRINCIPAL</span>
-              </div>
-              <div className="winner-prize">
-                {formatCurrency(winners.main.prize ?? 0)}
-              </div>
-            </div>
-            
-            <div className="winner-details">
-              <div className="winner-name">{winners.main.username}</div>
-              <div className="winner-info">
-                <span className="info-item">
-                  <span className="info-label">Número:</span>
-                  <span className="info-value">#{winners.main.index + 1}</span>
-                </span>
-                <span className="info-item">
-                  <span className="info-label">Apuesta:</span>
-                  <span className="info-value">{formatCurrency(winners.main.bet ?? 0)}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Ganadores secundarios */}
-          <div className="secondary-winners-section">
-            <h3 className="section-title">Ganadores Secundarios</h3>
-            
-            <div className="secondary-winners-grid">
-              {/* Ganador izquierdo */}
-              <div className="winner-card secondary-winner-card">
-                <div className="winner-header">
-                  <div className="winner-rank">
-                    <span className="rank-icon">🥈</span>
-                    <span className="rank-text">IZQUIERDO</span>
-                  </div>
-                  <div className="winner-prize">
-                    {formatCurrency(winners.left.prize ?? 0)}
-                  </div>
-                </div>
-                
-                <div className="winner-details">
-                  <div className="winner-name">{winners.left.username}</div>
-                  <div className="winner-info">
-                    <span className="info-item">
-                      <span className="info-label">Número:</span>
-                      <span className="info-value">#{winners.left.index + 1}</span>
-                    </span>
-                    <span className="info-item">
-                      <span className="info-label">Apuesta:</span>
-                      <span className="info-value">{formatCurrency(winners.left.bet ?? 0)}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Ganador derecho */}
-              <div className="winner-card secondary-winner-card">
-                <div className="winner-header">
-                  <div className="winner-rank">
-                    <span className="rank-icon">🥉</span>
-                    <span className="rank-text">DERECHO</span>
-                  </div>
-                  <div className="winner-prize">
-                    {formatCurrency(winners.right.prize ?? 0)}
-                  </div>
-                </div>
-                
-                <div className="winner-details">
-                  <div className="winner-name">{winners.right.username}</div>
-                  <div className="winner-info">
-                    <span className="info-item">
-                      <span className="info-label">Número:</span>
-                      <span className="info-value">#{winners.right.index + 1}</span>
-                    </span>
-                    <span className="info-item">
-                      <span className="info-label">Apuesta:</span>
-                      <span className="info-value">{formatCurrency(winners.right.bet ?? 0)}</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Resumen de estadísticas */}
-          <div className="stats-summary">
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Total Apostado</span>
-                <span className="stat-value">{formatCurrency(winners.totals.totalApostado ?? 0)}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Premio Principal</span>
-                <span className="stat-value">{formatCurrency(winners.totals.premioPrincipal ?? 0)}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Premios Secundarios</span>
-                <span className="stat-value">{formatCurrency((winners.totals.premioSecundario ?? 0) * 2)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="modal-footer">
-          <div className="footer-info">
-            <span className="footer-text">
-              Los premios se acreditarán automáticamente a tu saldo
-            </span>
-          </div>
-          <button 
-            className="continue-btn"
-            onClick={handleCloseClick}
-          >
-            Continuar Jugando
+          <p className="dp-subtitle">
+            Mesa #{winners.mesaId} • Total Apostado: {formatCurrency(totalApostado ?? 0)}
+          </p>
+          <button className="dp-close" onClick={handleCloseClick} aria-label="Cerrar modal">
+            ✕
           </button>
-        </div>
+        </header>
+
+        <section className="dp-content">
+          <div className="dp-card main">
+            <div className="dp-card-header">
+              <div className="rank">
+                <span>🥇</span> GANADOR PRINCIPAL
+              </div>
+              <div className="prize">{formatCurrency(winners.main.prize ?? 0)}</div>
+            </div>
+            <div className="dp-card-body">
+              <h3>{winners.main.username}</h3>
+              <div className="info">
+                <div><strong>Número:</strong> #{winners.main.index + 1}</div>
+                <div><strong>Apuesta:</strong> {formatCurrency(winners.main.bet ?? 0)}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="dp-grid">
+            <div className="dp-card secondary">
+              <div className="dp-card-header">
+                <div className="rank"><span>🥈</span> IZQUIERDO</div>
+                <div className="prize">{formatCurrency(winners.left.prize ?? 0)}</div>
+              </div>
+              <div className="dp-card-body">
+                <h3>{winners.left.username}</h3>
+                <div className="info">
+                  <div><strong>Número:</strong> #{winners.left.index + 1}</div>
+                  <div><strong>Apuesta:</strong> {formatCurrency(winners.left.bet ?? 0)}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="dp-card secondary">
+              <div className="dp-card-header">
+                <div className="rank"><span>🥉</span> DERECHO</div>
+                <div className="prize">{formatCurrency(winners.right.prize ?? 0)}</div>
+              </div>
+              <div className="dp-card-body">
+                <h3>{winners.right.username}</h3>
+                <div className="info">
+                  <div><strong>Número:</strong> #{winners.right.index + 1}</div>
+                  <div><strong>Apuesta:</strong> {formatCurrency(winners.right.bet ?? 0)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="dp-stats">
+            <div><span>Total Apostado</span><strong>{formatCurrency(winners.totals.totalApostado ?? 0)}</strong></div>
+            <div><span>Premio Principal</span><strong>{formatCurrency(winners.totals.premioPrincipal ?? 0)}</strong></div>
+            <div><span>Premios Secundarios</span><strong>{formatCurrency((winners.totals.premioSecundario ?? 0) * 2)}</strong></div>
+          </div>
+        </section>
+
+        <footer className="dp-footer">
+          <p>Los premios se acreditarán automáticamente a tu saldo.</p>
+          <button className="dp-btn" onClick={handleCloseClick}>Continuar Jugando</button>
+        </footer>
       </div>
     </div>
   );
 };
-

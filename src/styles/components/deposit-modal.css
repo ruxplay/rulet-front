@@ -135,6 +135,132 @@
   box-shadow: none;
 }
 
+/* Estilos para el encabezado de recarga */
+.deposit-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  text-align: left;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background: transparent !important;
+  border: 2px solid var(--secondary) !important;
+  border-radius: var(--border-radius-lg);
+  box-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.deposit-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 156, 0.05) 0%,
+    rgba(0, 255, 156, 0.15) 20%,
+    rgba(0, 255, 156, 0.3) 40%,
+    rgba(0, 200, 120, 0.4) 50%,
+    rgba(0, 255, 156, 0.3) 60%,
+    rgba(0, 255, 156, 0.15) 80%,
+    rgba(0, 255, 156, 0.05) 100%
+  );
+  background-size: 300% 100%;
+  animation: shimmer-background 4s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--border-radius-lg);
+}
+
+@keyframes shimmer-background {
+  0% {
+    background-position: -300% 0;
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 300% 0;
+    opacity: 0.5;
+  }
+}
+
+.deposit-header::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: var(--border-radius-lg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 240deg,
+    var(--secondary) 270deg,
+    var(--secondary) 290deg,
+    transparent 320deg,
+    transparent 360deg
+  );
+  opacity: 0.8;
+  animation: rotate-border 5s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+@keyframes rotate-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.deposit-header-icon {
+  flex-shrink: 0;
+  color: var(--secondary) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-icon 2s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulse-icon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.deposit-header-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.deposit-header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary) !important;
+  margin: 0 0 var(--spacing-md);
+  line-height: 1.2;
+}
+
+.deposit-header-description {
+  font-size: 1rem;
+  color: var(--text-secondary) !important;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 100%;
+}
+
 .deposit-modal .method-icon {
   flex-shrink: 0;
   color: var(--secondary) !important;

@@ -48,7 +48,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Calcular monto en RUB usando la nueva tasa con margen
+  // Calcular monto en RUX usando la nueva tasa con margen
   const [calculatedAmount, setCalculatedAmount] = useState(0);
 
   useEffect(() => {
@@ -184,7 +184,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
         bank: 'USDT Wallet',
         paymentMethod: 'usdt' as const,
         usdtAmount: formData.usdtAmount,
-        exchangeRate: rateData.finalRate, // Envía tasa con margen (297.0045 RUB/USDT)
+        exchangeRate: rateData.finalRate, // Envía tasa con margen (297.0045 RUX/USDT)
         walletAddress: formData.walletAddress,
         transactionHash: formData.transactionHash,
         ...receiptData,
@@ -196,7 +196,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
       await Swal.fire({
         title: '¡Depósito USDT Enviado!',
-        text: `Tu solicitud de depósito de ${formData.usdtAmount} USDT por ${calculatedAmount.toFixed(2)} RUB ha sido enviada y será revisada por nuestro equipo.`,
+        text: `Tu solicitud de depósito de ${formData.usdtAmount} USDT por ${calculatedAmount.toFixed(2)} RUX ha sido enviada y será revisada por nuestro equipo.`,
         icon: 'success',
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#00ff9c',
@@ -248,14 +248,14 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                        <span>Tasa oficial: </span>
                        <span className="rate-value">
                          {isLoadingRate ? 'Cargando...' : 
-                          rateData ? `${rateData.officialRate} RUB/USDT` : 'No disponible'}
+                          rateData ? `${rateData.officialRate} RUX/USDT` : 'No disponible'}
                        </span>
                      </div>
                      <div className="rate-info">
                        <span>Tasa final (con margen): </span>
                        <span className="rate-value-final">
                          {isLoadingRate ? 'Cargando...' : 
-                          rateData ? `${rateData.finalRate} RUB/USDT` : 'No disponible'}
+                          rateData ? `${rateData.finalRate} RUX/USDT` : 'No disponible'}
                        </span>
                      </div>
                      <div className="rate-info">
@@ -328,7 +328,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               
                      {formData.usdtAmount > 0 && rateData && (
                        <div className="conversion-info">
-                         <strong className="conversion-amount">Recibirás: {calculatedAmount.toFixed(2)} RUB</strong>
+                         <strong className="conversion-amount">Recibirás: {calculatedAmount.toFixed(2)} RUX</strong>
                        </div>
                      )}
             </div>
@@ -434,16 +434,16 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               </div>
               <div className="summary-item">
                 <span className="summary-label">Equivale a:</span>
-                <span className="summary-value">{calculatedAmount.toFixed(2)} RUB</span>
+                <span className="summary-value">{calculatedAmount.toFixed(2)} RUX</span>
               </div>
               <div className="summary-item">
                 <span className="summary-label">Tasa Final:</span>
-                <span className="summary-value">{rateData?.finalRate.toFixed(2) || 'N/A'} RUB/USDT</span>
+                <span className="summary-value">{rateData?.finalRate.toFixed(2) || 'N/A'} RUX/USDT</span>
               </div>
               {/* Campos técnicos ocultos para el usuario */}
               {/* <div className="summary-item">
                 <span className="summary-label">Tasa Oficial:</span>
-                <span className="summary-value">{rateData?.officialRate.toFixed(2) || 'N/A'} RUB/USDT</span>
+                <span className="summary-value">{rateData?.officialRate.toFixed(2) || 'N/A'} RUX/USDT</span>
               </div>
               <div className="summary-item">
                 <span className="summary-label">Margen:</span>

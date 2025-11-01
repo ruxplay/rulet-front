@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useGetAllUsersQuery } from '@/store/api/usersApi';
 import { useGetAllDepositsQuery } from '@/store/api/adminDepositsApi';
 import { useGetAllWithdrawalsQuery } from '@/store/api/adminWithdrawalsApi';
-import { useGetCurrentMesaQuery } from '@/store/api/rouletteApi';
+import { useGetCurrentMesaQuery, useGetTotalHouseEarningsQuery } from '@/store/api/rouletteApi';
 import { AdminContent } from './AdminContent';
 
 interface ActiveMesa {
@@ -49,9 +49,13 @@ export const AdminStatsProvider: React.FC = () => {
     username: undefined,
   });
 
-  // Obtener mesas de ruleta 150 y 300
+  // Obtener mesas de ruleta 150 y 300 (para mesas activas)
   const { data: mesa150Data } = useGetCurrentMesaQuery('150');
   const { data: mesa300Data } = useGetCurrentMesaQuery('300');
+
+  // Obtener total de ganancias de la casa (todas las mesas cerradas)
+  // Se actualiza automáticamente vía SSE cuando se cierra una mesa
+  const { data: totalEarningsData } = useGetTotalHouseEarningsQuery();
 
   // Calcular estadísticas
   useEffect(() => {
@@ -76,11 +80,21 @@ export const AdminStatsProvider: React.FC = () => {
     
     const activeMesas = activeMesasDetail.length;
 
-    // Calcular ganancias totales de la casa
-    const houseEarnings = [
-      mesa150Data?.mesa?.houseEarnings || 0,
-      mesa300Data?.mesa?.houseEarnings || 0
-    ].reduce((sum, val) => sum + Number(val), 0);
+    // Obtener ganancias totales de la casa desde el endpoint dedicado
+    // Este endpoint suma todas las mesas cerradas y se actualiza automáticamente vía SSE
+    const houseEarnings = totalEarningsData?.total || 0;
+    
+    // Debug: Log para verificar datos
+    console.log('💰 Ganancias Casa - Debug:', {
+      totalEarningsData,
+      houseEarnings150: totalEarningsData?.[150] || 0,
+      houseEarnings300: totalEarningsData?.[300] || 0,
+      totalFinal: houseEarnings,
+      mesasActivas: {
+        mesa150: mesa150Data?.mesa?.mesaId,
+        mesa300: mesa300Data?.mesa?.mesaId
+      }
+    });
 
     const newStats: DashboardStats = {
       totalUsers: usersData?.users?.length || 0,
@@ -93,7 +107,7 @@ export const AdminStatsProvider: React.FC = () => {
     };
 
     setStats(newStats);
-  }, [usersData, depositsData, withdrawalsData, mesa150Data, mesa300Data]);
+  }, [usersData, depositsData, withdrawalsData, mesa150Data, mesa300Data, totalEarningsData]);
 
   return <AdminContent stats={stats} />;
 };

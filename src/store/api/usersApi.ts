@@ -30,6 +30,23 @@ export interface UserResponse {
   user: User;
 }
 
+// Historial unificado del usuario
+export type UserHistoryItemType = 'bet' | 'deposit' | 'withdrawal';
+
+export interface UserHistoryItem<T = unknown> {
+  type: UserHistoryItemType;
+  id: number;
+  at: string;
+  data: T;
+}
+
+export interface UserHistoryResponse<T = unknown> {
+  username: string;
+  filters?: Record<string, unknown>;
+  pagination: { limit: number; offset: number; hasMore: boolean };
+  items: Array<UserHistoryItem<T>>;
+}
+
 export interface UpdateUserRequest {
   username?: string;
   email?: string;
@@ -120,6 +137,23 @@ export const usersApi = createApi({
         { type: 'User', id: 'LIST' },
       ],
     }),
+
+    // GET /api/users/:username/history
+    getUserHistory: builder.query<
+      UserHistoryResponse,
+      { username: string; dateFrom?: string; dateTo?: string; types?: string; limit?: number; offset?: number }
+    >({
+      query: ({ username, dateFrom, dateTo, types, limit = 50, offset = 0 }) => {
+        const params = new URLSearchParams();
+        if (dateFrom) params.set('dateFrom', dateFrom);
+        if (dateTo) params.set('dateTo', dateTo);
+        if (types) params.set('types', types);
+        params.set('limit', String(limit));
+        params.set('offset', String(offset));
+        const queryString = params.toString();
+        return `/${username}/history${queryString ? `?${queryString}` : ''}`;
+      },
+    }),
   }),
 });
 
@@ -129,4 +163,5 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useReactivateUserMutation,
+  useGetUserHistoryQuery,
 } = usersApi;

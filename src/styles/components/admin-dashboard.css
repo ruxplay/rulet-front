@@ -245,26 +245,187 @@
   margin: 0 auto;
 }
 
+/* ========================================
+   ESTILOS PREMIUM - ADMIN WELCOME
+   ======================================== */
 .admin-welcome {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  padding: 2.5rem 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  position: relative;
+}
+
+.admin-welcome::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 255, 156, 0.8) 0%, rgba(0, 255, 156, 0) 100%);
 }
 
 .admin-welcome h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .admin-welcome p {
   color: #64748b;
-  font-size: 1.125rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
+}
+
+/* Grid superior con 4 columnas para las tarjetas principales */
+.admin-stats-grid-top {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 1.5rem;
+}
+
+/* Contenedor para la tarjeta de Mesas Activas */
+.admin-mesas-container {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+/* ========================================
+   ESTILOS PREMIUM - MESAS ACTIVAS CARD
+   ======================================== */
+.admin-mesas-container:first-of-type .admin-stat-card-fullwidth {
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Borde superior sutil */
+.admin-mesas-container:first-of-type .admin-stat-card-fullwidth::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 255, 156, 0.4) 0%, rgba(0, 255, 156, 0) 50%, rgba(0, 255, 156, 0.4) 100%);
+  background-size: 200% 100%;
+  animation: shimmer-line 3s ease-in-out infinite;
+}
+
+@keyframes shimmer-line {
+  0%, 100% { background-position: -200% 0; }
+  50% { background-position: 200% 0; }
+}
+
+/* Centrar título y número en Mesas Activas */
+.admin-mesas-container:first-of-type .admin-stat-card-fullwidth h3 {
+  text-align: center !important;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin: 0 auto 1.25rem auto !important;
+  width: 100%;
+  display: block;
+}
+
+.admin-mesas-container:first-of-type .admin-stat-card-fullwidth .stat-number {
+  text-align: center !important;
+  display: block;
+  margin: 0 auto !important;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  width: 100%;
+}
+
+/* Detalles de mesas - Premium Minimalista */
+.admin-mesas-container:first-of-type .mesas-detail {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.admin-mesas-container:first-of-type .mesa-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 0.75rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+}
+
+.admin-mesas-container:first-of-type .mesa-item:hover {
+  background: #f1f5f9;
+  border-color: rgba(0, 255, 156, 0.3);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.admin-mesas-container:first-of-type .mesa-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.admin-mesas-container:first-of-type .mesa-type {
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+}
+
+.admin-mesas-container:first-of-type .mesa-id {
+  font-weight: 500;
+  color: #1e293b;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.75rem;
+  background: rgba(0, 255, 156, 0.12);
+  border: 1px solid rgba(0, 255, 156, 0.25);
+  border-radius: 0.375rem;
+  letter-spacing: 0.02em;
+}
+
+.admin-mesas-container:first-of-type .mesa-status {
+  font-weight: 600;
+  color: #059669;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  padding: 0.5rem 0.875rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 9999px;
+  letter-spacing: 0.08em;
 }
 
 /* Cards premium - compactas */
@@ -359,12 +520,12 @@
 
 .mesa-id {
   font-weight: 500;
-  color: #64748b;
+  color: #0f172a;
   font-family: 'Courier New', monospace;
   font-size: 0.8125rem;
   padding: 0.25rem 0.5rem;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: rgba(0, 255, 156, 0.15);
+  border: 1px solid rgba(0, 255, 156, 0.3);
   border-radius: 0.25rem;
 }
 
@@ -436,6 +597,11 @@
   .admin-stats-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Grid superior adaptativo para móvil */
+  .admin-stats-grid-top {
+    grid-template-columns: repeat(2, 1fr);
+  }
   
   .admin-content {
     padding: 1rem;
@@ -492,6 +658,11 @@
 @media (max-width: 480px) {
   .admin-content {
     padding: 0.75rem;
+  }
+
+  /* Grid superior: 1 columna en móviles pequeños */
+  .admin-stats-grid-top {
+    grid-template-columns: 1fr;
   }
 
   .admin-header {

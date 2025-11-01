@@ -12,10 +12,13 @@
 ### 🏗️ Arquitectura Implementada
 - **Framework:** Next.js 15 con App Router
 - **Lenguaje:** TypeScript con configuración strict
-- **Estilos:** CSS Modules + Tailwind CSS
-- **Estado:** Redux Toolkit + RTK Query
+- **Estilos:** CSS Modules (sin Tailwind en dependencias actuales)
+- **Estado:** Redux Toolkit (RTK) + RTK Query
 - **Autenticación:** Sistema de auth con persistencia
 - **UI Components:** Componentes reutilizables y escalables
+- **Tiempo Real:** Server-Sent Events (SSE) para actualizaciones en vivo
+
+### 📁 Estructura de Carpetas
 
 ### 📁 Estructura de Carpetas
 ```
@@ -119,6 +122,13 @@ src/
 - [x] Resultados en tiempo real
 - [x] SSE (Server-Sent Events)
 - [x] Modal de ganadores profesionales
+- [x] **NUEVO:** Sistema de actividad de mesas en tiempo real
+  - [x] Eventos SSE: `mesa.updated`, `mesa.spinning`
+  - [x] Contadores de jugadores activos (ej: 12/15)
+  - [x] ETA de giro en tiempo real (ej: ~1m 50s)
+  - [x] Estados de mesa: waiting, spinning, closed
+  - [x] Componente `MesaActivityCard` para mostrar actividad
+  - [x] Componente `MesaActivitySection` para dashboard
 - [x] Selector de salas (150, 300)
 - [x] Overlay de countdown
 - [x] **Indicadores LED profesionales** - Sistema moderno de luces LED para señalar ganadores
@@ -139,7 +149,7 @@ src/
 
 ### Estilos
 - **CSS Modules** - Estilos encapsulados
-- **Tailwind CSS** - Framework de utilidades CSS
+- (No se usa Tailwind en `package.json` actual)
 
 ### Servicios Externos
 - **Cloudinary** - Gestión de imágenes
@@ -161,8 +171,8 @@ src/
 
 ### 3. Estilos
 - **CSS Modules** para encapsulación
-- **Tailwind** para utilidades rápidas
 - **Variables CSS** para temas consistentes
+- Estilos organizados en `src/styles/` (components, layout, themes)
 
 ### 4. TypeScript
 - **Configuración strict** habilitada
@@ -180,7 +190,6 @@ src/
 - **typescript:** ^5.0.0
 - **@reduxjs/toolkit:** ^2.0.0
 - **zod:** ^3.22.0
-- **tailwindcss:** ^3.4.0
 
 ---
 
@@ -209,13 +218,31 @@ src/
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 
 ### Herramientas
-- [Tailwind CSS](https://tailwindcss.com/)
 - [Zod Validation](https://zod.dev/)
 - [Cloudinary](https://cloudinary.com/)
 
 ---
 
 ## 📅 Historial de Cambios
+
+### 2025-10-30 - Estabilización del stream SSE y alertas
+- ✅ Memoización de `useSweetAlert` con `useCallback` para estabilizar referencias.
+- ✅ `useRouletteSSE` ahora usa `alertsRef`, `usernameRef` y `roleRef` para leer valores actuales en listeners sin re-crear la conexión.
+- ✅ El efecto que abre `EventSource` quedó con dependencias vacías; se abre 1 sola conexión estable y se limpia en unmount.
+- ✅ Menos reconexiones al backend y menos GET a `/api/roulette/stream`.
+- ✅ Sin cambios de contrato de eventos; siguen: `mesa.*`, `user.balance.updated`, `deposit.*`, `withdrawal.*`.
+
+### 2025-01-29 - Sistema de Actividad de Mesas en Tiempo Real
+- ✅ **Implementado eventos SSE para actividad de mesas:**
+  - `mesa.updated`: Actualiza contadores de jugadores activos (ej: 12/15)
+  - `mesa.spinning`: Muestra ETA de giro en tiempo real (ej: ~1m 50s)
+- ✅ **Agregados tipos TypeScript:** `MesaUpdatedEvent`, `MesaSpinningEvent`
+- ✅ **Estado de actividad:** `mesaActivity` en `useRouletteSSE` hook
+- ✅ **Componentes creados:**
+  - `MesaActivityCard`: Muestra actividad individual de mesa
+  - `MesaActivitySection`: Sección completa para dashboard
+- ✅ **Estilos CSS:** Diseño responsive con animaciones
+- ✅ **Estados de mesa:** waiting, spinning, closed con indicadores visuales
 
 ### 2024-12-19 - Inicialización del Sistema de Memoria
 - ✅ Creación del sistema de memoria `memoria-front.md`
@@ -563,58 +590,39 @@ async onQueryStarted(arg, { dispatch, queryFulfilled }) {
 
 ---
 
-## 🍞 Sistema de Toasts
+## 🔔 Notificaciones con SweetAlert2
 
-### 📋 Funcionalidad Implementada
+### 📋 Implementación vigente
 
-**Sistema de notificaciones toast** para reemplazar SweetAlert en casos específicos donde se requiere una experiencia menos intrusiva.
+Las notificaciones se manejan con SweetAlert2 a través del hook `useSweetAlert`.
 
-### 🔧 Implementación Técnica
+- Archivo: `src/hooks/useSweetAlert.ts`
+- API expuesta: `showSuccess`, `showError`, `showWarning`, `showInfo`, `showConfirm`
+- Desde 2025-10-30, estas funciones están memoizadas con `useCallback` para estabilizar referencias y evitar remounts de efectos dependientes (SSE).
 
-#### 📍 Archivos Creados:
-
-1. **`src/hooks/useToast.ts`** - Hook personalizado para manejar toasts
-2. **`src/components/ui/Toast.tsx`** - Componente de toast individual
-3. **`src/components/ui/ToastProvider.tsx`** - Context provider global
-
-#### 📍 Características:
-
-- **Posición:** Esquina inferior derecha
-- **Duración:** 7 segundos por defecto (configurable)
-- **Tipos:** Success, Error, Warning, Info
-- **Auto-cierre:** Sí, con timer
-- **Cierre manual:** Botón X
-- **Responsive:** Funciona en móvil y desktop
-- **Animaciones:** Transiciones suaves
-- **Accesibilidad:** Screen reader friendly
-
-### 🎨 Diseño Visual
-
-```css
-/* Toast de Error */
-border-left: 4px solid #ef4444;
-background: white;
-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-border-radius: 0.5rem;
-```
-
-### 🔄 Uso en el Proyecto
+### 🔧 Uso típico
 
 ```typescript
-// En cualquier componente
-const { showError, showSuccess, showWarning, showInfo } = useToastContext();
+import { useSweetAlert } from '@/hooks/useSweetAlert';
 
-// Ejemplo de uso
-showError('Usuario Inactivo', 'Tu cuenta ha sido desactivada.', 7000);
+const { showSuccess, showError, showInfo } = useSweetAlert();
+
+await showSuccess('Operación exitosa', 'Tu acción se completó correctamente');
+await showError('Error', 'Algo salió mal');
+await showInfo('Información', 'Este es un mensaje informativo');
 ```
 
-### ✅ Ventajas sobre SweetAlert
+### 🔗 Integración con SSE
 
-- **🚫 No bloquea la interfaz** - El usuario puede seguir interactuando
-- **⏱️ Auto-cierre** - No requiere acción del usuario
-- **📱 Mejor UX móvil** - No ocupa toda la pantalla
-- **🎨 Más moderno** - Diseño más limpio y profesional
-- **🔄 Reutilizable** - Sistema escalable para toda la app
+En `useRouletteSSE`, las funciones del hook se leen desde un ref (`alertsRef`) dentro de los listeners, evitando que cambie la dependencia del efecto que abre la conexión SSE.
+
+```typescript
+const { showSuccess, showInfo, showError } = useSweetAlert();
+const alertsRef = useRef({ showSuccess, showInfo, showError });
+useEffect(() => { alertsRef.current = { showSuccess, showInfo, showError }; }, [showSuccess, showInfo, showError]);
+```
+
+Esto asegura una sola conexión estable y reconexiones solo por caídas reales de red/servidor.
 
 ---
 

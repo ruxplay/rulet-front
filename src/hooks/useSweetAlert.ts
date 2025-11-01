@@ -1,7 +1,8 @@
 import Swal from 'sweetalert2';
+import { useCallback } from 'react';
 
 export const useSweetAlert = () => {
-  const showSuccess = (title: string, text?: string) => {
+  const showSuccess = useCallback((title: string, text?: string) => {
     return Swal.fire({
       title,
       text,
@@ -16,9 +17,9 @@ export const useSweetAlert = () => {
         confirmButton: 'swal-confirm-button'
       }
     });
-  };
+  }, []);
 
-  const showError = (title: string, text?: string) => {
+  const showError = useCallback((title: string, text?: string) => {
     return Swal.fire({
       title,
       text,
@@ -33,9 +34,9 @@ export const useSweetAlert = () => {
         confirmButton: 'swal-confirm-button'
       }
     });
-  };
+  }, []);
 
-  const showWarning = (title: string, text?: string) => {
+  const showWarning = useCallback((title: string, text?: string) => {
     return Swal.fire({
       title,
       text,
@@ -50,9 +51,9 @@ export const useSweetAlert = () => {
         confirmButton: 'swal-confirm-button'
       }
     });
-  };
+  }, []);
 
-  const showInfo = (title: string, text?: string) => {
+  const showInfo = useCallback((title: string, text?: string) => {
     return Swal.fire({
       title,
       text,
@@ -67,9 +68,9 @@ export const useSweetAlert = () => {
         confirmButton: 'swal-confirm-button'
       }
     });
-  };
+  }, []);
 
-  const showConfirm = (title: string, text?: string) => {
+  const showConfirm = useCallback((title: string, text?: string) => {
     return Swal.fire({
       title,
       text,
@@ -88,7 +89,7 @@ export const useSweetAlert = () => {
         cancelButton: 'swal-cancel-button'
       }
     });
-  };
+  }, []);
 
   return {
     showSuccess,

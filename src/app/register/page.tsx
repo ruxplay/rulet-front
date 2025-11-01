@@ -526,7 +526,7 @@ export default function RegisterPage() {
         {/* Footer .*/}
         <div className="register-footer">
           <p>
-            ¿Ya tienes cuenta? <Link href="/login" className="login-link">Inicia sesión</Link>
+            ¿Ya tienes cuenta? <Link href="/" className="login-link">Inicia sesión</Link>
           </p>
         </div>
         </div>

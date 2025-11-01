@@ -1,33 +1,34 @@
-# 🧠 Memoria Backend - Sistema de Ruleta
+# 🧠 Memoria Backend – Sistema de Ruleta (Node.js + Express + TypeScript)
 
-## 📋 Información General
+## 📋 Información general
 
-**Stack Tecnológico:**
-- **Backend:** Node.js + Express + TypeScript
-- **Base de Datos:** PostgreSQL + Sequelize ORM
-- **Autenticación:** JWT con cookies HTTP-Only
-- **Validación:** Zod schemas
-- **Seguridad:** Helmet, CORS, bcrypt
-- **Testing:** Vitest + Supertest
+- **Backend**: Node.js + Express + TypeScript (ES Modules)
+- **ORM**: Sequelize (+ `sequelize-typescript`)
+- **Base de datos**: PostgreSQL
+- **Validación**: Zod
+- **Auth**: JWT en cookies HTTP-Only
+- **Seguridad**: Helmet, CORS, rate limit, bcrypt
+- **RT**: Server-Sent Events (SSE)
+- **Testing**: Vitest + Supertest
 
-**Estructura del Proyecto:**
+Estructura principal del código:
 ```
 src/
-├── routes/          # Endpoints de la API
-├── controllers/     # Lógica HTTP (delgada)
-├── services/        # Lógica de negocio
-├── models/          # Modelos Sequelize
-├── validators/       # Schemas Zod
-├── middleware/       # Middlewares (auth, etc.)
-├── config/          # Configuración DB
-└── common/          # Constantes y utilidades
+├── routes/            # Endpoints HTTP agrupados por módulo
+├── services/          # Reglas de negocio y transacciones
+├── models/            # Modelos Sequelize
+├── validators/        # Esquemas Zod
+├── middleware/        # Auth y manejo de errores
+├── config/            # DB y bootstrap
+├── common/            # Constantes/utilidades
+└── server.ts          # App Express y middlewares
 ```
 
 ---
 
-## 🔐 Autenticación y Usuarios
+## 🔐 Autenticación y usuarios
 
-### **Modelo: SqlUser**
+### Modelo: `SqlUser`
 ```typescript
 interface IUserAttributes {
   id: number;
@@ -48,9 +49,9 @@ interface IUserAttributes {
 }
 ```
 
-### **Endpoints de Autenticación**
+### Endpoints de autenticación
 
-#### `POST /api/auth/register`
+#### POST `/api/auth/register`
 **Descripción:** Registro de nuevos usuarios
 **Request:**
 ```json
@@ -75,7 +76,7 @@ interface IUserAttributes {
 ```
 **Validaciones:** Username y email únicos, email válido, password mínimo 6 caracteres
 
-#### `POST /api/auth/login`
+#### POST `/api/auth/login`
 **Descripción:** Inicio de sesión con JWT
 **Request:**
 ```json
@@ -108,7 +109,7 @@ interface IUserAttributes {
 **Cookies:** `authToken` HTTP-Only, 24h expiración, `sameSite: 'none'` para cross-domain
 **Nota:** El campo `isActive` se incluye en la respuesta para que el frontend pueda manejar usuarios inactivos. El backend NO restringe el login por `isActive` - esta validación se maneja en el frontend.
 
-#### `GET /api/auth/verify`
+#### GET `/api/auth/verify`
 **Descripción:** Verificar autenticación actual
 **Headers:** Cookie `authToken`
 **Response:**
@@ -120,7 +121,7 @@ interface IUserAttributes {
 }
 ```
 
-#### `POST /api/auth/logout`
+#### POST `/api/auth/logout`
 **Descripción:** Cerrar sesión
 **Response:**
 ```json
@@ -130,7 +131,7 @@ interface IUserAttributes {
 }
 ```
 
-#### `GET /api/auth/usernames`
+#### GET `/api/auth/usernames`
 **Descripción:** Obtener usernames por email
 **Query:** `?email=usuario@email.com`
 **Response:**
@@ -140,9 +141,9 @@ interface IUserAttributes {
 }
 ```
 
-### **Endpoints de Usuarios**
+### Endpoints de usuarios
 
-#### `GET /api/users`
+#### GET `/api/users`
 **Descripción:** Obtener todos los usuarios (admin) - INCLUYE usuarios activos e inactivos
 **Headers:** `Cookie: authToken=...` (requiere autenticación admin)
 **Response:**
@@ -184,7 +185,7 @@ interface IUserAttributes {
 ```
 **Nota:** Este endpoint devuelve TODOS los usuarios (activos e inactivos) para que el admin pueda gestionarlos. El campo `isActive` indica el estado del usuario.
 
-#### `GET /api/users/:username`
+#### GET `/api/users/:username`
 **Descripción:** Obtener usuario por username
 **Response:**
 ```json
@@ -193,7 +194,7 @@ interface IUserAttributes {
 }
 ```
 
-#### `PUT /api/users/:id`
+#### PUT `/api/users/:id`
 **Descripción:** Actualizar usuario
 **Request:**
 ```json
@@ -211,7 +212,7 @@ interface IUserAttributes {
 }
 ```
 
-#### `DELETE /api/users/:id`
+#### DELETE `/api/users/delete/:id`
 **Descripción:** Eliminación lógica de usuario (marca como inactivo)
 **Headers:** `Cookie: authToken=...` (requiere autenticación admin)
 **Response:**
@@ -222,7 +223,7 @@ interface IUserAttributes {
 ```
 **Nota:** Este endpoint realiza eliminación lógica, estableciendo `isActive: false` en lugar de eliminar físicamente el registro. Esto preserva el historial de transacciones y permite auditoría.
 
-#### `PUT /api/users/reactivate/:id`
+#### PUT `/api/users/reactivate/:id`
 **Descripción:** Reactivar usuario eliminado lógicamente (marca como activo)
 **Headers:** `Cookie: authToken=...` (requiere autenticación admin)
 **Response:**
@@ -233,7 +234,7 @@ interface IUserAttributes {
 ```
 **Nota:** Este endpoint reactiva un usuario que fue eliminado lógicamente, estableciendo `isActive: true`. Permite recuperar usuarios que fueron marcados como inactivos.
 
-#### `GET /api/users/test/:id`
+#### GET `/api/users/test/:id`
 **Descripción:** Verificar si un usuario existe en la base de datos (para testing)
 **Headers:** `Cookie: authToken=...` (requiere autenticación admin)
 **Response:**
@@ -249,7 +250,7 @@ interface IUserAttributes {
 ```
 **Nota:** Endpoint de testing para verificar la existencia de usuarios en la base de datos.
 
-### **Eliminación Lógica de Usuarios**
+### Eliminación lógica de usuarios
 
 El sistema implementa **eliminación lógica** para preservar la integridad de los datos:
 
@@ -277,9 +278,9 @@ El sistema implementa **eliminación lógica** para preservar la integridad de l
 
 ---
 
-## 💰 Sistema de Depósitos
+## 💰 Sistema de depósitos
 
-### **Modelo: Deposit**
+### Modelo: `Deposit`
 ```typescript
 interface DepositAttributes {
   id: number;
@@ -306,9 +307,9 @@ interface DepositAttributes {
 }
 ```
 
-### **Endpoints de Depósitos**
+### Endpoints de depósitos
 
-#### **Estados de Depósito**
+#### Estados de depósito
 Los depósitos tienen 3 estados posibles:
 
 | Estado | Descripción | Balance del Usuario |
@@ -319,7 +320,7 @@ Los depósitos tienen 3 estados posibles:
 
 **Flujo:** `pending` → `approved` (suma dinero) O `rejected` (no suma dinero)
 
-#### **⚠️ Corrección Importante - Suma de Balance**
+#### ⚠️ Corrección importante – suma de balance
 **Problema resuelto:** Se corrigió un bug crítico donde la suma del balance del usuario se realizaba como concatenación de strings en lugar de suma matemática.
 
 **Causa:** Los campos `balance` y `amount` en la base de datos son de tipo `DECIMAL`, que Sequelize devuelve como strings, causando concatenación en lugar de suma.
@@ -335,7 +336,7 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
 
 ---
 
-#### `POST /api/deposits`
+#### POST `/api/deposits`
 **Descripción:** Crear solicitud de depósito
 **Request:**
 ```json
@@ -379,7 +380,7 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
 }
 ```
 
-#### `GET /api/deposits/user/:username`
+#### GET `/api/deposits/user/:username`
 **Descripción:** Obtener depósitos de un usuario
 **Response:**
 ```json
@@ -397,7 +398,7 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
 }
 ```
 
-#### `GET /api/deposits/pending`
+#### GET `/api/deposits/pending`
 **Descripción:** Obtener depósitos pendientes (admin)
 **Response:**
 ```json
@@ -406,7 +407,7 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
 }
 ```
 
-#### `GET /api/deposits/all`
+#### GET `/api/deposits/all`
 **Descripción:** Obtener todos los depósitos con filtros (admin)
 **Query Parameters:**
 - `status`: Estado del depósito
@@ -414,7 +415,7 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
 - `dateFrom`: Fecha desde (ISO)
 - `dateTo`: Fecha hasta (ISO)
 
-#### `PUT /api/deposits/:id/status`
+#### PUT `/api/deposits/:id/status`
 **Descripción:** Actualizar estado de depósito (admin)
 **Request:**
 ```json
@@ -440,33 +441,15 @@ const newBalance = parseFloat(user.balance) + parseFloat(deposit.amount.toString
   }
   ```
 
-#### `GET /api/deposits/test-usdt-rate`
-**Descripción:** Probar cálculo de tasa USDT
-**Response:**
-```json
-{
-  "message": "Tasa USDT obtenida correctamente",
-  "currentRate": {
-    "rate": 36.25,
-    "source": "binance",
-    "createdAt": "2024-01-15T10:30:00Z"
-  },
-  "testCalculation": {
-    "usdtAmount": 10,
-    "exchangeRate": 36.25,
-    "calculatedAmount": 362.50,
-    "formula": "10 USDT × 36.25 BS/USDT = 362.50 BS"
-  }
-}
-```
+> Nota: El endpoint de prueba `GET /api/deposits/test-usdt-rate` no está presente en el código actual de rutas; se omite de la especificación.
 
 ---
 
-## 💸 Sistema de Retiros
+## 💸 Sistema de retiros
 
 > 📄 **Documentación detallada:** Ver archivo `retiros.mdx` en la raíz del proyecto para información completa de endpoints de administración.
 
-### **Modelo: Withdrawal**
+### Modelo: `Withdrawal`
 ```typescript
 interface WithdrawalAttributes {
   id: number;
@@ -485,9 +468,9 @@ interface WithdrawalAttributes {
 }
 ```
 
-### **Endpoints de Retiros**
+### Endpoints de retiros
 
-#### **Estados de Retiro**
+#### Estados de retiro
 Los retiros tienen 3 estados posibles:
 
 | Estado | Descripción | Balance del Usuario |
@@ -500,7 +483,7 @@ Los retiros tienen 3 estados posibles:
 
 ---
 
-#### `POST /api/withdrawals/request`
+#### POST `/api/withdrawals/request`
 **Descripción:** Crear solicitud de retiro
 **Request:**
 ```json
@@ -531,7 +514,7 @@ Los retiros tienen 3 estados posibles:
 - Monto mínimo configurado
 - No puede tener retiros pendientes
 
-#### `GET /api/withdrawals/user/:username`
+#### GET `/api/withdrawals/user/:username`
 **Descripción:** Obtener retiros de un usuario
 **Response:**
 ```json
@@ -549,7 +532,7 @@ Los retiros tienen 3 estados posibles:
 }
 ```
 
-#### `GET /api/withdrawals/pending`
+#### GET `/api/withdrawals/pending`
 **Descripción:** Obtener retiros pendientes (admin)
 **Response:**
 ```json
@@ -558,11 +541,11 @@ Los retiros tienen 3 estados posibles:
 }
 ```
 
-#### `GET /api/withdrawals/all`
+#### GET `/api/withdrawals/all`
 **Descripción:** Obtener todos los retiros con filtros (admin)
 **Query Parameters:** `status`, `username`, `dateFrom`, `dateTo`
 
-#### `PUT /api/withdrawals/:id/status`
+#### PUT `/api/withdrawals/:id/status`
 **Descripción:** Actualizar estado de retiro (admin)
 **Request:**
 ```json
@@ -573,7 +556,7 @@ Los retiros tienen 3 estados posibles:
 }
 ```
 
-#### `GET /api/withdrawals/eligibility/:username`
+#### GET `/api/withdrawals/eligibility/:username`
 **Descripción:** Verificar elegibilidad de retiro
 **Response:**
 ```json
@@ -590,7 +573,7 @@ Los retiros tienen 3 estados posibles:
 }
 ```
 
-#### `GET /api/withdrawals/allowed-methods/:username`
+#### GET `/api/withdrawals/allowed-methods/:username`
 **Descripción:** Obtener métodos de pago permitidos
 **Response:**
 ```json
@@ -617,7 +600,7 @@ El backend **RESTRINGE** los métodos de retiro según los métodos de depósito
 
 ---
 
-### 📋 **GUÍA PARA FRONTEND: Implementación de Retiros**
+### 📋 Guía frontend: retiros
 
 #### **1. Flujo Recomendado al Abrir Modal de Retiro**
 
@@ -867,9 +850,9 @@ const WithdrawalModal = ({ username, onClose }) => {
 
 ---
 
-## 🎰 Sistema de Ruleta
+## 🎰 Sistema de ruleta
 
-### **Modelos de Ruleta**
+### Modelos de ruleta
 
 #### **RouletteMesa**
 ```typescript
@@ -915,9 +898,9 @@ interface RouletteControlAttributes {
 }
 ```
 
-### **Endpoints de Ruleta**
+### Endpoints de ruleta
 
-#### `GET /api/roulette/:type/current`
+#### GET `/api/roulette/:type/current`
 **Descripción:** Obtener mesa actual de ruleta
 **Path:** `type` = '150' o '300'
 **Response:**
@@ -936,7 +919,7 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `POST /api/roulette/:type/bet`
+#### POST `/api/roulette/:type/bet`
 **Descripción:** Realizar apuesta en ruleta
 **Request:**
 ```json
@@ -971,7 +954,7 @@ interface RouletteControlAttributes {
 - Usuario no puede apostar dos veces en la misma mesa
 - Monto debe ser exacto según el tipo (150 o 300)
 
-#### `POST /api/roulette/:type/spin`
+#### POST `/api/roulette/:type/spin`
 **Descripción:** Iniciar giro de la ruleta
 **Request:**
 ```json
@@ -992,7 +975,7 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `POST /api/roulette/:type/submit-result`
+#### POST `/api/roulette/:type/submit-result`
 **Descripción:** Enviar resultado del giro
 **Request:**
 ```json
@@ -1022,7 +1005,7 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `POST /api/roulette/:type/advance`
+#### POST `/api/roulette/:type/advance`
 **Descripción:** Avanzar a la siguiente mesa
 **Request:**
 ```json
@@ -1031,7 +1014,7 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `GET /api/roulette/:type/report`
+#### GET `/api/roulette/:type/report`
 **Descripción:** Reporte de ganancias de la casa
 **Query Parameters:** `dateFrom`, `dateTo`
 **Response:**
@@ -1045,8 +1028,8 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `GET /api/roulette/:type/winners`
-**Descripción:** Últimos ganadores por mesa
+#### GET `/api/roulette/:type/winners`
+**Descripción:** Últimos ganadores por mesa (según implementación actual de rutas)
 **Query Parameters:** `limit` (default: 10)
 **Response:**
 ```json
@@ -1070,7 +1053,7 @@ interface RouletteControlAttributes {
 }
 ```
 
-#### `POST /api/roulette/:type/test-winners`
+#### POST `/api/roulette/:type/test-winners`
 **Descripción:** Probar cálculo de sectores ganadores
 **Request:**
 ```json
@@ -1094,9 +1077,9 @@ interface RouletteControlAttributes {
 }
 ```
 
-### **Server-Sent Events (SSE)**
+### Server-Sent Events (SSE)
 
-#### `GET /api/roulette/:type/stream`
+#### GET `/api/roulette/:type/stream`
 **Descripción:** Stream de eventos en tiempo real por tipo
 **Headers:** `Accept: text/event-stream`
 **Eventos de Ruleta:**
@@ -1121,7 +1104,7 @@ interface RouletteControlAttributes {
 - `withdrawal.approved`: Retiro aprobado
 - `withdrawal.rejected`: Retiro rechazado
 
-#### `GET /api/roulette/stream`
+#### GET `/api/roulette/stream`
 **Descripción:** Stream unificado para ambas ruletas (150 y 300)
 **Response:**
 ```json
@@ -1139,9 +1122,9 @@ interface RouletteControlAttributes {
 
 ---
 
-## 💱 Sistema de Tasas USDT
+## 💱 Sistema de tasas USDT
 
-### **Modelo: UsdtRate**
+### Modelo: `UsdtRate`
 ```typescript
 interface UsdtRateAttributes {
   id: number;
@@ -1153,9 +1136,9 @@ interface UsdtRateAttributes {
 }
 ```
 
-### **Endpoints de Tasas USDT**
+### Endpoints de tasas USDT
 
-#### `GET /api/usdt-rates/current`
+#### GET `/api/usdt-rates/current`
 **Descripción:** Obtener tasa actual de USDT
 **Response:**
 ```json
@@ -1172,7 +1155,7 @@ interface UsdtRateAttributes {
 }
 ```
 
-#### `GET /api/usdt-rates/history`
+#### GET `/api/usdt-rates/history`
 **Descripción:** Historial de tasas (admin)
 **Query Parameters:** `limit`, `offset`, `source`, `status`
 **Response:**
@@ -1190,7 +1173,7 @@ interface UsdtRateAttributes {
 }
 ```
 
-#### `POST /api/usdt-rates`
+#### POST `/api/usdt-rates`
 **Descripción:** Crear tasa manual (admin)
 **Request:**
 ```json
@@ -1200,7 +1183,7 @@ interface UsdtRateAttributes {
 }
 ```
 
-#### `PUT /api/usdt-rates/:id`
+#### PUT `/api/usdt-rates/:id`
 **Descripción:** Actualizar tasa (admin)
 **Request:**
 ```json
@@ -1210,7 +1193,7 @@ interface UsdtRateAttributes {
 }
 ```
 
-#### `POST /api/usdt-rates/update-from-api`
+#### POST `/api/usdt-rates/update-from-api`
 **Descripción:** Forzar actualización desde APIs externas
 **Response:**
 ```json
@@ -1226,9 +1209,9 @@ interface UsdtRateAttributes {
 
 ---
 
-## ⚙️ Sistema de Configuración
+## ⚙️ Sistema de configuración
 
-### **Modelo: SystemConfig**
+### Modelo: `SystemConfig`
 ```typescript
 interface SystemConfigAttributes {
   id: number;
@@ -1244,9 +1227,9 @@ interface SystemConfigAttributes {
 }
 ```
 
-### **Endpoints de Configuración**
+### Endpoints de configuración
 
-#### `GET /api/system-config`
+#### GET `/api/system-config`
 **Descripción:** Obtener todas las configuraciones (admin)
 **Query Parameters:** `category`, `isEditable`, `limit`, `offset`
 **Response:**
@@ -1266,7 +1249,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `GET /api/system-config/:key`
+#### GET `/api/system-config/:key`
 **Descripción:** Obtener configuración por clave (admin)
 **Response:**
 ```json
@@ -1283,7 +1266,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `GET /api/system-config/:key/value`
+#### GET `/api/system-config/:key/value`
 **Descripción:** Obtener valor de configuración (público, parseado)
 **Response:**
 ```json
@@ -1293,7 +1276,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `GET /api/system-config/category/:category`
+#### GET `/api/system-config/category/:category`
 **Descripción:** Obtener configuraciones por categoría
 **Response:**
 ```json
@@ -1303,7 +1286,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `POST /api/system-config`
+#### POST `/api/system-config`
 **Descripción:** Crear nueva configuración (admin)
 **Request:**
 ```json
@@ -1317,7 +1300,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `PUT /api/system-config/:key`
+#### PUT `/api/system-config/:key`
 **Descripción:** Actualizar configuración (admin)
 **Request:**
 ```json
@@ -1327,7 +1310,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `PUT /api/system-config/bulk`
+#### PUT `/api/system-config/bulk`
 **Descripción:** Actualización masiva de configuraciones
 **Request:**
 ```json
@@ -1345,7 +1328,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `DELETE /api/system-config/:key`
+#### DELETE `/api/system-config/:key`
 **Descripción:** Eliminar configuración (admin)
 **Response:**
 ```json
@@ -1354,7 +1337,7 @@ interface SystemConfigAttributes {
 }
 ```
 
-#### `GET /api/system-config/meta/categories`
+#### GET `/api/system-config/meta/categories`
 **Descripción:** Obtener categorías disponibles
 **Response:**
 ```json
@@ -1370,7 +1353,7 @@ interface SystemConfigAttributes {
 
 ---
 
-## 🔧 Configuraciones del Sistema
+## 🔧 Configuraciones del sistema
 
 ### **Categorías de Configuración:**
 - **`roulette`**: Configuraciones de ruleta (payouts, delays, etc.)
@@ -1388,28 +1371,28 @@ interface SystemConfigAttributes {
 
 ---
 
-## 🛡️ Seguridad y Validaciones
+## 🛡️ Seguridad y validaciones
 
-### **Autenticación:**
+### Autenticación
 - JWT tokens con cookies HTTP-Only
 - Expiración de 24 horas
 - Verificación en middleware `authenticateToken`
 - Roles: `user` y `admin`
 
-### **Validaciones Zod:**
+### Validaciones Zod
 - Todos los endpoints tienen schemas de validación
 - Validación de tipos de datos
 - Validación de rangos y formatos
 - Mensajes de error estructurados
 
-### **Seguridad:**
+### Seguridad
 - Contraseñas encriptadas con bcrypt (10 rounds)
 - Helmet para headers de seguridad
 - CORS configurado
 - Rate limiting implementado
 - Sanitización de inputs
 
-### **Manejo de Errores:**
+### Manejo de errores
 - Errores tipados con códigos específicos
 - Mensajes de error en español
 - Logging estructurado
@@ -1417,7 +1400,7 @@ interface SystemConfigAttributes {
 
 ---
 
-## 📊 Relaciones entre Entidades
+## 📊 Relaciones entre entidades
 
 ### **Usuarios ↔ Depósitos:**
 - Un usuario puede tener múltiples depósitos
@@ -1444,7 +1427,7 @@ interface SystemConfigAttributes {
 
 ---
 
-## 🚀 Funcionalidades Especiales
+## 🚀 Funcionalidades especiales
 
 ### **Sistema de Eventos en Tiempo Real:**
 - Server-Sent Events (SSE) para actualizaciones en vivo
@@ -1473,7 +1456,7 @@ interface SystemConfigAttributes {
 
 ---
 
-## 📝 **CAMBIOS RECIENTES**
+## 📝 Cambios recientes
 
 ### **2025-01-22 - Sistema de Eventos SSE para Retiros**
 **Archivos creados:**
@@ -1496,6 +1479,22 @@ interface SystemConfigAttributes {
 - ✅ Usuario recibe actualización de balance automática al aprobar/rechazar retiros
 - ✅ Frontend puede actualizar la tabla sin recargar la página
 - ✅ Mejora la experiencia de usuario
+
+### **2025-01-22 - Notificación Completa de Depósitos Aprobados y Rechazados**
+**Archivos modificados:**
+- `src/services/DepositService.ts` - Emite evento user.balance.updated al rechazar depósito
+- `memoria-backend.md` - Actualizada documentación
+
+**Cambios implementados:**
+- Ahora cuando se rechaza un depósito, también se emite `user.balance.updated` con `reason: 'deposit_rejected'`
+- Usuario recibe notificación en tiempo real tanto al aprobar como al rechazar su depósito
+- Consistencia con el flujo de retiros (ambos tienen eventos completos)
+
+**Impacto:**
+- ✅ Usuario recibe notificación cuando se aprueba su depósito
+- ✅ Usuario recibe notificación cuando se rechaza su depósito
+- ✅ Flujo completo y consistente con retiros
+- ✅ Mejor experiencia de usuario
 
 ### **2025-01-22 - Sistema de Eventos SSE para Depósitos**
 **Archivos creados:**
@@ -1598,11 +1597,11 @@ interface SystemConfigAttributes {
 
 ---
 
-## 📝 Notas de Desarrollo
+## 📝 Notas de desarrollo
 
-### **Última Actualización:** 2024-01-15
-### **Versión:** 1.0.0
-### **Estado:** Producción
+### Última actualización: 2025-10-30
+### Versión: 1.0.0
+### Estado: Producción
 
 ### **Próximas Mejoras:**
 - Sistema de notificaciones push
@@ -1620,7 +1619,7 @@ interface SystemConfigAttributes {
 
 ---
 
-## 🎯 **GUÍA PARA EL FRONTEND**
+## 🎯 Guía para el frontend
 
 ### **📋 Resumen de Endpoints para Gestión de Usuarios**
 
@@ -1792,7 +1791,20 @@ const UserManagement = () => {
 
 ---
 
-## 📚 Documentación Adicional
+## 🌐 CORS y despliegue
+
+- Orígenes permitidos actuales:
+  - `http://localhost:3000`
+  - `https://ruleta-front-seven.vercel.app`
+- Si el panel admin o el frontend cambian de dominio, debe agregarse el nuevo origen al CORS del backend.
+
+### SSE en producción (Nginx/Proxy)
+- Mantener conexiones long-lived: `proxy_read_timeout >= 60s`
+- Desactivar buffering: `proxy_buffering off`
+- Respuesta con headers actuales: `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `Connection: keep-alive`, `X-Accel-Buffering: no`
+- Heartbeat servidor: cada 30s se envía `: heartbeat\n\n`
+
+## 📚 Documentación adicional
 
 ### **Sistema de Retiros - Administración**
 Para información completa sobre gestión de retiros por parte del administrador, consultar:

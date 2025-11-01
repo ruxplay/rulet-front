@@ -54,59 +54,9 @@ export const DashboardSidebar = () => {
         </div>
       </div>
 
-      <div className="dashboard-card">
-        <h3 className="sidebar-title">Mesas en Vivo</h3>
-        <div className="live-list">
-          <div className="live-item">
-            <div className="live-header">
-              <div>150</div>
-              <div>12/15</div>
-            </div>
-            <div className="live-meter">
-              <div className="live-fill" style={{width: '80%'}}></div>
-            </div>
-            <div className="live-status">Gira en ~1m</div>
-          </div>
-          <div className="live-item">
-            <div className="live-header">
-              <div>300</div>
-              <div>5/15</div>
-            </div>
-            <div className="live-meter">
-              <div className="live-fill" style={{width: '33%'}}></div>
-            </div>
-            <div className="live-status">Nuevo ciclo</div>
-          </div>
-        </div>
-      </div>
+      {/** Sección "Mesas en Vivo" removida a solicitud */}
 
-      <div className="dashboard-card">
-        <h3 className="sidebar-title">Últimos Ganadores</h3>
-        <div className="winner-list">
-          <div className="winner-item">
-            <span>Mesa 150:</span>
-            <span>@Ana — 1.575</span>
-          </div>
-          <div className="winner-item">
-            <span>Mesa 300:</span>
-            <span>@Luis — 3.150</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="dashboard-card">
-        <h3 className="sidebar-title">Tickets de Soporte</h3>
-        <div className="winner-list">
-          <div className="winner-item">
-            <span>Pendientes</span>
-            <span>1</span>
-          </div>
-          <div className="winner-item">
-            <span>Resueltos</span>
-            <span>3</span>
-          </div>
-        </div>
-      </div>
+      {/** Secciones "Últimos Ganadores" y "Tickets de Soporte" removidas a solicitud */}
 
       <div className="dashboard-card">
         <h3 className="sidebar-title">Acciones Rápidas</h3>
@@ -117,8 +67,14 @@ export const DashboardSidebar = () => {
           <Link href="/deposits" className="quick-link">
             📋 Historial de Depósitos
           </Link>
+          <Link href="/withdrawals" className="quick-link">
+            📋 Historial de Retiros
+          </Link>
           <Link href="/withdraw" className="quick-link">
             💸 Retirar Fondos
+          </Link>
+          <Link href="/history" className="quick-link">
+            🗂️ Historial de Usuario
           </Link>
         </div>
       </div>

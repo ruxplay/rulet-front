@@ -64,18 +64,16 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                   justifyItems: 'center'
                 }}
               >
-                {/* Card informativa no clicable */}
-                <div 
-                  className="method-option info-card"
-                >
-                  <div className="method-icon">
+                {/* Encabezado informativo */}
+                <div className="deposit-header">
+                  <div className="deposit-header-icon">
                     <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M12,8C16.42,8 20,9.79 20,12C20,14.21 16.42,16 12,16C7.58,16 4,14.21 4,12C4,9.79 7.58,8 12,8M12,18C7.58,18 4,16.21 4,14V16C4,18.21 7.58,20 12,20C16.42,20 20,18.21 20,16V14C20,16.21 16.42,18 12,18Z" />
                     </svg>
                   </div>
-                  <div className="method-info">
-                    <h3>💵 Recargar Saldo</h3>
-                    <p>Selecciona el método de pago que prefieras para recargar tu saldo</p>
+                  <div className="deposit-header-content">
+                    <h2 className="deposit-header-title">💵 Recargar Saldo</h2>
+                    <p className="deposit-header-description">Selecciona el método de pago que prefieras para recargar tu saldo</p>
                   </div>
                 </div>
 

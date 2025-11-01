@@ -11,15 +11,13 @@ export const QuickActions = () => {
       <Link href="/roulette/300" className="action-btn">
         Ruleta 300
       </Link>
-      <Link href="/deposit" className="action-btn">
+      <Link href="/deposit" className="action-btn action-random">
         Recargar Saldo
       </Link>
       <Link href="/withdraw" className="action-btn">
         Retirar
       </Link>
-      <button className="action-btn" onClick={() => alert('Soporte pronto')}>
-        Soporte
-      </button>
+      {/** Botón de Soporte removido a solicitud */}
     </div>
   );
 };

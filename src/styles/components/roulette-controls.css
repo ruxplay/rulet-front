@@ -6,6 +6,9 @@
   padding: 25px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  overflow: visible;
 }
 
 .bet-controls {
@@ -156,6 +159,18 @@
   border-radius: 10px;
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* Asegurar que los labels no sean tapados por overlays */
+.mesa-info .status-label,
+.mesa-info .id-label,
+.mesa-info .progress-label {
+  position: relative;
+  z-index: 100 !important;
+  pointer-events: auto !important;
 }
 
 .mesa-id {
@@ -168,8 +183,14 @@
 }
 
 .id-label {
-  font-weight: 600;
-  color: #ecf0f1;
+  font-weight: 700;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 10 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .id-value {
@@ -189,11 +210,20 @@
   margin-bottom: 15px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 10;
+  overflow: visible;
 }
 
 .status-label {
-  font-weight: 600;
-  color: #ecf0f1;
+  font-weight: 700;
+  color: #000000 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 10 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .status-value {
@@ -208,6 +238,7 @@
 .status-value.open {
   background-color: rgba(46, 204, 113, 0.2);
   color: #2ecc71;
+  font-weight: 700;
   border: 1px solid rgba(46, 204, 113, 0.3);
 }
 
@@ -230,10 +261,16 @@
 }
 
 .progress-label {
-  font-weight: 600;
-  color: #ecf0f1;
+  font-weight: 700;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+  opacity: 1 !important;
   margin-bottom: 8px;
   display: block;
+  position: relative;
+  z-index: 10 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .progress-value {

@@ -10,6 +10,7 @@ import {
 import { useSweetAlert } from '@/hooks/useSweetAlert';
 // Using simple input instead of SearchBar
 import { Pagination } from './Pagination';
+import '@/styles/components/pagination.css';
 
 interface DepositsTableProps {
   onStatsChange: (stats: DepositStats) => void;
@@ -362,7 +363,7 @@ export const DepositsTable: React.FC<DepositsTableProps> = ({ onStatsChange }) =
   const formatAmount = (amount: number): string => {
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'RUB',
+      currency: 'RUX',
       minimumFractionDigits: 2,
     }).format(amount);
   };

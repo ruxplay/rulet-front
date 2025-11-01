@@ -95,6 +95,8 @@ export const useAuth = () => {
         ? { email: validatedData.username, password: validatedData.password }
         : { username: validatedData.username, password: validatedData.password };
 
+      console.log('🔍 useAuth - Payload enviado al backend:', payload);
+
       const result = await login(payload).unwrap();
 
       

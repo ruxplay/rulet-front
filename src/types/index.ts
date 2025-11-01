@@ -55,7 +55,7 @@ export interface RouletteMesa {
   status: RouletteStatus;
   filledCount: number;
   sectors: Array<RouletteSector | null>;
-  houseEarnings: number;
+  houseEarnings: string; // Backend devuelve string (ej: "1500.00")
 }
 
 export interface RouletteWinner {
@@ -270,10 +270,16 @@ export interface WithdrawalStatusChangedEvent {
 export interface MesaWaitingForResultEvent {
   type: 'mesa.waiting_for_result';
   payload: {
-    mesaId: string;
     type: RouletteType;
-    filledCount: number;
-    status: 'waiting_for_result';
+    mesaId: string;
+    mesa: {
+      mesaId: string;
+      status: 'waiting_for_result';
+      filledCount: number;
+      sectors: Array<RouletteSector | null>;
+      houseEarnings: string;
+    };
+    message: string;
   };
 }
 
@@ -284,6 +290,31 @@ export interface MesaResultSubmittedEvent {
     type: RouletteType;
     winningSector: number;
     operatorId: string;
+    timestamp: string;
+  };
+}
+
+export interface MesaUpdatedEvent {
+  type: 'mesa.updated';
+  payload: {
+    type: RouletteType;
+    mesa: {
+      mesaId: string;
+      status: 'open' | 'waiting_for_result' | 'spinning' | 'closed';
+      filledCount: number;
+      sectors: Array<RouletteSector | null>;
+      houseEarnings: string;
+    };
+  };
+}
+
+export interface MesaSpinningEvent {
+  type: 'mesa.spinning';
+  payload: {
+    mesaId: string;
+    type: RouletteType;
+    etaSeconds: number;
+    spinStartTime: string;
     timestamp: string;
   };
 }
@@ -353,14 +384,6 @@ export interface RouletteMesaAdvancedEvent {
   };
 }
 
-export interface RouletteMesaUpdatedEvent {
-  type: 'mesa.updated';
-  payload: {
-    type: RouletteType;
-    mesaId: string;
-    filledCount: number;
-  };
-}
 
 // ===== TIPOS PARA RETIROS (WITHDRAWALS) =====
 
@@ -376,6 +399,15 @@ export interface Withdrawal {
   monto: number;
   payment_method: WithdrawalPaymentMethod;
   status: WithdrawalStatus;
+  // Campos específicos para bank_transfer
+  accountType?: string | null;
+  accountNumber?: string | null;
+  accountHolder?: string | null;
+  // Campos específicos para pago_movil
+  phoneNumber?: string | null;
+  // Campos específicos para usdt
+  network?: string | null;
+  walletAddress?: string | null;
   createdAt: string;
   updatedAt: string;
   processedAt: string | null;
@@ -390,6 +422,15 @@ export interface CreateWithdrawalRequest {
   banco: string;
   monto: number;
   payment_method: WithdrawalPaymentMethod;
+  // Campos específicos para bank_transfer
+  accountType?: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  // Campos específicos para pago_movil
+  phoneNumber?: string;
+  // Campos específicos para usdt
+  network?: string;
+  walletAddress?: string;
 }
 
 export interface CreateWithdrawalResponse {

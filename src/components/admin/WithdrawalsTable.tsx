@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useGetAllWithdrawalsQuery, useUpdateWithdrawalStatusMutation, type WithdrawalWithUser } from '@/store/api/adminWithdrawalsApi';
 import { useSweetAlert } from '@/hooks/useSweetAlert';
 import { Pagination } from './Pagination';
+import '@/styles/components/pagination.css';
 
 interface WithdrawalsTableProps {
   onStatsChange: (stats: WithdrawalStats) => void;
@@ -160,7 +161,7 @@ export const WithdrawalsTable: React.FC<WithdrawalsTableProps> = ({ onStatsChang
   const formatAmount = (monto: number): string => {
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'RUB',
+      currency: 'RUX',
       minimumFractionDigits: 2,
     }).format(monto);
   };

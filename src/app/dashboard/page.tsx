@@ -22,10 +22,10 @@ export default function DashboardPage() {
         
         <div className="dashboard-grid">
           <div className="dashboard-main">
+            <QuickActions />
             <KPICards />
             <RuletaMetrics />
             <ActivityFeed />
-            <QuickActions />
           </div>
           
           <DashboardSidebar />

@@ -53,7 +53,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
     switch (name) {
       case 'amount':
         if (!value || Number(value) < 50) {
-          newErrors.amount = 'El monto mínimo es 50 RUB';
+          newErrors.amount = 'El monto mínimo es 50 RUX';
         } else {
           delete newErrors.amount;
         }
@@ -167,7 +167,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
         amount: formData.amount,
         reference: formData.reference,
         bank: variant === 'pago_movil' ? 'Pago Móvil' : formData.bank,
-        paymentMethod: 'bank_transfer' as const, // Temporal: backend aún no soporta 'pago_movil'
+        paymentMethod: (variant === 'pago_movil' ? 'pago_movil' : 'bank_transfer') as 'pago_movil' | 'bank_transfer',
         ...receiptData,
       };
 
@@ -277,7 +277,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                   type="number"
                   id="amount"
                   name="amount"
-                  value={formData.amount}
+                  value={formData.amount === 0 ? '' : formData.amount}
                   onChange={handleInputChange}
                   className={`form-input ${errors.amount ? 'error' : ''}`}
                   placeholder="Ej: 2000"
@@ -381,7 +381,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Monto:</span>
-                  <span className="summary-value">{formData.amount.toFixed(2)} RUB</span>
+                  <span className="summary-value">{formData.amount.toFixed(2)} RUX</span>
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Referencia:</span>

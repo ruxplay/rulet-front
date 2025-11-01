@@ -40,22 +40,24 @@ export const Header = () => {
 
         {/* Nav */}
         <nav className="desktop-nav">
-          <Link href="/" className="nav-link">
-            Inicio
-          </Link>
+          {(!isAuthenticated || authState.user?.role === 'admin') && (
+            <Link href="/" className="nav-link">
+              Inicio
+            </Link>
+          )}
           {isAuthenticated && (
             <>
               <Link href="/dashboard" className="nav-link">
                 Dashboard
+              </Link>
+              <Link href="/roulette/150" className="nav-link">
+                Ruleta
               </Link>
               {authState.user?.role === 'admin' && (
                 <Link href="/admin" className="nav-link admin-link">
                   Dashboard Admin
                 </Link>
               )}
-              <Link href="/roulette/150" className="nav-link">
-                Ruleta
-              </Link>
             </>
           )}
         </nav>

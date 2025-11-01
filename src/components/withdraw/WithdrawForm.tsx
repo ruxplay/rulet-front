@@ -8,6 +8,9 @@ import {
   useCheckEligibilityQuery,
   useGetAllowedMethodsQuery,
 } from '@/store/api/withdrawalApi';
+import { BankTransferFields } from './BankTransferFields';
+import { PagoMovilFields } from './PagoMovilFields';
+import { UsdtFields } from './UsdtFields';
 import Swal from 'sweetalert2';
 import type { WithdrawalPaymentMethod } from '@/types';
 
@@ -17,6 +20,15 @@ interface WithdrawFormData {
   banco: string;
   monto: number;
   payment_method: WithdrawalPaymentMethod | '';
+  // Campos específicos para bank_transfer
+  accountType: string;
+  accountNumber: string;
+  accountHolder: string;
+  // Campos específicos para pago_movil
+  phoneNumber: string;
+  // Campos específicos para usdt
+  network: string;
+  walletAddress: string;
 }
 
 interface WithdrawFormErrors {
@@ -26,6 +38,13 @@ interface WithdrawFormErrors {
   monto?: string;
   payment_method?: string;
   general?: string;
+  // Campos específicos
+  accountType?: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  phoneNumber?: string;
+  network?: string;
+  walletAddress?: string;
 }
 
 export const WithdrawForm: React.FC = () => {
@@ -40,6 +59,12 @@ export const WithdrawForm: React.FC = () => {
     banco: '',
     monto: 0,
     payment_method: '',
+    accountType: '',
+    accountNumber: '',
+    accountHolder: '',
+    phoneNumber: '',
+    network: '',
+    walletAddress: '',
   });
 
   const [errors, setErrors] = useState<WithdrawFormErrors>({});
@@ -58,8 +83,11 @@ export const WithdrawForm: React.FC = () => {
 
   const [createWithdrawal, { isLoading: isSubmitting }] = useCreateWithdrawalMutation();
 
-  const availableBalance = eligibilityData?.availableBalance ?? 0;
-  const minAmount = 150; // Monto mínimo en RUB
+  // Usar balance de Redux (igual que el Dashboard) para consistencia
+  const balanceFromRedux = user?.balance ?? 0;
+  const balanceValue = typeof balanceFromRedux === 'string' ? parseFloat(balanceFromRedux) : balanceFromRedux;
+  const availableBalance = eligibilityData?.availableBalance ?? balanceValue;
+  const minAmount = 150; // Monto mínimo en RUX
 
   const validateField = (name: string, value: string | number) => {
     const newErrors = { ...errors };
@@ -67,7 +95,7 @@ export const WithdrawForm: React.FC = () => {
     switch (name) {
       case 'monto':
         if (!value || Number(value) < minAmount) {
-          newErrors.monto = `El monto mínimo es ${minAmount} RUB`;
+          newErrors.monto = `El monto mínimo es ${minAmount} RUX`;
         } else if (Number(value) > availableBalance) {
           newErrors.monto = 'Saldo insuficiente';
         } else {
@@ -108,6 +136,57 @@ export const WithdrawForm: React.FC = () => {
           newErrors.payment_method = 'Debe seleccionar un método de pago';
         } else {
           delete newErrors.payment_method;
+        }
+        break;
+
+      // Validaciones específicas para bank_transfer
+      case 'accountType':
+        if (!value) {
+          newErrors.accountType = 'El tipo de cuenta es requerido';
+        } else {
+          delete newErrors.accountType;
+        }
+        break;
+
+      case 'accountNumber':
+        if (!value || String(value).length < 5) {
+          newErrors.accountNumber = 'El número de cuenta es requerido';
+        } else {
+          delete newErrors.accountNumber;
+        }
+        break;
+
+      case 'accountHolder':
+        if (!value || String(value).length < 3) {
+          newErrors.accountHolder = 'El nombre del titular es requerido';
+        } else {
+          delete newErrors.accountHolder;
+        }
+        break;
+
+      // Validaciones específicas para pago_movil
+      case 'phoneNumber':
+        if (!value || String(value).length < 10) {
+          newErrors.phoneNumber = 'El teléfono de Pago Móvil es requerido';
+        } else {
+          delete newErrors.phoneNumber;
+        }
+        break;
+
+      // Validaciones específicas para usdt
+      case 'network':
+        if (!value) {
+          newErrors.network = 'Debe seleccionar una red blockchain';
+        } else {
+          delete newErrors.network;
+        }
+        break;
+
+      case 'walletAddress':
+        if (!value || String(value).length < 10) {
+          newErrors.walletAddress = 'La dirección de wallet es requerida';
+        } else {
+          delete newErrors.walletAddress;
         }
         break;
 
@@ -155,19 +234,35 @@ export const WithdrawForm: React.FC = () => {
     }
 
     try {
-      const result = await createWithdrawal({
+      // Construir payload según el método de pago
+      const withdrawalData: any = {
         username,
         cedula: formData.cedula,
         telefono: formData.telefono,
         banco: formData.banco,
         monto: formData.monto,
         payment_method: formData.payment_method as WithdrawalPaymentMethod,
-      }).unwrap();
+      };
+
+      // Agregar campos específicos según el método
+      if (formData.payment_method === 'bank_transfer') {
+        withdrawalData.accountType = formData.accountType;
+        withdrawalData.accountNumber = formData.accountNumber;
+        withdrawalData.accountHolder = formData.accountHolder;
+      } else if (formData.payment_method === 'pago_movil') {
+        withdrawalData.phoneNumber = formData.phoneNumber;
+        withdrawalData.accountHolder = formData.accountHolder;
+      } else if (formData.payment_method === 'usdt') {
+        withdrawalData.network = formData.network;
+        withdrawalData.walletAddress = formData.walletAddress;
+      }
+
+      const result = await createWithdrawal(withdrawalData).unwrap();
 
       await Swal.fire({
         icon: 'success',
         title: '¡Retiro Solicitado!',
-        text: `Tu solicitud de retiro de ${formData.monto} RUB fue enviada exitosamente. Estará en revisión.`,
+        text: `Tu solicitud de retiro de ${formData.monto} RUX fue enviada exitosamente. Estará en revisión.`,
         confirmButtonText: 'Ir al Dashboard',
       });
 
@@ -191,7 +286,7 @@ export const WithdrawForm: React.FC = () => {
             errorMessage = 'Saldo insuficiente';
             break;
           case 'MINIMUM_AMOUNT_NOT_MET':
-            errorMessage = `El monto mínimo es ${minAmount} RUB`;
+            errorMessage = `El monto mínimo es ${minAmount} RUX`;
             break;
           case 'PENDING_WITHDRAWAL_EXISTS':
             errorMessage = 'Ya tienes un retiro pendiente de aprobación. Espera a que se procese antes de solicitar otro.';
@@ -239,6 +334,12 @@ export const WithdrawForm: React.FC = () => {
     }
   };
 
+  // Debug para ver eligibilityData
+  console.log('🔍 WithdrawForm - eligibilityData:', eligibilityData);
+  console.log('🔍 WithdrawForm - eligible:', eligibilityData?.eligible);
+  console.log('🔍 WithdrawForm - reason:', eligibilityData?.reason);
+  console.log('🔍 WithdrawForm - username:', username);
+
   // Usuario no elegible
   if (eligibilityData && !eligibilityData.eligible) {
     return (
@@ -270,11 +371,11 @@ export const WithdrawForm: React.FC = () => {
         <div className="balance-info">
           <div className="balance-item">
             <span className="balance-label">Balance disponible:</span>
-            <span className="balance-value">{availableBalance.toFixed(2)} RUB</span>
+            <span className="balance-value">{availableBalance.toFixed(2)} RUX</span>
           </div>
         </div>
         <p className="balance-note">
-          Solo puedes retirar si has ganado en la ruleta. El monto mínimo es {minAmount} RUB.
+          Solo puedes retirar si has ganado en la ruleta. El monto mínimo es {minAmount} RUX.
         </p>
         {allowedMethods.length > 0 && (
           <p className="balance-note method-note">
@@ -312,9 +413,65 @@ export const WithdrawForm: React.FC = () => {
           {errors.payment_method && <span className="error-message">{errors.payment_method}</span>}
         </div>
 
+        {/* Campos específicos según el método de pago */}
+        {formData.payment_method === 'bank_transfer' && (
+          <BankTransferFields
+            formData={{
+              accountType: formData.accountType,
+              accountNumber: formData.accountNumber,
+              accountHolder: formData.accountHolder,
+            }}
+            errors={{
+              accountType: errors.accountType,
+              accountNumber: errors.accountNumber,
+              accountHolder: errors.accountHolder,
+            }}
+            onChange={(field: string, value: string) => {
+              setFormData((prev) => ({ ...prev, [field]: value }));
+              validateField(field, value);
+            }}
+          />
+        )}
+
+        {formData.payment_method === 'pago_movil' && (
+          <PagoMovilFields
+            formData={{
+              banco: formData.banco,
+              phoneNumber: formData.phoneNumber,
+              accountHolder: formData.accountHolder,
+            }}
+            errors={{
+              banco: errors.banco,
+              phoneNumber: errors.phoneNumber,
+              accountHolder: errors.accountHolder,
+            }}
+            onChange={(field: string, value: string) => {
+              setFormData((prev) => ({ ...prev, [field]: value }));
+              validateField(field, value);
+            }}
+          />
+        )}
+
+        {formData.payment_method === 'usdt' && (
+          <UsdtFields
+            formData={{
+              network: formData.network,
+              walletAddress: formData.walletAddress,
+            }}
+            errors={{
+              network: errors.network,
+              walletAddress: errors.walletAddress,
+            }}
+            onChange={(field: string, value: string) => {
+              setFormData((prev) => ({ ...prev, [field]: value }));
+              validateField(field, value);
+            }}
+          />
+        )}
+
         <div className="form-group">
           <label htmlFor="monto" className="form-label">
-            Monto a Retirar (RUB) *
+            Monto a Retirar (RUX) *
           </label>
           <input
             type="number"
@@ -326,12 +483,12 @@ export const WithdrawForm: React.FC = () => {
             max={availableBalance}
             step="0.01"
             className={`form-input ${errors.monto ? 'error' : ''}`}
-            placeholder="Mínimo 150 RUB"
+            placeholder="Mínimo 150 RUX"
           />
           {errors.monto && <span className="error-message">{errors.monto}</span>}
           {formData.monto > 0 && formData.monto < availableBalance && (
             <span className="form-help">
-              Disponible: {availableBalance.toFixed(2)} RUB
+              Disponible: {availableBalance.toFixed(2)} RUX
             </span>
           )}
         </div>
@@ -368,21 +525,24 @@ export const WithdrawForm: React.FC = () => {
           {errors.telefono && <span className="error-message">{errors.telefono}</span>}
         </div>
 
-        <div className="form-group">
-          <label htmlFor="banco" className="form-label">
-            Banco Destino *
-          </label>
-          <input
-            type="text"
-            id="banco"
-            name="banco"
-            value={formData.banco}
-            onChange={handleChange}
-            className={`form-input ${errors.banco ? 'error' : ''}`}
-            placeholder="Banesco, Mercantil, BVC..."
-          />
-          {errors.banco && <span className="error-message">{errors.banco}</span>}
-        </div>
+        {/* No mostrar "Banco" común cuando es pago_movil, ya está en el subcomponente */}
+        {formData.payment_method !== 'pago_movil' && (
+          <div className="form-group">
+            <label htmlFor="banco" className="form-label">
+              Banco Destino *
+            </label>
+            <input
+              type="text"
+              id="banco"
+              name="banco"
+              value={formData.banco}
+              onChange={handleChange}
+              className={`form-input ${errors.banco ? 'error' : ''}`}
+              placeholder={formData.payment_method === 'usdt' ? 'usdt' : 'Banesco, Mercantil, BVC...'}
+            />
+            {errors.banco && <span className="error-message">{errors.banco}</span>}
+          </div>
+        )}
 
         {errors.general && (
           <div className="error-banner">

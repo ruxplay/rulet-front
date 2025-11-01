@@ -173,7 +173,7 @@ export const RouletteControls = ({
           <div className="mesa-status">
             <span className="status-label">Estado:</span>
             <span className={`status-value ${mesa.status}`}>
-              {mesa.status === 'open' && 'Abierta'}
+              {mesa.status === 'open' && 'OPEN'}
               {mesa.status === 'spinning' && 'Girando'}
               {mesa.status === 'closed' && 'Cerrada'}
             </span>

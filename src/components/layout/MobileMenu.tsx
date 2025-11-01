@@ -43,22 +43,24 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   return (
     <div className="mobile-menu">
       <div className="mobile-menu-content">
-        <Link href="/" className="mobile-nav-link" onClick={onClose}>
-          Inicio
-        </Link>
+        {(!isAuthenticated || authState.user?.role === 'admin') && (
+          <Link href="/" className="mobile-nav-link" onClick={onClose}>
+            Inicio
+          </Link>
+        )}
         {isAuthenticated && (
           <>
             <Link href="/dashboard" className="mobile-nav-link" onClick={onClose}>
               Dashboard
+            </Link>
+            <Link href="/roulette/150" className="mobile-nav-link" onClick={onClose}>
+              Ruleta
             </Link>
             {authState.user?.role === 'admin' && (
               <Link href="/admin" className="mobile-nav-link admin-link" onClick={onClose}>
                 Dashboard Admin
               </Link>
             )}
-            <Link href="/roulette/150" className="mobile-nav-link" onClick={onClose}>
-              Ruleta
-            </Link>
           </>
         )}
 
