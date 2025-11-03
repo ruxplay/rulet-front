@@ -98,7 +98,9 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         ctx.translate(textX, textY);
         ctx.rotate(textAngle + Math.PI / 2);
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 12px Arial';
+        const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches;
+        const numberFontSize = isMobile ? 12 : 18;
+        ctx.font = `bold ${numberFontSize}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.shadowColor = 'rgba(0,0,0,0.5)';
@@ -109,14 +111,17 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         // Información del jugador si existe
         const sectorData = sectors[i];
         if (sectorData && sectorData.username) {
-          const infoX = centerX + (radius - 25) * Math.cos(textAngle);
-          const infoY = centerY + (radius - 25) * Math.sin(textAngle);
+          const isMobileForName = typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches;
+          const nameOffset = isMobileForName ? -15 : -25; // Más alejado del centro en móvil
+          const infoX = centerX + (radius + nameOffset) * Math.cos(textAngle);
+          const infoY = centerY + (radius + nameOffset) * Math.sin(textAngle);
           
           ctx.save();
           ctx.translate(infoX, infoY);
           ctx.rotate(textAngle + Math.PI / 2);
           ctx.fillStyle = '#fff';
-          ctx.font = 'bold 12px Arial';
+          const nameFontSize = isMobileForName ? 9 : 15; // 9px en móvil, 15px en PC/tablet
+          ctx.font = `bold ${nameFontSize}px Arial`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.shadowColor = 'rgba(0,0,0,0.5)';
