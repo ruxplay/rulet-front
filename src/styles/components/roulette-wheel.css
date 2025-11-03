@@ -105,7 +105,7 @@
   top: -5%;
   left: -5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 60%);
+  background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
   z-index: -1;
 }
 
@@ -201,6 +201,22 @@
   .roulette-wheel-center {
     transform: translate(-50%, -50%) scale(1.4);
     transform-origin: center center;
+  }
+  /* Color morado intenso para móvil - asegurar que se vea */
+  .roulette-wheel-shadow {
+    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%) !important;
+    transform: scale(1.4);
+    transform-origin: center center;
+    z-index: -1 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    position: absolute !important;
+  }
+  
+  /* Asegurar que el contenedor no tenga fondo que oculte el shadow */
+  .roulette-wheel-container {
+    background: transparent !important;
   }
 }
 
@@ -337,6 +353,11 @@
     margin-bottom: 30px;
   }
   
+  /* Color morado intenso para tablet */
+  .roulette-wheel-shadow {
+    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
+  }
+  
   .roulette-pointer {
     border-left: var(--pointer-size-tablet) solid transparent;
     border-right: var(--pointer-size-tablet) solid transparent;
@@ -399,6 +420,11 @@
   .roulette-wheel-container {
     max-width: var(--roulette-size-mobile);
     margin-bottom: 20px;
+  }
+  
+  /* Color morado intenso para móvil */
+  .roulette-wheel-shadow {
+    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
   }
   
   .roulette-pointer {
@@ -478,6 +504,11 @@
 @media (max-width: 360px) {
   .roulette-wheel-container {
     max-width: 250px;
+  }
+  
+  /* Color morado intenso para móvil pequeño */
+  .roulette-wheel-shadow {
+    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
   }
   
   .roulette-title {
