@@ -418,10 +418,14 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
               break;
             case 'spin_prize':
               if (data.prize !== undefined) {
-                alertsRef.current.showSuccess(
-                  '🎉 ¡Ganaste!',
-                  `¡Felicitaciones! Has ganado ${data.prize} RUX`
-                );
+                // Guardar el prize en una constante para usarlo dentro del setTimeout
+                const prizeAmount = data.prize;
+                setTimeout(() => {
+                  alertsRef.current.showSuccess(
+                    '🎉 ¡Ganaste!',
+                    `¡Felicitaciones! Has ganado ${prizeAmount} RUX`
+                  );
+                }, 16000); // 16 segundos de delay
               }
               break;
             case 'withdrawal_approved':

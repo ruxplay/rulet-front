@@ -26,7 +26,7 @@ export interface RouletteWheelRef {
 }
 
 export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
-  ({ sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false }, ref) => {
+  ({ type, sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const animationRef = useRef<number | null>(null);
@@ -36,6 +36,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     // Estado para forzar re-render de botones SVG durante la animación
     const [currentAnimationRotation, setCurrentAnimationRotation] = useState(rotation);
     const [forceRender, setForceRender] = useState(0); // Estado adicional para forzar re-render
+    const [isMounting, setIsMounting] = useState(true); // Estado para ocultar durante el montaje inicial
 
     const NUM_SECTORS = 15;
     const [canvasSize, setCanvasSize] = useState<number>(400);
@@ -612,13 +613,20 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         if (ctx) {
           drawWheel(ctx, canvas, currentRotationRef.current, highlightedSector ?? undefined);
         }
+
+        // Una vez que el canvas esté listo, mostrar el componente después de un breve delay
+        if (isMounting) {
+          setTimeout(() => {
+            setIsMounting(false);
+          }, 250); // 250ms para ocultar el efecto espiral
+        }
       };
 
       resizeCanvas();
       const observer = new ResizeObserver(() => resizeCanvas());
       if (containerRef.current) observer.observe(containerRef.current);
       return () => observer.disconnect();
-    }, [drawWheel, highlightedSector]);
+    }, [drawWheel, highlightedSector, isMounting]);
 
     // Efecto para dibujar la ruleta estática cuando rotation = 0
     useEffect(() => {
@@ -639,6 +647,11 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     // ELIMINADO: Este useEffect causaba interferencias con la animación
     // La sincronización se maneja directamente en animateSpin
 
+    // Resetear estado de montaje cuando cambia el tipo de ruleta
+    useEffect(() => {
+      setIsMounting(true);
+    }, [type]);
+
     // Limpiar animación al desmontar
     useEffect(() => {
       return () => {
@@ -649,7 +662,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     }, []);
 
   return (
-    <div className="roulette-wheel-container" ref={containerRef}>
+    <div className={`roulette-wheel-container ${isMounting ? 'roulette-mounting' : ''}`} ref={containerRef}>
       <div className="roulette-wheel-shadow"></div>
       <canvas
         ref={canvasRef}

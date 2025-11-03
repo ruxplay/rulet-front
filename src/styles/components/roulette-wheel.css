@@ -41,6 +41,60 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Skeleton loader durante el montaje inicial */
+.roulette-wheel-container.roulette-mounting {
+  opacity: 1;
+}
+
+.roulette-wheel-container.roulette-mounting::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 255, 156, 0.08) 0%, rgba(0, 255, 156, 0.02) 50%, transparent 100%);
+  border: 3px solid rgba(0, 255, 156, 0.15);
+  animation: roulette-skeleton-pulse 1.5s ease-in-out infinite;
+  z-index: 1;
+}
+
+.roulette-wheel-container.roulette-mounting::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  z-index: 2;
+}
+
+/* Ocultar contenido real durante el montaje */
+.roulette-wheel-container.roulette-mounting > * {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Animación del skeleton loader */
+@keyframes roulette-skeleton-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
 }
 
 /* Sombra de la ruleta - Responsive */
@@ -355,21 +409,21 @@
   
   /* Mantener el triángulo principal verde en móviles y acercarlo al borde */
   .roulette-main-pointer {
-    top: -56px;
+    top: -60px;
   left: calc(50% + 1.1rem);
   transform: translateX(-50%) rotate(6deg);
   border-top-color: #00FF9C;
   }
   
   .roulette-left-pointer {
-    top: -50px;
+    top: -54px;
     left: calc(50% - 3.2rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
     transform: translateX(-50%) rotate(-30deg);
     border-top-color: #dcf30a;
   }
   
   .roulette-right-pointer {
-    top: -35px;
+    top: -39px;
     left: calc(50% + 4.7rem - 5px + 0.5rem);
     transform: translateX(-50%) rotate(30deg);
     border-top-color: #dc2626; /* Color ROJO INTENSO */
