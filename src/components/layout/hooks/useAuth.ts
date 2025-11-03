@@ -89,11 +89,12 @@ export const useAuth = () => {
     try {
       // Validar con Zod
       const validatedData = loginSchema.parse(loginData);
-      const isEmail = validatedData.username.includes('@');
+      const normalizedUsername = validatedData.username.trim().toLowerCase();
+      const isEmail = normalizedUsername.includes('@');
 
       const payload = isEmail
-        ? { email: validatedData.username, password: validatedData.password }
-        : { username: validatedData.username, password: validatedData.password };
+        ? { email: normalizedUsername, password: validatedData.password }
+        : { username: normalizedUsername, password: validatedData.password };
 
       console.log('🔍 useAuth - Payload enviado al backend:', payload);
 
@@ -161,14 +162,18 @@ export const useAuth = () => {
     
     // Resetear API state
     dispatch(authApi.util.resetApiState());
-
-    // Redireccionar inmediatamente
-    router.push('/');
     
-    // Llamar logout al backend (en background, sin await)
-    logout(undefined).unwrap().catch(() => {
-      // Error silencioso en logout
-    });
+    // Cerrar sesión en backend y luego redirigir
+    try {
+      await logout(undefined).unwrap();
+    } catch {
+      // Error silencioso en logout backend; continuamos con la redirección
+    } finally {
+      // Asegurar limpieza de estado de API
+      dispatch(authApi.util.resetApiState());
+      // Redireccionar después de que el backend procese el logout
+      router.push('/');
+    }
     
     // NO resetear isLoggingOut - se mantiene hasta recargar la página
   };
