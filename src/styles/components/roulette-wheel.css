@@ -105,7 +105,28 @@
   top: -5%;
   left: -5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
+  /* Textura de mesa: combinación de múltiples capas */
+  background: 
+    /* Capa de brillo/laca translúcido */
+    radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    /* Anillos de crecimiento de madera */
+    radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
+    /* Vetas horizontales de madera sutiles */
+    repeating-linear-gradient(
+      0deg,
+      rgba(139, 69, 19, 0.4) 0px,
+      transparent 1px,
+      transparent 3px,
+      rgba(160, 82, 45, 0.3) 4px,
+      transparent 5px,
+      transparent 8px,
+      rgba(184, 134, 11, 0.25) 9px,
+      transparent 10px
+    ),
+    /* Base de color madera */
+    radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
+  background-blend-mode: overlay, overlay, multiply, multiply, normal;
   z-index: -1;
 }
 
@@ -202,9 +223,15 @@
     transform: translate(-50%, -50%) scale(1.4);
     transform-origin: center center;
   }
-  /* Color morado intenso para móvil - asegurar que se vea */
+  /* Textura de mesa de madera para móvil - asegurar que se vea */
   .roulette-wheel-shadow {
-    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%) !important;
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
+      repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
+      radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%) !important;
+    background-blend-mode: overlay, overlay, multiply, multiply, normal !important;
     transform: scale(1.4);
     transform-origin: center center;
     z-index: -1 !important;
@@ -353,9 +380,15 @@
     margin-bottom: 30px;
   }
   
-  /* Color morado intenso para tablet */
+  /* Textura de mesa de madera para tablet */
   .roulette-wheel-shadow {
-    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
+      repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
+      radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
+    background-blend-mode: overlay, overlay, multiply, multiply, normal;
   }
   
   .roulette-pointer {
@@ -422,9 +455,15 @@
     margin-bottom: 20px;
   }
   
-  /* Color morado intenso para móvil */
+  /* Textura de mesa de madera para móvil */
   .roulette-wheel-shadow {
-    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
+      repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
+      radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
+    background-blend-mode: overlay, overlay, multiply, multiply, normal;
   }
   
   .roulette-pointer {
@@ -506,9 +545,15 @@
     max-width: 250px;
   }
   
-  /* Color morado intenso para móvil pequeño */
+  /* Textura de mesa de madera para móvil pequeño */
   .roulette-wheel-shadow {
-    background: radial-gradient(ellipse at center, rgb(75, 0, 130) 0%, rgb(138, 43, 226) 20%, rgb(148, 0, 211) 40%, rgb(123, 31, 162) 60%, rgb(106, 13, 173) 80%, rgba(75, 0, 130, 0.6) 95%, transparent 100%);
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
+      repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
+      radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
+    background-blend-mode: overlay, overlay, multiply, multiply, normal;
   }
   
   .roulette-title {
