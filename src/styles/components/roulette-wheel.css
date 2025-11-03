@@ -4,7 +4,7 @@
    ======================================== */
 
 /* Variables CSS profesionales con breakpoints */
-:root {
+ :root {
   --roulette-primary-color: #2c3e50;
   --roulette-secondary-color: #3498db;
   --roulette-accent-color: #e74c3c;
@@ -16,9 +16,9 @@
   --roulette-dark-color: #2c3e50;
   
   /* Variables responsive para la ruleta */
-  --roulette-size-desktop: 400px;
-  --roulette-size-tablet: 320px;
-  --roulette-size-mobile: 280px;
+  --roulette-size-desktop: 500px; /* +25% en escritorio */
+  --roulette-size-tablet: 380px;
+  --roulette-size-mobile: min(100vw, 640px); /* maximizar tamaño visible en móviles */
   
   /* Variables para triángulos */
   --pointer-size-desktop: 12.6px;
@@ -38,6 +38,9 @@
   margin: 0 auto 40px;
   perspective: 1000px;
   aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Sombra de la ruleta - Responsive */
@@ -52,22 +55,15 @@
   z-index: -1;
 }
 
-/* Canvas de la ruleta - Responsive */
+
+
+/* Asegurar uso máximo de ancho en móviles y evitar desbordes visuales */
 .roulette-wheel-canvas {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-  transform-style: preserve-3d;
-  position: relative;
-  z-index: 1;
-  object-fit: contain;
+  height: auto;
+  display: block;
 }
 
-.roulette-wheel-canvas:hover {
-  transform: rotate(5deg);
-}
 
 /* Punteros profesionales para los 3 ganadores - Responsive */
 .roulette-pointer {
@@ -78,48 +74,48 @@
   border-right: var(--pointer-size-desktop) solid transparent;
   border-top: var(--pointer-height-desktop) solid var(--roulette-accent-color);
   z-index: 10;
-  filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
-  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 /* Puntero principal - 12 en punto (GANADOR PRINCIPAL - 70%) */
 .roulette-main-pointer {
-  top: -10px;
-  left: calc(50% + 1rem);
+  top: -18px;
+  left: calc(50% + 1.5rem);
   transform: translateX(-50%);
   border-top-color: #00FF9C;
 }
 
 /* Puntero derecho - Sector DERECHO del principal (SEGUNDO GANADOR - 10%) */
 .roulette-right-pointer {
-  top: 15px;
-  left: calc(50% + 6.2rem - 5px + 0.5rem);
+  top: 14px;
+  left: calc(50% + 8rem - 5px + 0.5rem);
   transform: translateX(-50%) rotate(24deg);
   border-top-color: #dc2626; /* Color ROJO INTENSO */
 }
 
 /* Puntero izquierdo - Sector IZQUIERDO del principal (TERCER GANADOR - 10%) */
 .roulette-left-pointer {
-  top: 0px;
-  left: calc(50% - 4.2rem);
+  top: -9px;
+  left: calc(50% - 4.9rem);
   transform: translateX(-50%) rotate(-24deg);
-  border-top-color: #dc2626; /* Color ROJO INTENSO */
+  border-top-color: #dcf30a; /* Color AMARILLO */
 }
 
 /* Efectos cuando hay ganadores */
 .roulette-pointer.winner-active {
-  animation: pointer-glow 1.5s infinite alternate;
+  animation: pointerPulse 1.6s ease-in-out infinite alternate;
   border-top-color: #f39c12;
 }
 
-@keyframes pointer-glow {
-  from { 
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+@keyframes pointerPulse {
+  from {
+    filter: drop-shadow(0 3px 8px rgba(243, 156, 18, 0.35));
     transform: translateX(-50%) scale(1);
   }
-  to { 
-    filter: drop-shadow(0 0 15px rgba(243, 156, 18, 0.8));
-    transform: translateX(-50%) scale(1.1);
+  to {
+    filter: drop-shadow(0 6px 16px rgba(243, 156, 18, 0.65));
+    transform: translateX(-50%) scale(1.06);
   }
 }
 
@@ -128,14 +124,30 @@
   position: absolute;
   width: 30px;
   height: 30px;
-  background: white;
+  background: conic-gradient(from 180deg at 50% 50%, #ffffff 0deg, #e5e7eb 120deg, #cbd5e1 240deg, #ffffff 360deg);
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.15);
   border: 5px solid var(--roulette-primary-color);
+}
+
+/* Ampliar el círculo solo en móvil (canvas + overlay + centro) */
+@media (max-width: 480px) {
+  .roulette-wheel-section { overflow: visible; }
+  .roulette-wheel-container { overflow: visible; }
+  .roulette-wheel-canvas,
+  .sector-buttons-overlay {
+    transform: scale(1.4);
+    transform-origin: center center;
+  }
+  /* El círculo central necesita mantener su translate para centrarse */
+  .roulette-wheel-center {
+    transform: translate(-50%, -50%) scale(1.4);
+    transform-origin: center center;
+  }
 }
 
 /* Efectos de giro */
@@ -259,7 +271,7 @@
    ======================================== */
 
 /* Tablet - 768px y menos */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :root {
     --roulette-size-desktop: var(--roulette-size-tablet);
     --pointer-size-desktop: var(--pointer-size-tablet);
@@ -277,12 +289,25 @@
     border-top: var(--pointer-height-tablet) solid var(--roulette-accent-color);
   }
   
+  .roulette-main-pointer {
+    top: -20px;
+  left: calc(50% + 1.2rem);
+  transform: translateX(-50%) rotate(6deg);
+  border-top-color: #00FF9C;
+  }
+  
   .roulette-left-pointer {
-    left: calc(50% - 3.5rem);
+    top: -10px;
+    left: calc(50% - 3.7rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+    transform: translateX(-50%) rotate(-30deg);
+    border-top-color: #dcf30a;
   }
   
   .roulette-right-pointer {
-    left: calc(50% + 5rem);
+    top: 5px;
+    left: calc(50% + 5rem - 5px + 0.5rem);
+    transform: translateX(-50%) rotate(30deg);
+    border-top-color: #dc2626; /* Color ROJO INTENSO */
   }
   
   .roulette-title {
@@ -330,16 +355,24 @@
   
   /* Mantener el triángulo principal verde en móviles y acercarlo al borde */
   .roulette-main-pointer {
-    border-top-color: #00FF9C !important;
-    top: -5px; /* Más cerca del borde de la ruleta */
+    top: -56px;
+  left: calc(50% + 1.1rem);
+  transform: translateX(-50%) rotate(6deg);
+  border-top-color: #00FF9C;
   }
   
   .roulette-left-pointer {
-    left: calc(50% - 3rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+    top: -50px;
+    left: calc(50% - 3.2rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+    transform: translateX(-50%) rotate(-30deg);
+    border-top-color: #dcf30a;
   }
   
   .roulette-right-pointer {
-    left: calc(50% + 5rem - 10px); /* 10px hacia el centro */
+    top: -35px;
+    left: calc(50% + 4.7rem - 5px + 0.5rem);
+    transform: translateX(-50%) rotate(30deg);
+    border-top-color: #dc2626; /* Color ROJO INTENSO */
   }
   
   .roulette-title {
@@ -377,6 +410,13 @@
     width: 25px;
     height: 25px;
     border-width: 3px;
+  }
+}
+
+/* Móviles grandes: exprimir aún más el tamaño visual */
+@media (min-width: 381px) and (max-width: 480px) {
+  .roulette-wheel-container {
+    max-width: min(100vw, 560px);
   }
 }
 

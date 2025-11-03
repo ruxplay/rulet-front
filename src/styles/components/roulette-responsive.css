@@ -11,7 +11,7 @@
     gap: 25px;
   }
   
-  .wheel-container {
+  .roulette-wheel-container {
     max-width: 350px;
   }
 }
@@ -20,10 +20,13 @@
 @media (max-width: 768px) {
   .roulette-page {
     padding: 15px;
+    overflow-x: hidden; /* seguridad extra en móviles */
   }
   
   .roulette-container {
     padding: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .roulette-header {
@@ -38,14 +41,25 @@
   .roulette-content {
     grid-template-columns: 1fr;
     gap: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Mostrar primero los controles (Selecciona un número) y luego la ruleta */
+  .roulette-controls-section {
+    order: 1;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .roulette-wheel-section {
-    order: 1;
-  }
-  
-  .roulette-controls-section {
     order: 2;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .roulette-bets-section {
@@ -56,20 +70,35 @@
     order: 4;
   }
   
-  .wheel-container {
+  .roulette-wheel-container {
     max-width: 300px;
     margin-bottom: 30px;
   }
+
+  /* Colocar Progreso al final dentro de controles */
+  .roulette-controls .mesa-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .roulette-controls .mesa-info .mesa-id { order: 1; }
+  .roulette-controls .mesa-info .mesa-status { order: 2; }
+  .roulette-controls .mesa-info .mesa-progress { order: 3; margin-top: 12px; }
 }
 
 /* ===== MOBILE PORTRAIT ===== */
 @media (max-width: 480px) {
   .roulette-page {
     padding: 10px;
+    overflow-x: hidden;
   }
   
   .roulette-container {
     padding: 10px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .roulette-header {
@@ -83,9 +112,11 @@
   
   .roulette-content {
     gap: 15px;
+    width: 100%;
+    max-width: 100%;
   }
   
-  .wheel-container {
+  .roulette-wheel-container {
     max-width: 250px;
     margin-bottom: 25px;
   }
@@ -96,6 +127,9 @@
   .roulette-results {
     padding: 15px;
   }
+
+  /* Asegurar Progreso al final en pantallas pequeñas */
+  .roulette-controls .mesa-info .mesa-progress { order: 3; margin-top: 12px; }
 }
 
 /* ===== SMALL MOBILE ===== */
@@ -156,7 +190,7 @@
 
 /* ===== HIGH DPI DISPLAYS ===== */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .wheel {
+  .roulette-wheel-canvas {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }

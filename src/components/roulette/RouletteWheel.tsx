@@ -28,6 +28,7 @@ export interface RouletteWheelRef {
 export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
   ({ sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const animationRef = useRef<number | null>(null);
     const currentRotationRef = useRef(rotation);
     const isSpinningRef = useRef(false);
@@ -37,6 +38,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     const [forceRender, setForceRender] = useState(0); // Estado adicional para forzar re-render
 
     const NUM_SECTORS = 15;
+    const [canvasSize, setCanvasSize] = useState<number>(400);
 
     // Función para dibujar la ruleta
     const drawWheel = useCallback((
@@ -52,7 +54,9 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       ];
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
-      const radius = canvas.width / 2 - 20;
+      // Margen dinámico: en móviles reduce el espacio para ampliar visualmente el círculo
+      const dynamicMargin = Math.max(6, Math.round(canvas.width * 0.02));
+      const radius = canvas.width / 2 - dynamicMargin;
 
       // Limpiar canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -94,7 +98,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         ctx.translate(textX, textY);
         ctx.rotate(textAngle + Math.PI / 2);
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 18px Arial';
+        ctx.font = 'bold 12px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.shadowColor = 'rgba(0,0,0,0.5)';
@@ -582,6 +586,35 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       detectWinningSector
     }), [animateSpin, drawWheel, startPhysicalSpin, detectWinningSector]);
 
+    // Ajustar tamaño del canvas al contenedor (para mayor nitidez y tamaño máximo en móvil)
+    useEffect(() => {
+      const resizeCanvas = () => {
+        const canvas = canvasRef.current;
+        const container = containerRef.current;
+        if (!canvas || !container) return;
+
+        const size = Math.floor(container.clientWidth);
+        if (size <= 0) return;
+
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
+
+        setCanvasSize(size);
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          drawWheel(ctx, canvas, currentRotationRef.current, highlightedSector ?? undefined);
+        }
+      };
+
+      resizeCanvas();
+      const observer = new ResizeObserver(() => resizeCanvas());
+      if (containerRef.current) observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    }, [drawWheel, highlightedSector]);
+
     // Efecto para dibujar la ruleta estática cuando rotation = 0
     useEffect(() => {
       const canvas = canvasRef.current;
@@ -611,12 +644,12 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     }, []);
 
   return (
-    <div className="roulette-wheel-container">
+    <div className="roulette-wheel-container" ref={containerRef}>
       <div className="roulette-wheel-shadow"></div>
       <canvas
         ref={canvasRef}
-        width={400}
-        height={400}
+        width={500}
+        height={500}
         className="roulette-wheel-canvas"
         onClick={handleCanvasClick}
       />
@@ -633,7 +666,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           pointerEvents: 'auto',
           zIndex: 5
         }}
-        viewBox="0 0 400 400"
+        viewBox={`0 0 ${canvasSize} ${canvasSize}`}
         preserveAspectRatio="xMidYMid meet"
       >
         {Array.from({ length: NUM_SECTORS }, (_, i) => {
@@ -657,9 +690,9 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
               sectorIndex={i}
               color={colors[i % colors.length]}
               angle={startAngle}
-              radius={180}
-              centerX={200}
-              centerY={200}
+              radius={canvasSize / 2 - Math.max(6, Math.round(canvasSize * 0.02))}
+              centerX={canvasSize / 2}
+              centerY={canvasSize / 2}
               anglePerSector={anglePerSector}
               onClick={onSectorClick}
               isHighlighted={highlightedSector === i}
