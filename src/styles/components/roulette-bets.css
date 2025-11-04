@@ -31,12 +31,12 @@
 }
 
 .filled-count {
-  color: #2ecc71;
+  color: #00FF9C;
   font-weight: bold;
-  background: rgba(46, 204, 113, 0.2);
+  background: rgba(0, 255, 156, 0.2);
   padding: 4px 12px;
   border-radius: 15px;
-  border: 1px solid rgba(46, 204, 113, 0.3);
+  border: 1px solid rgba(0, 255, 156, 0.3);
 }
 
 .empty-count {
@@ -96,8 +96,8 @@
 }
 
 .bet-slot.occupied {
-  border-color: #2ecc71;
-  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  border-color: #00FF9C;
+  background: linear-gradient(135deg, #00FF9C 0%, #00FF9C 100%);
   color: white;
 }
 

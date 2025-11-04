@@ -164,16 +164,48 @@ export const useRoulette = (type: RouletteType) => {
       // Refrescar datos
       refetch();
     } catch (error: unknown) {
-      console.error('❌ ERROR USUARIO 15:', error);
+      console.error('❌ ERROR al realizar apuesta:', error);
       console.error('❌ Tipo de error:', typeof error);
-      console.error('❌ Error stringified:', JSON.stringify(error));
       
-      // Información adicional del error
+      // Manejo mejorado de errores de RTK Query
       if (error && typeof error === 'object') {
-        const err = error as { status?: number; data?: { error?: string; message?: string } };
-        console.error('❌ Error status:', err.status);
-        console.error('❌ Error data:', err.data);
-        console.error('❌ Error message:', err.data?.error ?? err.data?.message);
+        const err = error as Record<string, unknown>;
+        
+        // Extraer información del error de RTK Query
+        const errorInfo: Record<string, unknown> = {
+          status: 'status' in err ? err.status : undefined,
+          originalStatus: 'originalStatus' in err ? err.originalStatus : undefined,
+          message: 'message' in err ? err.message : undefined,
+        };
+        
+        // Extraer datos del error del servidor
+        if ('data' in err && err.data && typeof err.data === 'object') {
+          const errorData = err.data as Record<string, unknown>;
+          errorInfo.data = {
+            error: 'error' in errorData ? errorData.error : undefined,
+            message: 'message' in errorData ? errorData.message : undefined,
+            code: 'code' in errorData ? errorData.code : undefined,
+            ...errorData, // Incluir todas las propiedades adicionales
+          };
+        }
+        
+        console.error('❌ Error completo:', errorInfo);
+        console.error('❌ Error status:', errorInfo.status);
+        console.error('❌ Error data:', errorInfo.data);
+        console.error('❌ Error message:', 
+          (errorInfo.data as Record<string, unknown>)?.error ?? 
+          (errorInfo.data as Record<string, unknown>)?.message ?? 
+          errorInfo.message
+        );
+      } else if (error instanceof Error) {
+        // Manejo de errores estándar de JavaScript
+        console.error('❌ Error estándar:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        });
+      } else {
+        console.error('❌ Error desconocido:', error);
       }
       
       throw error;

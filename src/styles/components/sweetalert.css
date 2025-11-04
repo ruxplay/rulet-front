@@ -21,7 +21,7 @@
 }
 
 .swal-confirm-button {
-  background: linear-gradient(135deg, #00ff9c 0%, #00d4aa 100%) !important;
+  background: linear-gradient(135deg, #00ff9c 0%, #00ff9c 100%) !important;
   border: none !important;
   border-radius: 0.5rem !important;
   padding: 0.75rem 1.5rem !important;
@@ -35,7 +35,7 @@
 }
 
 .swal-confirm-button:hover {
-  background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%) !important;
+  background: linear-gradient(135deg, #00ff9c 0%, #00ff9c 100%) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 25px rgba(0, 255, 156, 0.4) !important;
 }

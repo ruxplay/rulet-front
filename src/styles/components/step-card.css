@@ -63,17 +63,17 @@
   0%, 15% {
     transform: scale(1);
     box-shadow: 0 4px 8px rgba(0, 255, 156, 0.3);
-    background: linear-gradient(135deg, #00FF9C, #00CC7A);
+    background: linear-gradient(135deg, #00FF9C, #00FF9C);
   }
   16%, 30% {
     transform: scale(1.15);
     box-shadow: 0 0 25px #00FF9C, 0 0 50px #00FF9C, 0 4px 8px rgba(0, 255, 156, 0.3);
-    background: linear-gradient(135deg, #00FF9C, #33FFB3);
+    background: linear-gradient(135deg, #00FF9C, #00FF9C);
   }
   31%, 100% {
     transform: scale(1);
     box-shadow: 0 4px 8px rgba(0, 255, 156, 0.3);
-    background: linear-gradient(135deg, #00FF9C, #00CC7A);
+    background: linear-gradient(135deg, #00FF9C, #00FF9C);
   }
 }
 

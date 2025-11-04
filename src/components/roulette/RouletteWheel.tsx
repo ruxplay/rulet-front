@@ -15,6 +15,7 @@ interface RouletteWheelProps {
   isPhysicalMode?: boolean;
   onPhysicalSpin?: (winningSector: number) => void;
   shouldAutoSpin?: boolean;
+  mesaId?: string | null; // Para sincronización determinística
 }
 
 export interface RouletteWheelRef {
@@ -26,7 +27,7 @@ export interface RouletteWheelRef {
 }
 
 export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
-  ({ type, sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false }, ref) => {
+  ({ type, sectors, rotation, highlightedSector, onSectorClick, isLoading, isPhysicalMode = false, onPhysicalSpin, shouldAutoSpin = false, mesaId }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const animationRef = useRef<number | null>(null);
@@ -48,10 +49,23 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       currentRotation: number,
       highlightSector?: number | null
     ) => {
+      // Paleta de colores de la aplicación (15 colores únicos - sin repeticiones)
       const colors = [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-        '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
-        '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
+        '#0A192F', // 1. Azul Petróleo Oscuro (Primary)
+        '#00FF9C', // 2. Verde Neón (Secondary)
+        '#FF8C42', // 3. Naranja (combina con la paleta)
+        '#000000', // 4. Negro
+        '#3498db', // 5. Azul Información (Info)
+        '#20B2AA', // 6. Azul Agua Marina
+        '#dc2626', // 7. Rojo Intenso (Ganador Secundario)
+        '#dcf30a', // 8. Amarillo Intenso (Ganador Terciario)
+        '#2c3e50', // 9. Azul Petróleo Claro (Primary Light)
+        '#C7A008', // 10. Dorado (color hover del botón admin en header)
+        '#00CED1', // 11. Turquesa Claro (combina con la paleta)
+        '#9ED54A', // 12. Verde-Amarillo (gradiente difuminado del botón Continuar Jugando)
+        '#FF6B6B', // 13. Coral/Rosa Suave (buen contraste para números)
+        '#B0B0B0', // 14. Gris Muted (Text Muted - de la paleta extendida)
+        '#8B5CF6'  // 15. Púrpura Violeta 
       ];
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
@@ -146,21 +160,114 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.fill();
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-        ctx.lineWidth = 3;
+        
+        // Detectar si es móvil para aplicar estilos diferentes
+        const isMobileForHighlight = typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches;
+        
+        if (isMobileForHighlight) {
+          // Móvil: verde neón más delgado
+          ctx.fillStyle = 'rgba(0, 255, 156, 0.2)'; // Verde neón semitransparente
+          ctx.fill();
+          ctx.strokeStyle = '#00FF9C'; // Verde neón sólido
+          ctx.lineWidth = 1.5; // Borde delgado
+        } else {
+          // Desktop: estilo original
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+          ctx.lineWidth = 3;
+        }
         ctx.stroke();
       }
 
-      // Dibujar centro
+      // Dibujar centro - Textura de madera igual al exterior
+      // Reducir tamaño del círculo central en móvil
+      const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches;
+      const centerRadius = isMobile ? 20 : 30; // Reducido de 30 a 20 en móvil
+      
+      // Base de color madera (capa principal)
+      const baseGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+      baseGradient.addColorStop(0, 'rgb(139, 69, 19)'); // SaddleBrown
+      baseGradient.addColorStop(0.2, 'rgb(160, 82, 45)'); // Sienna
+      baseGradient.addColorStop(0.4, 'rgb(184, 134, 11)'); // DarkGoldenrod
+      baseGradient.addColorStop(0.6, 'rgb(205, 133, 63)'); // Peru
+      baseGradient.addColorStop(0.8, 'rgb(210, 180, 140)'); // Tan
+      baseGradient.addColorStop(0.95, 'rgb(139, 69, 19)'); // SaddleBrown sólido
+      baseGradient.addColorStop(1, 'rgb(139, 69, 19)'); // SaddleBrown sólido - sin transparencia
+      
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-      ctx.fillStyle = 'white';
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = baseGradient;
       ctx.fill();
-      ctx.strokeStyle = '#2c3e50';
-      ctx.lineWidth = 5;
+      
+      // Anillos de crecimiento de madera (capa 2)
+      ctx.globalAlpha = 0.8; // Aumentado para mayor opacidad
+      const ringGradient1 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+      ringGradient1.addColorStop(0, 'rgba(139, 69, 19, 0.1)');
+      ringGradient1.addColorStop(0.2, 'rgba(139, 69, 19, 0.5)');
+      ringGradient1.addColorStop(0.3, 'rgba(160, 82, 45, 0.3)');
+      ringGradient1.addColorStop(0.4, 'rgba(160, 82, 45, 0.4)');
+      ringGradient1.addColorStop(0.5, 'rgba(184, 134, 11, 0.3)');
+      ringGradient1.addColorStop(0.6, 'rgba(184, 134, 11, 0.4)');
+      ringGradient1.addColorStop(0.7, 'rgba(205, 133, 63, 0.3)');
+      ringGradient1.addColorStop(0.8, 'rgba(205, 133, 63, 0.4)');
+      ringGradient1.addColorStop(0.9, 'rgba(139, 69, 19, 0.5)');
+      ringGradient1.addColorStop(1, 'rgba(139, 69, 19, 0.6)');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = ringGradient1;
+      ctx.fill();
+      
+      // Capa de brillo/laca (capa 3)
+      ctx.globalAlpha = 0.4; // Aumentado para mayor opacidad
+      const shineOffset1 = isMobile ? -6 : -9;
+      const shineOffset2 = isMobile ? -8 : -12;
+      const shineRadius1 = isMobile ? 10 : 15;
+      const shineGradient1 = ctx.createRadialGradient(centerX + shineOffset1, centerY + shineOffset2, 0, centerX + shineOffset1, centerY + shineOffset2, shineRadius1);
+      shineGradient1.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+      shineGradient1.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+      shineGradient1.addColorStop(1, 'rgba(139, 69, 19, 0.2)');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = shineGradient1;
+      ctx.fill();
+      
+      const shineOffset3 = isMobile ? 14 : 21;
+      const shineOffset4 = isMobile ? 12 : 18;
+      const shineRadius2 = isMobile ? 10 : 15;
+      const shineGradient2 = ctx.createRadialGradient(centerX + shineOffset3, centerY + shineOffset4, 0, centerX + shineOffset3, centerY + shineOffset4, shineRadius2);
+      shineGradient2.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
+      shineGradient2.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
+      shineGradient2.addColorStop(1, 'rgba(139, 69, 19, 0.15)');
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.fillStyle = shineGradient2;
+      ctx.fill();
+      
+      // Vetas horizontales de madera (capa 4) - simular con líneas
+      ctx.globalAlpha = 0.8; // Aumentado para mayor opacidad
+      ctx.strokeStyle = 'rgba(139, 69, 19, 0.8)'; // Aumentada opacidad para mayor visibilidad
+      ctx.lineWidth = 0.5;
+      const maxOffset = isMobile ? 10 : 15;
+      for (let i = -maxOffset; i <= maxOffset; i += 2) {
+        const y = centerY + i;
+        ctx.beginPath();
+        ctx.moveTo(centerX - Math.sqrt(centerRadius * centerRadius - i * i), y);
+        ctx.lineTo(centerX + Math.sqrt(centerRadius * centerRadius - i * i), y);
+        ctx.stroke();
+      }
+      
+      // Resetear alpha
+      ctx.globalAlpha = 1;
+      
+      // Borde final
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#00FF9C'; // Verde neón
+      ctx.lineWidth = isMobile ? 1.5 : 1.5; // Borde delgado
       ctx.stroke();
 
       // Los punteros ahora se dibujan como elementos HTML/CSS fuera del canvas
@@ -344,15 +451,18 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
             animationRef.current = requestAnimationFrame(animate);
           } else {
             // Asegurar que termine exactamente en la rotación final
+            // Normalizar la rotación final para sincronización entre clientes
             const finalCalculatedRotation = startRotation + rotationDelta;
-            currentRotationRef.current = finalCalculatedRotation;
-            setCurrentAnimationRotation(finalCalculatedRotation);
+            const normalizedFinalRotation = ((finalCalculatedRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+            
+            currentRotationRef.current = normalizedFinalRotation;
+            setCurrentAnimationRotation(normalizedFinalRotation);
             setForceRender(prev => prev + 1); // Forzar re-render final
             const canvas = canvasRef.current;
             if (canvas) {
               const ctx = canvas.getContext('2d');
               if (ctx) {
-                drawWheel(ctx, canvas, finalCalculatedRotation);
+                drawWheel(ctx, canvas, normalizedFinalRotation);
               }
             }
             isSpinningRef.current = false; // Marcar que terminó el giro
@@ -504,6 +614,23 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       animate();
     }, [drawWheel, highlightedSector, calculateTargetRotation]);
 
+    // Función determinística para generar un número "aleatorio" basado en mesaId
+    // Esto asegura que todos los clientes generen el mismo valor
+    const deterministicRandom = useCallback((seed: string | null | undefined): number => {
+      if (!seed) return 0.5; // Valor por defecto si no hay seed
+      
+      // Crear un hash simple del seed
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convertir a 32 bits
+      }
+      
+      // Normalizar a un valor entre 0 y 1
+      return Math.abs(Math.sin(hash)) % 1;
+    }, []);
+
     // Función para iniciar giro físico - TRANSICIÓN SUAVE AL RESULTADO DEL BACKEND
     const startPhysicalSpin = useCallback((winningSector?: number) => {
       if (isSpinningRef.current) return;
@@ -514,10 +641,30 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       // Si hay sector específico del backend, hacer transición suave
       if (winningSector !== undefined) {
         console.log('🎯 Transición suave al sector del backend:', winningSector);
+        
+        // Normalizar rotación inicial a 0 para todos los clientes
+        currentRotationRef.current = 0;
+        
         const targetRotation = calculateTargetRotation(winningSector);
-        // SOLO agregar 2-3 vueltas para transición suave, no múltiples vueltas
-        const extraRotations = (Math.random() * 4 + 6) * Math.PI; // 6-10 vueltas para giro rápido
-        const finalRotation = targetRotation + extraRotations;
+        
+        // Usar rotaciones adicionales determinísticas basadas en mesaId
+        // Esto asegura que todos los clientes agreguen las mismas vueltas
+        const deterministicValue = deterministicRandom(mesaId);
+        const extraRotations = (deterministicValue * 4 + 6) * Math.PI; // 6-10 vueltas determinísticas
+        
+        // Asegurar que la rotación final sea exactamente la misma para todos
+        // Normalizar targetRotation y luego agregar las vueltas
+        const normalizedTargetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+        const finalRotation = normalizedTargetRotation + extraRotations;
+        
+        console.log('🎯 Rotación sincronizada:', {
+          winningSector,
+          targetRotation: normalizedTargetRotation,
+          extraRotations,
+          finalRotation,
+          mesaId
+        });
+        
         animateSpin(finalRotation);
         return;
       }
@@ -530,7 +677,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       const extraRotations = (Math.random() * 6 + 8) * Math.PI; // 8-14 vueltas para giro rápido
       const finalRotation = targetRotation + extraRotations;
       animateSpin(finalRotation);
-    }, [animateSpin, calculateTargetRotation]);
+    }, [animateSpin, calculateTargetRotation, deterministicRandom, mesaId]);
 
     // Función para detectar el sector ganador
     const detectWinningSector = useCallback(() => {
@@ -688,10 +835,23 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         preserveAspectRatio="xMidYMid meet"
       >
         {Array.from({ length: NUM_SECTORS }, (_, i) => {
+          // Paleta de colores de la aplicación (15 colores únicos - sin repeticiones)
           const colors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#8AC24A', '#F06292', '#7986CB', '#FF7043',
-            '#26A69A', '#7E57C2', '#DCE775', '#FF8A65', '#81C784'
+            '#0A192F', // 1. Azul Petróleo Oscuro (Primary)
+            '#00FF9C', // 2. Verde Neón (Secondary)
+            '#FF8C42', // 3. Naranja (combina con la paleta)
+            '#000000', // 4. Negro
+            '#3498db', // 5. Azul Información (Info)
+            '#20B2AA', // 6. Azul Agua Marina
+            '#dc2626', // 7. Rojo Intenso (Ganador Secundario)
+            '#dcf30a', // 8. Amarillo Intenso (Ganador Terciario)
+            '#2c3e50', // 9. Azul Petróleo Claro (Primary Light)
+            '#C7A008', // 10. Dorado (color hover del botón admin en header)
+            '#00CED1', // 11. Turquesa Claro (combina con la paleta)
+            '#9ED54A', // 12. Verde-Amarillo (gradiente difuminado del botón Continuar Jugando)
+            '#FF6B6B', // 13. Coral/Rosa Suave (buen contraste para números)
+            '#B0B0B0', // 14. Gris Muted (Text Muted - de la paleta extendida)
+            '#8B5CF6'  // 15. Púrpura Violeta (combina con la paleta)
           ];
           const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
           // SINCRONIZAR con la rotación actual del canvas durante la animación - CRÍTICO para mantener coincidencia visual

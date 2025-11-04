@@ -31,7 +31,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, var(--secondary) 0%, #00B366 100%) !important;
+  background: linear-gradient(135deg, var(--secondary) 0%, #00FF9C 100%) !important;
   color: var(--primary) !important;
   flex-shrink: 0;
 }

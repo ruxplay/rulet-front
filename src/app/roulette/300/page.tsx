@@ -5,11 +5,10 @@ import {
   RouletteWheel,
   RouletteControls,
   RouletteBets,
-  RouletteResults,
+ 
   ProfessionalWinnersModal,
   RoulettePageSelector,
   useRoulette,
-  useRouletteSSE
 } from '@/components/roulette';
 import { RouletteWheelRef } from '@/components/roulette/RouletteWheel';
 import { useAuth } from '@/components/layout/hooks/useAuth';
@@ -45,8 +44,7 @@ function Roulette300Content() {
     isPhysicalMode,
     countdown,
     isAutoSpinning,
-    isWaitingForResult,
-    currentMesaIdForSpin,
+  
     handlePhysicalSpin,
     isWaitingForNewMesa,
     sseWinners // ← AGREGADO: Obtener sseWinners desde useRoulette
@@ -79,23 +77,14 @@ function Roulette300Content() {
     }
   }, [sseWinners]);
 
-  // Función para manejar el giro físico desde el botón
-  const handlePhysicalSpinFromButton = () => {
-    console.log('🎰 Botón GIRAR RULETA presionado');
-    if (rouletteWheelRef.current) {
-      console.log('🎯 Iniciando giro físico...');
-      rouletteWheelRef.current.startPhysicalSpin();
-    } else {
-      console.error('❌ Referencia de ruleta no disponible');
-    }
-  };
+
 
   return (
     <div className="roulette-page">
       <div className="roulette-container">
         {/* Header */}
         <div className="roulette-header">
-          <h1 className="roulette-title">Ruleta</h1>
+          <h1 className="roulette-title">Rulet</h1>
           
           {/* Selector de páginas */}
           <RoulettePageSelector currentType="300" />
@@ -135,6 +124,7 @@ function Roulette300Content() {
               isLoading={isLoading || isSpinning}
               isPhysicalMode={isPhysicalMode}
               onPhysicalSpin={handlePhysicalSpin}
+              mesaId={mesa?.mesaId}
             />
           </div>
 

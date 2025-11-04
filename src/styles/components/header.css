@@ -350,7 +350,7 @@
 }
 
 .header-login-button:hover {
-  background: linear-gradient(135deg, var(--secondary-dark), #00B366);
+  background: linear-gradient(135deg, var(--secondary-dark), #00FF9C);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
 }
@@ -704,7 +704,7 @@
 }
 
 .mobile-login-button:hover {
-  background: linear-gradient(135deg, var(--secondary-dark), #00B366);
+  background: linear-gradient(135deg, var(--secondary-dark), #00FF9C);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 255, 156, 0.4);
 }

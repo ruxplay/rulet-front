@@ -10,13 +10,13 @@
   --roulette-accent-color: #e74c3c;
   --roulette-background-color: #f5f5f5;
   --roulette-text-color: #333;
-  --roulette-success-color: #2ecc71;
+  --roulette-success-color: #00FF9C;
   --roulette-danger-color: #e74c3c;
   --roulette-light-color: #ecf0f1;
   --roulette-dark-color: #2c3e50;
   
   /* Variables responsive para la ruleta */
-  --roulette-size-desktop: 500px; /* +25% en escritorio */
+  --roulette-size-desktop: 650px; /* Aumentado para PC - más grande */
   --roulette-size-tablet: 380px;
   --roulette-size-mobile: min(100vw, 640px); /* maximizar tamaño visible en móviles */
   
@@ -35,7 +35,7 @@
   position: relative;
   width: 100%;
   max-width: var(--roulette-size-desktop);
-  margin: 0 auto 40px;
+  margin: 40px auto 40px;
   perspective: 1000px;
   aspect-ratio: 1;
   display: flex;
@@ -199,14 +199,14 @@
   position: absolute;
   width: 30px;
   height: 30px;
-  background: conic-gradient(from 180deg at 50% 50%, #ffffff 0deg, #e5e7eb 120deg, #cbd5e1 240deg, #ffffff 360deg);
+  /* Color brillante neon - sólido sin difuminación */
+  background: #00FF9C;
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.15);
-  border: 5px solid var(--roulette-primary-color);
+  border: 1.5px solid #00FF9C; /* Verde neón - borde delgado */
 }
 
 /* Ampliar el círculo solo en móvil (canvas + overlay + centro) */
@@ -218,9 +218,13 @@
     transform: scale(1.4);
     transform-origin: center center;
   }
-  /* El círculo central necesita mantener su translate para centrarse */
+  /* El círculo central necesita mantener su translate para centrarse, pero más pequeño */
   .roulette-wheel-center {
-    transform: translate(-50%, -50%) scale(1.4);
+    width: 10px; /* Reducido 20% (de 20px a 16px) */
+    height: 10px; /* Reducido 20% (de 20px a 16px) */
+    border-width: 1.5px;
+    border-color: #00FF9C; /* Verde neón - borde delgado */
+    transform: translate(-50%, -50%) ;
     transform-origin: center center;
   }
   /* Textura de mesa de madera para móvil - asegurar que se vea */
@@ -528,7 +532,8 @@
   .roulette-wheel-center {
     width: 25px;
     height: 25px;
-    border-width: 3px;
+    border-width: 1.5px;
+    border-color: #00FF9C; /* Verde neón - borde delgado */
   }
 }
 

@@ -270,7 +270,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--secondary-dark), #00B366);
+  background: linear-gradient(135deg, var(--secondary-dark), #00FF9C);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 255, 156, 0.4);
 }

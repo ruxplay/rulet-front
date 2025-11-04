@@ -35,7 +35,7 @@ export const Header = () => {
           <div className="logo-icon">
             <span className="logo-text">R</span>
           </div>
-          <span className="logo-text">RubPlay</span>
+          <span className="logo-text">RuxPlay</span>
         </Link>
 
         {/* Nav */}

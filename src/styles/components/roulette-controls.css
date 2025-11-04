@@ -11,6 +11,47 @@
   overflow: visible;
 }
 
+/* Reducir tamaño de controles a la mitad en PC (desktop) */
+@media (min-width: 1025px) {
+  .roulette-controls {
+    padding: 12px 15px; /* Reducido a la mitad */
+  }
+  
+  .bet-controls {
+    margin-bottom: 12px; /* Reducido a la mitad */
+  }
+  
+  .bet-button {
+    padding: 8px 15px; /* Reducido a la mitad */
+    font-size: 0.9rem; /* Reducido */
+    min-width: 150px; /* Reducido */
+    border-radius: 25px;
+  }
+  
+  .status-message {
+    font-size: 0.85rem; /* Reducido */
+    padding: 8px 12px; /* Reducido */
+    margin-top: 10px; /* Reducido */
+  }
+  
+  .mesa-info {
+    padding: 10px 0; /* Reducido */
+    gap: 8px; /* Reducido */
+  }
+  
+  .mesa-id,
+  .mesa-status,
+  .mesa-progress {
+    font-size: 0.85rem; /* Reducido */
+    padding: 5px 0; /* Reducido */
+  }
+  
+  .progress-bar {
+    height: 6px; /* Reducido */
+    margin-top: 5px; /* Reducido */
+  }
+}
+
 .bet-controls {
   text-align: center;
   margin-bottom: 25px;
@@ -112,9 +153,9 @@
 }
 
 .status-message.success {
-  background-color: rgba(46, 204, 113, 0.2);
-  color: #2ecc71;
-  border: 1px solid rgba(46, 204, 113, 0.3);
+  background-color: rgba(0, 255, 156, 0.2);
+  color: #00FF9C;
+  border: 1px solid rgba(0, 255, 156, 0.3);
 }
 
 .status-message.error {
@@ -162,6 +203,9 @@
   position: relative;
   z-index: 1;
   overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* Asegurar que los labels no sean tapados por overlays */
@@ -177,7 +221,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -207,7 +251,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
@@ -257,7 +301,7 @@
 
 /* ===== PROGRESS BAR ===== */
 .mesa-progress {
-  margin-top: 15px;
+  margin-top: 0;
 }
 
 .progress-label {
@@ -278,6 +322,19 @@
   color: #3498db;
   margin-bottom: 8px;
   display: block;
+}
+
+/* Aumentar tamaño del Progreso en PC y Tablet */
+@media (min-width: 769px) {
+  .progress-label {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .progress-value {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
 }
 
 .progress-bar {
