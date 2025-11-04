@@ -33,6 +33,8 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     const animationRef = useRef<number | null>(null);
     const currentRotationRef = useRef(rotation);
     const isSpinningRef = useRef(false);
+    const expectedWinningSectorRef = useRef<number | null>(null); // Guardar el sector esperado del backend
+    const originalTargetRotationRef = useRef<number | null>(null); // Guardar targetRotation original sin normalizar
     
     // Estado para forzar re-render de botones SVG durante la animación
     const [currentAnimationRotation, setCurrentAnimationRotation] = useState(rotation);
@@ -450,21 +452,136 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
-            // Asegurar que termine exactamente en la rotación final
-            // Normalizar la rotación final para sincronización entre clientes
-            const finalCalculatedRotation = startRotation + rotationDelta;
-            const normalizedFinalRotation = ((finalCalculatedRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+            // SOLUCIÓN SIN SALTOS: La animación termina naturalmente en finalRotation
+            // que ya está calculado con normalizedTargetRotation + vueltas completas exactas
+            // No necesitamos ningún ajuste porque finalRotation ya tiene la estructura correcta
+            const finalDrawRotation = currentRotationRef.current;
             
-            currentRotationRef.current = normalizedFinalRotation;
-            setCurrentAnimationRotation(normalizedFinalRotation);
+            // La animación ya terminó en el valor correcto, simplemente dibujar
+            setCurrentAnimationRotation(finalDrawRotation);
             setForceRender(prev => prev + 1); // Forzar re-render final
             const canvas = canvasRef.current;
             if (canvas) {
               const ctx = canvas.getContext('2d');
               if (ctx) {
-                drawWheel(ctx, canvas, normalizedFinalRotation);
+                drawWheel(ctx, canvas, finalDrawRotation);
               }
             }
+            
+            // 🟢 LOG DE DONDE SE DETUVO LA RULETA VISUALMENTE
+            // Usar el sector esperado del backend directamente en lugar de calcular
+            const expectedSector = expectedWinningSectorRef.current;
+            const expectedNumber = expectedSector !== null ? expectedSector + 1 : null;
+            
+            // Declarar originalTargetRotation antes de usarlo
+            const originalTargetRotation = originalTargetRotationRef.current;
+            
+            // CORRECCIÓN: Calcular basándonos en el targetRotation ORIGINAL (sin normalizar)
+            const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
+            const arrowOffset = 0.098; // 5.6° en radianes (corregido)
+            
+            // Calcular el sector basándonos en el targetRotation original
+            // Fórmula inversa: targetRotation = -sectorCenterAngle + Math.PI/2 - arrowOffset
+            // Por lo tanto: sectorCenterAngle = -targetRotation + Math.PI/2 - arrowOffset
+            let calculatedSector = expectedSector; // Por defecto, usar el esperado
+            let calculatedNumber = expectedNumber;
+            
+            if (originalTargetRotation !== null) {
+              // Revertir el cálculo de targetRotation para obtener el sector original
+              // Fórmula original: targetRotation = -sectorCenterAngle + Math.PI/2 - arrowOffset + visualOffset
+              // Despejando: -sectorCenterAngle = targetRotation - Math.PI/2 + arrowOffset - visualOffset
+              // Por lo tanto: sectorCenterAngle = -targetRotation + Math.PI/2 - arrowOffset + visualOffset
+              const visualOffsetSectors = 8; // Mismo valor que en calculateTargetRotation
+              const visualOffset = visualOffsetSectors * anglePerSector;
+              const sectorCenterAngle = -originalTargetRotation + Math.PI / 2 - arrowOffset + visualOffset;
+              const normalizedSectorCenterAngle = ((sectorCenterAngle % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+              
+              // sectorCenterAngle = sectorIndex * anglePerSector + anglePerSector/2
+              // Por lo tanto: sectorIndex = (sectorCenterAngle - anglePerSector/2) / anglePerSector
+              const sectorIndex = (normalizedSectorCenterAngle - anglePerSector / 2) / anglePerSector;
+              // CORRECCIÓN: Usar Math.round() en lugar de Math.floor() para manejar errores de precisión de punto flotante
+              // Ejemplo: 1.9999999999999996 → Math.floor() = 1 ❌, Math.round() = 2 ✅
+              calculatedSector = Math.round(sectorIndex) % NUM_SECTORS;
+              if (calculatedSector < 0) calculatedSector += NUM_SECTORS;
+              calculatedNumber = calculatedSector + 1;
+              
+              // DEBUG: Log detallado del cálculo
+              console.log('🔍 DEBUG Cálculo sector desde targetRotation:', {
+                originalTargetRotation,
+                originalTargetRotationDegrees: (originalTargetRotation * 180) / Math.PI,
+                sectorCenterAngle,
+                sectorCenterAngleDegrees: (sectorCenterAngle * 180) / Math.PI,
+                normalizedSectorCenterAngle,
+                normalizedSectorCenterAngleDegrees: (normalizedSectorCenterAngle * 180) / Math.PI,
+                sectorIndex,
+                calculatedSector,
+                expectedSector,
+                diferencia: calculatedSector - (expectedSector || 0)
+              });
+            } else {
+              // Fallback: calcular desde finalDrawRotation usando la misma lógica
+              const adjustedRotation = finalDrawRotation + (Math.PI / 2) - arrowOffset;
+              const normalizedAdjustedRotation = ((adjustedRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+              calculatedSector = Math.floor(normalizedAdjustedRotation / anglePerSector) % NUM_SECTORS;
+              calculatedNumber = calculatedSector + 1;
+            }
+            
+            // 🔍 CÁLCULO CRÍTICO: Detectar qué sector está VISUALMENTE bajo la flecha verde
+            // CORRECCIÓN: Usar finalDrawRotation normalizado (que es igual a normalizedTargetRotation)
+            // Esto asegura que el cálculo visual coincida con lo que realmente se dibuja
+            const arrowGlobalAngle = -Math.PI / 2 + arrowOffset; // Posición global de la flecha en el canvas
+            
+            // Normalizar finalDrawRotation (que ya usa normalizedTargetRotation si está disponible)
+            const normalizedDrawRotation = ((finalDrawRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+            
+            // Calcular qué sector está bajo la flecha verde
+            // El sector 0 comienza en currentRotation (finalDrawRotation normalizado)
+            // Así que el ángulo relativo al sector 0 es: arrowGlobalAngle - normalizedDrawRotation
+            let angleRelativeToSector0 = arrowGlobalAngle - normalizedDrawRotation;
+            angleRelativeToSector0 = ((angleRelativeToSector0 % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+            
+            // El sector que contiene este ángulo es:
+            const visualSectorIndex = Math.floor(angleRelativeToSector0 / anglePerSector) % NUM_SECTORS;
+            const visualSectorNumber = visualSectorIndex < 0 ? visualSectorIndex + NUM_SECTORS + 1 : visualSectorIndex + 1;
+            
+            // Calcular valores para comparación en el log
+            // Nota: originalTargetRotation ya está declarado arriba
+            const normalizedTargetRotation = originalTargetRotation !== null 
+              ? ((originalTargetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI)
+              : normalizedDrawRotation;
+            
+            // Verificar que normalizedDrawRotation sea igual a normalizedTargetRotation (debería serlo)
+            const diferenciaNormalizacion = Math.abs(normalizedTargetRotation - normalizedDrawRotation) * 180 / Math.PI;
+            
+            console.log('🎯 RULETA SE DETIENE VISUALMENTE (SIN SALTOS):', {
+              sectorIndexEsperado: expectedSector,
+              numeroEnRuletaEsperado: expectedNumber,
+              sectorIndexCalculado: calculatedSector,
+              numeroEnRuletaCalculado: calculatedNumber,
+              coinciden: expectedSector === calculatedSector,
+              originalTargetRotationDegrees: originalTargetRotation !== null ? (originalTargetRotation * 180) / Math.PI : null,
+              finalDrawRotationDegrees: (finalDrawRotation * 180) / Math.PI,
+              // 🔍 CORRECCIÓN: Mostrar valores normalizados
+              normalizedTargetRotationDegrees: (normalizedTargetRotation * 180) / Math.PI,
+              normalizedDrawRotationDegrees: (normalizedDrawRotation * 180) / Math.PI,
+              diferenciaNormalizacion: diferenciaNormalizacion,
+              // ✅ Si diferenciaNormalizacion es 0, significa que la animación terminó correctamente sin saltos
+              sinSaltos: diferenciaNormalizacion < 0.1,
+              arrowOffsetApplied: arrowOffset,
+              arrowOffsetDegrees: (arrowOffset * 180) / Math.PI,
+              // 🔍 DATOS VISUALES REALES - Calculados con normalizedDrawRotation (valor real usado para dibujar)
+              arrowGlobalAngleDegrees: (arrowGlobalAngle * 180) / Math.PI,
+              angleRelativeToSector0Degrees: (angleRelativeToSector0 * 180) / Math.PI,
+              sectorVisualmenteBajoFlecha: visualSectorIndex,
+              numeroVisualmenteBajoFlecha: visualSectorNumber,
+              desfaseVisual: expectedSector !== null ? visualSectorIndex - expectedSector : null,
+              desfaseVisualGrados: expectedSector !== null ? ((visualSectorIndex - expectedSector) * (360 / NUM_SECTORS)) : null,
+              nota: 'Animación termina naturalmente sin saltos - finalDrawRotation ya tiene la estructura correcta'
+            });
+            
+            // Limpiar el sector esperado después de usarlo
+            // expectedWinningSectorRef.current = null; // NO limpiar para mantenerlo disponible para detectWinningSector
+            
             isSpinningRef.current = false; // Marcar que terminó el giro
             resolve();
           }
@@ -478,26 +595,46 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
     const calculateTargetRotation = useCallback((winningSector: number) => {
       const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
       
-      // CORRECCIÓN: Calcular la rotación para que el CENTRO del sector ganador quede en 12 en punto (0 grados)
+      // CORRECCIÓN: Calcular la rotación para que el CENTRO del sector ganador quede en la flecha verde
       // El centro del sector está en: sectorIndex * anglePerSector + (anglePerSector / 2)
       const sectorCenterAngle = winningSector * anglePerSector + (anglePerSector / 2);
       
-      // Calcular la rotación necesaria para llevar el centro del sector a 0 grados (12 en punto)
-      // Necesitamos rotar en sentido contrario para que el centro quede en 0 grados
-      let targetRotation = -sectorCenterAngle;
+      // CORRECCIÓN COMPLETA DEL SISTEMA DE COORDENADAS:
+      // 1. Canvas dibuja sectores en sentido HORARIO desde 0° (3 en punto)
+      // 2. Flecha verde está desplazada ~32px a la DERECHA del centro
+      // 3. Con radio ~325px → ángulo de desplazamiento: arctan(32/325) ≈ 5.6° ≈ 0.098 radianes
+      // 4. Necesitamos rotar para que el centro del sector coincida con la flecha
+      
+      // CORRECCIÓN: Usar el desplazamiento real de la flecha (5.6°, no 24°)
+      const arrowOffset = 0.098; // 5.6° en radianes (desplazamiento real de la flecha verde)
+      
+      // CORRECCIÓN CRÍTICA: Compensar desfase visual detectado
+      // Los logs muestran desfase de -8 sectores (-192°) entre el sector esperado y el visual
+      // Necesitamos rotar +8 sectores adicionales para compensar
+      const visualOffsetSectors = 8; // 8 sectores de compensación
+      const visualOffset = visualOffsetSectors * anglePerSector; // 192° en radianes
+      
+      // Calcular la rotación necesaria
+      // La flecha está desplazada a la DERECHA, así que necesitamos rotar ligeramente a la IZQUIERDA
+      // Además, agregamos visualOffset para compensar el desfase visual
+      let targetRotation = -sectorCenterAngle + Math.PI / 2 - arrowOffset + visualOffset;
       
       // Normalizar la rotación para que esté entre 0 y 2π
       targetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
       
-      console.log('🎯 Calculando rotación objetivo CORREGIDO:', {
+      console.log('🎯 Calculando rotación objetivo con COMPENSACIÓN VISUAL:', {
         winningSector,
         anglePerSector,
         sectorCenterAngle: sectorCenterAngle,
         sectorCenterDegrees: (sectorCenterAngle * 180) / Math.PI,
+        arrowOffset: arrowOffset,
+        arrowOffsetDegrees: (arrowOffset * 180) / Math.PI,
+        visualOffsetSectors: visualOffsetSectors,
+        visualOffset: visualOffset,
+        visualOffsetDegrees: (visualOffset * 180) / Math.PI,
         targetRotation: targetRotation,
         targetRotationDegrees: (targetRotation * 180) / Math.PI,
-        expectedPosition: 'Centro del sector en 12 en punto (0 grados)',
-        flechaVerde: 'Apuntará al CENTRO del sector ganador'
+        expectedPosition: 'Centro del sector alineado con flecha verde (con compensación visual de +8 sectores)'
       });
       
       return targetRotation;
@@ -642,19 +779,33 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       if (winningSector !== undefined) {
         console.log('🎯 Transición suave al sector del backend:', winningSector);
         
+        // Guardar el sector esperado del backend para usarlo en la detección
+        expectedWinningSectorRef.current = winningSector;
+        
         // Normalizar rotación inicial a 0 para todos los clientes
         currentRotationRef.current = 0;
         
         const targetRotation = calculateTargetRotation(winningSector);
         
+        // CORRECCIÓN: Guardar targetRotation ANTES de normalizar para usarlo en detección visual
+        originalTargetRotationRef.current = targetRotation;
+        
+        // CORRECCIÓN CRÍTICA: Normalizar targetRotation UNA SOLA VEZ para evitar desfases
+        // Esta normalización debe ser la misma que se usará al final de la animación
+        const normalizedTargetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+        
         // Usar rotaciones adicionales determinísticas basadas en mesaId
         // Esto asegura que todos los clientes agreguen las mismas vueltas
         const deterministicValue = deterministicRandom(mesaId);
-        const extraRotations = (deterministicValue * 4 + 6) * Math.PI; // 6-10 vueltas determinísticas
+        const extraRotationsRaw = (deterministicValue * 4 + 6) * Math.PI; // 6-10 vueltas determinísticas
         
-        // Asegurar que la rotación final sea exactamente la misma para todos
-        // Normalizar targetRotation y luego agregar las vueltas
-        const normalizedTargetRotation = ((targetRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+        // CORRECCIÓN CRÍTICA: Calcular vueltas completas como múltiplos exactos de 2π
+        // Esto asegura que al normalizar finalRotation, obtengamos exactamente normalizedTargetRotation
+        const vueltasCompletas = Math.floor(extraRotationsRaw / (2 * Math.PI));
+        const extraRotations = vueltasCompletas * (2 * Math.PI); // Solo múltiplos exactos de 2π
+        
+        // Calcular finalRotation de forma que al normalizar sea exactamente normalizedTargetRotation
+        // Esto elimina la necesidad de ajustes al final que causan saltos
         const finalRotation = normalizedTargetRotation + extraRotations;
         
         console.log('🎯 Rotación sincronizada:', {
@@ -681,23 +832,33 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
 
     // Función para detectar el sector ganador
     const detectWinningSector = useCallback(() => {
+      // SOLUCIÓN: Si tenemos el sector esperado del backend, usarlo directamente
+      if (expectedWinningSectorRef.current !== null) {
+        const expectedSector = expectedWinningSectorRef.current;
+        console.log('🔍 Usando sector esperado del backend:', {
+          sectorIndex: expectedSector,
+          numeroEnRuleta: expectedSector + 1,
+          source: 'Backend directo (sin cálculo de rotación)'
+        });
+        return expectedSector;
+      }
+      
+      // FALLBACK: Calcular basándonos en la rotación (para giros sin backend)
       const currentRotation = currentRotationRef.current;
-      
-      // Normalizar la rotación
       const normalizedRotation = ((currentRotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      
-      
-      // Calcular el sector basado en la rotación
       const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
-      
-      // Ajustar para que el sector 0 esté en 12 en punto
-      const adjustedRotation = normalizedRotation + (anglePerSector / 2);
+      const arrowOffset = 0.098; // 5.6° en radianes (corregido - desplazamiento real de la flecha)
+      // La flecha está desplazada a la DERECHA, así que ajustamos a la IZQUIERDA
+      const adjustedRotation = normalizedRotation + (Math.PI / 2) - arrowOffset;
       const sector = Math.floor(adjustedRotation / anglePerSector) % NUM_SECTORS;
       
-      console.log('🔍 Detección física:', {
+      console.log('🔍 Calculando sector por rotación (fallback):', {
         rotation: currentRotation,
         normalizedRotation,
+        arrowOffset: arrowOffset,
+        arrowOffsetDegrees: (arrowOffset * 180) / Math.PI,
         adjustedRotation,
+        adjustedRotationDegrees: (adjustedRotation * 180) / Math.PI,
         sector,
         anglePerSector
       });
@@ -705,14 +866,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       return sector;
     }, [NUM_SECTORS]);
 
-    // Efecto para giro automático (DESHABILITADO - se maneja desde useRoulette)
-    // useEffect(() => {
-    //   console.log('🎰 shouldAutoSpin cambió:', { shouldAutoSpin, isSpinning: isSpinningRef.current });
-    //   if (shouldAutoSpin && !isSpinningRef.current) {
-    //     console.log('🎰 Giro automático activado');
-    //     startPhysicalSpin();
-    //   }
-    // }, [shouldAutoSpin, startPhysicalSpin]);
+  
 
     // Exponer métodos al componente padre
     useImperativeHandle(ref, () => ({
@@ -818,71 +972,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         className="roulette-wheel-canvas"
         onClick={handleCanvasClick}
       />
-      
-      {/* SVG con botones sectoriales delicados - COMPLETAMENTE RESPONSIVE */}
-      {/* TEMPORALMENTE COMENTADO PARA DIAGNÓSTICO - Ver si el problema persiste sin los botones SVG */}
-      {/* <svg
-        className="sector-buttons-overlay"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'auto',
-          zIndex: 5
-        }}
-        viewBox={`0 0 ${canvasSize} ${canvasSize}`}
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {Array.from({ length: NUM_SECTORS }, (_, i) => {
-          // Paleta de colores de la aplicación (15 colores únicos - sin repeticiones)
-          const colors = [
-            '#0A192F', // 1. Azul Petróleo Oscuro (Primary)
-            '#00FF9C', // 2. Verde Neón (Secondary)
-            '#FF8C42', // 3. Naranja (combina con la paleta)
-            '#000000', // 4. Negro
-            '#3498db', // 5. Azul Información (Info)
-            '#20B2AA', // 6. Azul Agua Marina
-            '#dc2626', // 7. Rojo Intenso (Ganador Secundario)
-            '#dcf30a', // 8. Amarillo Intenso (Ganador Terciario)
-            '#2c3e50', // 9. Azul Petróleo Claro (Primary Light)
-            '#C7A008', // 10. Dorado (color hover del botón admin en header)
-            '#00CED1', // 11. Turquesa Claro (combina con la paleta)
-            '#9ED54A', // 12. Verde-Amarillo (gradiente difuminado del botón Continuar Jugando)
-            '#FF6B6B', // 13. Coral/Rosa Suave (buen contraste para números)
-            '#B0B0B0', // 14. Gris Muted (Text Muted - de la paleta extendida)
-            '#8B5CF6'  // 15. Púrpura Violeta (combina con la paleta)
-          ];
-          const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
-          // SINCRONIZAR con la rotación actual del canvas durante la animación - CRÍTICO para mantener coincidencia visual
-          const startAngle = currentAnimationRotation + i * anglePerSector;
-          
-          // Debug: Log cada renderizado de botones SVG
-          if (i === 0) {
-            // Log eliminado para reducir spam en consola
-          }
-          
-          return (
-            <SectorButton
-              key={i}
-              sectorIndex={i}
-              color={colors[i % colors.length]}
-              angle={startAngle}
-              radius={canvasSize / 2 - Math.max(6, Math.round(canvasSize * 0.02))}
-              centerX={canvasSize / 2}
-              centerY={canvasSize / 2}
-              anglePerSector={anglePerSector}
-              onClick={onSectorClick}
-              isHighlighted={highlightedSector === i}
-            />
-          );
-        })}
-      </svg> */}
-      
-      <div className="roulette-wheel-center"></div>
-      
-      {/* Punteros profesionales para los 3 ganadores */}
+     
       <div className="roulette-pointer roulette-main-pointer"></div>
       <div className="roulette-pointer roulette-left-pointer"></div>
       <div className="roulette-pointer roulette-right-pointer"></div>

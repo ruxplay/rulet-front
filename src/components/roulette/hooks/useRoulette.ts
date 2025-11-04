@@ -18,19 +18,11 @@ export const useRoulette = (type: RouletteType) => {
   const username = authState.user?.username;
   const dispatch = useAppDispatch();
 
-  // Debug de autenticación (comentado para evitar spam en consola)
-  // console.log('🔐 Estado de autenticación:', {
-  //   isAuthenticated: authState.isAuthenticated,
-  //   username: username,
-  //   user: authState.user ? 'Usuario presente' : 'Usuario ausente'
-  // });
-
-
   // Estados locales
   const [selectedSector, setSelectedSector] = useState<number | null>(null);
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [isPhysicalMode, setIsPhysicalMode] = useState(true); // Activar modo físico por defecto
+  const [isPhysicalMode, setIsPhysicalMode] = useState(true);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isAutoSpinning, setIsAutoSpinning] = useState(false);
   const [lastSpunMesaId, setLastSpunMesaId] = useState<string | null>(null);
@@ -38,33 +30,27 @@ export const useRoulette = (type: RouletteType) => {
   const [persistentWinners, setPersistentWinners] = useState<RouletteWinners | null>(null);
 
   // Queries y mutations
-  const { 
-    data: mesaData, 
-    isLoading, 
+  const {
+    data: mesaData,
+    isLoading,
     error,
-    refetch 
+    refetch
   } = useGetCurrentMesaQuery(type, {
-    pollingInterval: 5000, // Polling cada 5 segundos
+    pollingInterval: 5000,
     skip: !username,
-    // Forzar nueva petición cada vez que cambie el tipo
     refetchOnMountOrArgChange: true
   });
 
   // SSE para ganadores en tiempo real
-  const { 
-    winners: sseWinners, 
-    showModal: sseShowModal, 
+  const {
+    winners: sseWinners,
+    showModal: sseShowModal,
     closeModal: sseCloseModal,
     isWaitingForResult,
     currentMesaIdForSpin,
     setWinners,
     setShowModal
   } = useRouletteSSE(type, mesaData?.mesa?.mesaId);
-
-  // Debug: rastrear cambios en el modal
-  useEffect(() => {
-    // Log eliminado
-  }, [sseShowModal]);
 
   // Sincronizar ganadores persistentes con SSE
   useEffect(() => {
@@ -73,22 +59,11 @@ export const useRoulette = (type: RouletteType) => {
     }
   }, [sseWinners, isWaitingForNewMesa]);
 
-  // Debug logs para el modal (comentado para evitar spam en consola)
-  // useEffect(() => {
-  //   console.log('🎯 Estado del modal:', {
-  //     sseWinners: !!sseWinners,
-  //     sseShowModal,
-  //     mesaId: mesaData?.mesa?.mesaId,
-  //     currentMesaIdForSpin
-  //   });
-  // }, [sseWinners, sseShowModal, mesaData?.mesa?.mesaId, currentMesaIdForSpin]);
-
-
   const [placeBetMutation, { isLoading: isPlacingBet }] = usePlaceBetMutation();
   const [spinMesaMutation] = useSpinMesaMutation();
   const [advanceMesaMutation] = useAdvanceMesaMutation();
 
-  // Función para formatear moneda
+  // Formato de moneda
   const formatCurrency = useCallback((value: number) => {
     return value.toLocaleString('es-VE', {
       minimumFractionDigits: 2,
@@ -96,109 +71,77 @@ export const useRoulette = (type: RouletteType) => {
     });
   }, []);
 
-  // Función para manejar el giro físico de la ruleta
+  // Manejo de giro físico (placeholder)
   const handlePhysicalSpin = useCallback((winningSector: number) => {
-    console.log('🎰 handlePhysicalSpin llamado con sector ganador:', winningSector);
-    // Esta función se puede usar para lógica adicional cuando termine el giro físico
-    // Por ahora solo registra el evento, la animación se maneja desde el componente padre
+    // Lógica adicional cuando termine el giro físico (si aplica)
   }, []);
 
-  // Función para realizar apuesta
+  // Realizar apuesta
   const placeBet = useCallback(async () => {
-    console.log('🎯 placeBet iniciado:', { 
-      username, 
-      selectedSector, 
-      mesaData: !!mesaData, 
-      type,
-      error: error ? 'Hay error' : 'Sin error'
-    });
-    
-    // Permitir apostar incluso si no hay mesa activa (para crear la primera mesa)
-    const isNoActiveMesa = (error as { status?: number; data?: { code?: string } })?.status === 404 || (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
-    
+    const isNoActiveMesa =
+      (error as { status?: number; data?: { code?: string } })?.status === 404 ||
+      (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
+
     if (!username || selectedSector === null) {
       console.error('❌ Validación fallida:', { username: !!username, selectedSector });
       return;
     }
 
-    // Si no hay mesa activa, permitir apostar para crear la primera mesa
     if (!mesaData?.mesa && !isNoActiveMesa) {
-      console.log('❌ No hay mesa activa y no es error de NO_ACTIVE_MESA');
+      console.error('❌ No hay mesa activa y no es error de NO_ACTIVE_MESA');
       return;
     }
 
     try {
-      console.log('🔄 Enviando apuesta al backend...');
-      console.log('🔄 Datos de la apuesta:', {
-        type,
-        username,
-        sectorIndex: selectedSector,
-        url: `/api/roulette/${type}/bet`
-      });
-      
       const result = await placeBetMutation({
         type,
         username,
         sectorIndex: selectedSector
       }).unwrap();
 
-      console.log('🎯 Respuesta completa de placeBet:', result);
-      console.log('🎯 Balance en respuesta:', (result as { balance?: number | string })?.balance);
-
-      // Si el backend devuelve balance actualizado, reflejarlo en Redux
       if ((result as { balance?: number | string })?.balance !== undefined) {
-        console.log('✅ Balance recibido, actualizando Redux:', (result as { balance?: number | string }).balance);
         dispatch(updateUserBalance((result as { balance?: number | string }).balance!));
       } else {
-        console.log('❌ No se recibió balance en la respuesta de placeBet');
+        console.error('❌ No se recibió balance en la respuesta de placeBet');
       }
 
-      // Actualizar pérdidas (el usuario perdió la apuesta)
       const betAmount = type === '150' ? 150 : 300;
-      console.log('💸 Registrando pérdida:', betAmount);
       dispatch(updateUserLosses(betAmount));
 
-      // Limpiar selección
       setSelectedSector(null);
-      
-      // Refrescar datos
       refetch();
     } catch (error: unknown) {
       console.error('❌ ERROR al realizar apuesta:', error);
       console.error('❌ Tipo de error:', typeof error);
-      
-      // Manejo mejorado de errores de RTK Query
+
       if (error && typeof error === 'object') {
         const err = error as Record<string, unknown>;
-        
-        // Extraer información del error de RTK Query
         const errorInfo: Record<string, unknown> = {
           status: 'status' in err ? err.status : undefined,
           originalStatus: 'originalStatus' in err ? err.originalStatus : undefined,
           message: 'message' in err ? err.message : undefined,
         };
-        
-        // Extraer datos del error del servidor
+
         if ('data' in err && err.data && typeof err.data === 'object') {
           const errorData = err.data as Record<string, unknown>;
           errorInfo.data = {
             error: 'error' in errorData ? errorData.error : undefined,
             message: 'message' in errorData ? errorData.message : undefined,
             code: 'code' in errorData ? errorData.code : undefined,
-            ...errorData, // Incluir todas las propiedades adicionales
+            ...errorData,
           };
         }
-        
+
         console.error('❌ Error completo:', errorInfo);
         console.error('❌ Error status:', errorInfo.status);
         console.error('❌ Error data:', errorInfo.data);
-        console.error('❌ Error message:', 
-          (errorInfo.data as Record<string, unknown>)?.error ?? 
-          (errorInfo.data as Record<string, unknown>)?.message ?? 
+        console.error(
+          '❌ Error message:',
+          (errorInfo.data as Record<string, unknown>)?.error ??
+          (errorInfo.data as Record<string, unknown>)?.message ??
           errorInfo.message
         );
       } else if (error instanceof Error) {
-        // Manejo de errores estándar de JavaScript
         console.error('❌ Error estándar:', {
           message: error.message,
           name: error.name,
@@ -207,60 +150,44 @@ export const useRoulette = (type: RouletteType) => {
       } else {
         console.error('❌ Error desconocido:', error);
       }
-      
+
       throw error;
     }
   }, [username, selectedSector, mesaData, type, placeBetMutation, refetch, error, dispatch]);
 
-  // Flujo A: el backend decide el ganador. No se envía submit-result desde el front.
-  // El manejo de animación se dispara cuando llega mesa.closed por SSE (winners.main.index)
+  // Seleccionar sector
+  const handleSectorClick = useCallback(
+    (sectorIndex: number) => {
+      const isNoActiveMesa =
+        (error as { status?: number; data?: { code?: string } })?.status === 404 ||
+        (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
 
-  // Función para manejar clic en sector
-  const handleSectorClick = useCallback((sectorIndex: number) => {
-    // Permitir selección incluso si no hay mesa activa (para crear la primera mesa)
-    const isNoActiveMesa = (error as { status?: number; data?: { code?: string } })?.status === 404 || (error as { status?: number; data?: { code?: string } })?.data?.code === 'NO_ACTIVE_MESA';
-
-    if (isNoActiveMesa) {
-      // Si no hay mesa activa, permitir selección para crear la primera mesa
-      setSelectedSector(sectorIndex);
-      return;
-    }
-
-    // Si hay mesa activa, aplicar las validaciones normales
-    if (!mesaData?.mesa || mesaData.mesa.status !== 'open') {
-      return;
-    }
-
-    // Verificar si el sector está ocupado
-    if (mesaData.mesa.sectors[sectorIndex]) {
-      return;
-    }
-
-    // Verificar si el usuario ya apostó
-    const userAlreadyBet = mesaData.mesa.sectors.some(
-      (sector: { username?: string } | null) => sector && sector.username === username
-    );
-    if (userAlreadyBet) {
-      return;
-    }
-
-    setSelectedSector(sectorIndex);
-  }, [mesaData, username, error]);
-
-  // Efecto para manejar cambios en la mesa
-  useEffect(() => {
-    if (mesaData?.mesa) {
-      // Si la mesa cambió, limpiar selección
-      if (mesaData.mesa.status !== 'open') {
-        setSelectedSector(null);
+      if (isNoActiveMesa) {
+        setSelectedSector(sectorIndex);
+        return;
       }
+
+      if (!mesaData?.mesa || mesaData.mesa.status !== 'open') return;
+      if (mesaData.mesa.sectors[sectorIndex]) return;
+
+      const userAlreadyBet = mesaData.mesa.sectors.some(
+        (sector: { username?: string } | null) => sector && sector.username === username
+      );
+      if (userAlreadyBet) return;
+
+      setSelectedSector(sectorIndex);
+    },
+    [mesaData, username, error]
+  );
+
+  // Limpiar selección al cambiar la mesa
+  useEffect(() => {
+    if (mesaData?.mesa && mesaData.mesa.status !== 'open') {
+      setSelectedSector(null);
     }
   }, [mesaData?.mesa]);
 
-  // ELIMINADO COMPLETAMENTE: Este useEffect estaba causando el giro automático
-  // Ahora el giro se activará SOLO cuando lleguen los sseWinners desde el backend
-
-  // Efecto para limpiar selección cuando cambia el tipo
+  // Limpiar selección al cambiar tipo
   useEffect(() => {
     setSelectedSector(null);
   }, [type]);
@@ -270,34 +197,34 @@ export const useRoulette = (type: RouletteType) => {
     mesa: mesaData?.mesa || null,
     isLoading,
     error,
-    
-    // Estados locales
+
+    // Estados
     selectedSector,
     rotation,
     isSpinning,
     isPhysicalMode,
     countdown,
     isAutoSpinning,
-    
-    // SSE para ganadores y modo físico
+
+    // SSE
     lastWinners: persistentWinners || sseWinners,
     showWinnerModal: sseShowModal,
     setShowWinnerModal: sseCloseModal,
     isWaitingForResult,
     currentMesaIdForSpin,
     isWaitingForNewMesa,
-    sseWinners, // ← AGREGADO: Exponer sseWinners directamente
-    
+    sseWinners,
+
     // Funciones
     setSelectedSector: handleSectorClick,
     placeBet,
     formatCurrency,
     handlePhysicalSpin,
-    
-    // Estados de loading
+
+    // Estado de carga
     isPlacingBet,
-    
-    // Funciones adicionales
+
+    // Utilidades
     refetch
   };
 };
