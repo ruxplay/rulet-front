@@ -102,14 +102,16 @@
   position: absolute;
   width: 110%;
   height: 110%;
-  top: -5%;
-  left: -5%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
   border-radius: 50%;
   /* Textura de mesa: combinación de múltiples capas */
   background: 
-    /* Capa de brillo/laca translúcido */
-    radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    /* Capa de brillo/laca translúcido - opacidad reducida para evitar reflejos */
+    radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
     /* Anillos de crecimiento de madera */
     radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
     /* Vetas horizontales de madera sutiles */
@@ -126,8 +128,12 @@
     ),
     /* Base de color madera */
     radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
-  background-blend-mode: overlay, overlay, multiply, multiply, normal;
+  background-blend-mode: normal, normal, multiply, multiply, normal;
   z-index: -1;
+  /* Evitar transiciones y re-renderizado que causan el efecto de acomodamiento */
+  transition: none !important;
+  will-change: contents;
+  contain: layout style paint;
 }
 
 
@@ -137,6 +143,9 @@
   width: 100%;
   height: auto;
   display: block;
+  /* Fondo sólido para ocultar la sombra debajo */
+  background: #0A192F; /* Color principal de la app - Azul Petróleo Oscuro */
+  border-radius: 50%;
 }
 
 
@@ -156,23 +165,23 @@
 /* Puntero principal - 12 en punto (GANADOR PRINCIPAL - 70%) */
 .roulette-main-pointer {
   top: -18px;
-  left: calc(50% + 1.5rem);
+  left: calc(50% + 2rem);
   transform: translateX(-50%);
   border-top-color: #00FF9C;
 }
 
 /* Puntero derecho - Sector DERECHO del principal (SEGUNDO GANADOR - 10%) */
 .roulette-right-pointer {
-  top: 14px;
-  left: calc(50% + 8rem - 5px + 0.5rem);
+  top: 26px;
+  left: calc(50% + 10rem - 5px + 0.5rem);
   transform: translateX(-50%) rotate(24deg);
   border-top-color: #dc2626; /* Color ROJO INTENSO */
 }
 
 /* Puntero izquierdo - Sector IZQUIERDO del principal (TERCER GANADOR - 10%) */
 .roulette-left-pointer {
-  top: -9px;
-  left: calc(50% - 4.9rem);
+  top:1px;
+  left: calc(50% - 6.5rem);
   transform: translateX(-50%) rotate(-24deg);
   border-top-color: #dcf30a; /* Color AMARILLO */
 }
@@ -212,10 +221,15 @@
 /* Ampliar el círculo solo en móvil (canvas + overlay + centro) */
 @media (max-width: 480px) {
   .roulette-wheel-section { overflow: visible; }
-  .roulette-wheel-container { overflow: visible; }
+  .roulette-wheel-container { 
+    overflow: visible;
+    /* Aumentar tamaño directamente en lugar de usar transform scale */
+    max-width: min(100vw, 896px) !important; /* 640px * 1.4 = 896px, limitado por viewport */
+  }
+  /* Eliminar transform scale para evitar desincronización entre canvas y SVG */
   .roulette-wheel-canvas,
   .sector-buttons-overlay {
-    transform: scale(1.4);
+    transform: none;
     transform-origin: center center;
   }
   /* El círculo central necesita mantener su translate para centrarse, pero más pequeño */
@@ -230,19 +244,29 @@
   /* Textura de mesa de madera para móvil - asegurar que se vea */
   .roulette-wheel-shadow {
     background: 
-      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
       radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
       repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
       radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%) !important;
-    background-blend-mode: overlay, overlay, multiply, multiply, normal !important;
-    transform: scale(1.4);
+    background-blend-mode: normal, normal, multiply, multiply, normal !important;
+    /* Centrar perfectamente desde el mismo punto que el canvas */
+    width: 110% !important;
+    height: 110% !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
     transform-origin: center center;
     z-index: -1 !important;
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
     position: absolute !important;
+    /* Evitar transiciones y re-renderizado que causan el efecto de acomodamiento */
+    transition: none !important;
+    will-change: contents !important;
+    contain: layout style paint !important;
+    backface-visibility: hidden;
   }
   
   /* Asegurar que el contenedor no tenga fondo que oculte el shadow */
@@ -387,12 +411,17 @@
   /* Textura de mesa de madera para tablet */
   .roulette-wheel-shadow {
     background: 
-      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
       radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
       repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
       radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
-    background-blend-mode: overlay, overlay, multiply, multiply, normal;
+    background-blend-mode: normal, normal, multiply, multiply, normal;
+    /* Centrar perfectamente desde el mismo punto que el canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
   }
   
   .roulette-pointer {
@@ -455,19 +484,25 @@
   }
   
   .roulette-wheel-container {
-    max-width: var(--roulette-size-mobile);
+    /* Mantener el tamaño aumentado sin transform scale (ya establecido en la media query anterior) */
+    max-width: min(100vw, 896px) !important; /* Mantener consistencia con el cambio anterior */
     margin-bottom: 20px;
   }
   
   /* Textura de mesa de madera para móvil */
   .roulette-wheel-shadow {
     background: 
-      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
       radial-gradient(ellipse at center, transparent 0%, rgba(139, 69, 19, 0.3) 20%, transparent 30%, rgba(160, 82, 45, 0.25) 40%, transparent 50%, rgba(184, 134, 11, 0.2) 60%, transparent 70%, rgba(205, 133, 63, 0.15) 80%, transparent 90%),
       repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
       radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
-    background-blend-mode: overlay, overlay, multiply, multiply, normal;
+    background-blend-mode: normal, normal, multiply, multiply, normal;
+    /* Centrar perfectamente desde el mismo punto que el canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
   }
   
   .roulette-pointer {
@@ -559,6 +594,11 @@
       repeating-linear-gradient(0deg, rgba(139, 69, 19, 0.4) 0px, transparent 1px, transparent 3px, rgba(160, 82, 45, 0.3) 4px, transparent 5px, transparent 8px, rgba(184, 134, 11, 0.25) 9px, transparent 10px),
       radial-gradient(ellipse at center, rgb(139, 69, 19) 0%, rgb(160, 82, 45) 20%, rgb(184, 134, 11) 40%, rgb(205, 133, 63) 60%, rgb(210, 180, 140) 80%, rgba(139, 69, 19, 0.6) 95%, transparent 100%);
     background-blend-mode: overlay, overlay, multiply, multiply, normal;
+    /* Centrar perfectamente desde el mismo punto que el canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
   }
   
   .roulette-title {

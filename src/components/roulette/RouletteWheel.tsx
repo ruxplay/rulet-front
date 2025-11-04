@@ -820,7 +820,8 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       />
       
       {/* SVG con botones sectoriales delicados - COMPLETAMENTE RESPONSIVE */}
-      <svg
+      {/* TEMPORALMENTE COMENTADO PARA DIAGNÓSTICO - Ver si el problema persiste sin los botones SVG */}
+      {/* <svg
         className="sector-buttons-overlay"
         style={{
           position: 'absolute',
@@ -877,7 +878,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
             />
           );
         })}
-      </svg>
+      </svg> */}
       
       <div className="roulette-wheel-center"></div>
       
