@@ -329,7 +329,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       const radius = canvas.width / 2 - 20;
       const distance = Math.sqrt(clickX * clickX + clickY * clickY);
 
-      // ÁREA COMPLETA: Permitir clics en toda la forma del sector
+    
       const maxRadius = radius + 40; // Expandir hacia afuera
       const minRadius = 20; // Permitir clics cerca del centro
       
@@ -452,9 +452,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
           if (progress < 1) {
             animationRef.current = requestAnimationFrame(animate);
           } else {
-            // SOLUCIÓN SIN SALTOS: La animación termina naturalmente en finalRotation
-            // que ya está calculado con normalizedTargetRotation + vueltas completas exactas
-            // No necesitamos ningún ajuste porque finalRotation ya tiene la estructura correcta
+            
             const finalDrawRotation = currentRotationRef.current;
             
             // La animación ya terminó en el valor correcto, simplemente dibujar
@@ -468,39 +466,31 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
               }
             }
             
-            // 🟢 LOG DE DONDE SE DETUVO LA RULETA VISUALMENTE
-            // Usar el sector esperado del backend directamente en lugar de calcular
+         
             const expectedSector = expectedWinningSectorRef.current;
             const expectedNumber = expectedSector !== null ? expectedSector + 1 : null;
             
             // Declarar originalTargetRotation antes de usarlo
             const originalTargetRotation = originalTargetRotationRef.current;
             
-            // CORRECCIÓN: Calcular basándonos en el targetRotation ORIGINAL (sin normalizar)
+           
             const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
             const arrowOffset = 0.098; // 5.6° en radianes (corregido)
             
-            // Calcular el sector basándonos en el targetRotation original
-            // Fórmula inversa: targetRotation = -sectorCenterAngle + Math.PI/2 - arrowOffset
-            // Por lo tanto: sectorCenterAngle = -targetRotation + Math.PI/2 - arrowOffset
+           
             let calculatedSector = expectedSector; // Por defecto, usar el esperado
             let calculatedNumber = expectedNumber;
             
             if (originalTargetRotation !== null) {
-              // Revertir el cálculo de targetRotation para obtener el sector original
-              // Fórmula original: targetRotation = -sectorCenterAngle + Math.PI/2 - arrowOffset + visualOffset
-              // Despejando: -sectorCenterAngle = targetRotation - Math.PI/2 + arrowOffset - visualOffset
-              // Por lo tanto: sectorCenterAngle = -targetRotation + Math.PI/2 - arrowOffset + visualOffset
+             
               const visualOffsetSectors = 8; // Mismo valor que en calculateTargetRotation
               const visualOffset = visualOffsetSectors * anglePerSector;
               const sectorCenterAngle = -originalTargetRotation + Math.PI / 2 - arrowOffset + visualOffset;
               const normalizedSectorCenterAngle = ((sectorCenterAngle % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
               
-              // sectorCenterAngle = sectorIndex * anglePerSector + anglePerSector/2
-              // Por lo tanto: sectorIndex = (sectorCenterAngle - anglePerSector/2) / anglePerSector
+        
               const sectorIndex = (normalizedSectorCenterAngle - anglePerSector / 2) / anglePerSector;
-              // CORRECCIÓN: Usar Math.round() en lugar de Math.floor() para manejar errores de precisión de punto flotante
-              // Ejemplo: 1.9999999999999996 → Math.floor() = 1 ❌, Math.round() = 2 ✅
+         
               calculatedSector = Math.round(sectorIndex) % NUM_SECTORS;
               if (calculatedSector < 0) calculatedSector += NUM_SECTORS;
               calculatedNumber = calculatedSector + 1;
@@ -526,17 +516,13 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
               calculatedNumber = calculatedSector + 1;
             }
             
-            // 🔍 CÁLCULO CRÍTICO: Detectar qué sector está VISUALMENTE bajo la flecha verde
-            // CORRECCIÓN: Usar finalDrawRotation normalizado (que es igual a normalizedTargetRotation)
-            // Esto asegura que el cálculo visual coincida con lo que realmente se dibuja
+         
             const arrowGlobalAngle = -Math.PI / 2 + arrowOffset; // Posición global de la flecha en el canvas
             
             // Normalizar finalDrawRotation (que ya usa normalizedTargetRotation si está disponible)
             const normalizedDrawRotation = ((finalDrawRotation % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
             
-            // Calcular qué sector está bajo la flecha verde
-            // El sector 0 comienza en currentRotation (finalDrawRotation normalizado)
-            // Así que el ángulo relativo al sector 0 es: arrowGlobalAngle - normalizedDrawRotation
+
             let angleRelativeToSector0 = arrowGlobalAngle - normalizedDrawRotation;
             angleRelativeToSector0 = ((angleRelativeToSector0 % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
             
@@ -579,9 +565,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
               nota: 'Animación termina naturalmente sin saltos - finalDrawRotation ya tiene la estructura correcta'
             });
             
-            // Limpiar el sector esperado después de usarlo
-            // expectedWinningSectorRef.current = null; // NO limpiar para mantenerlo disponible para detectWinningSector
-            
+           
             isSpinningRef.current = false; // Marcar que terminó el giro
             resolve();
           }
@@ -591,32 +575,20 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
       });
     }, [drawWheel]);
 
-    // Función para calcular la rotación objetivo que haga que los punteros apunten al sector correcto
     const calculateTargetRotation = useCallback((winningSector: number) => {
       const anglePerSector = (2 * Math.PI) / NUM_SECTORS;
       
-      // CORRECCIÓN: Calcular la rotación para que el CENTRO del sector ganador quede en la flecha verde
-      // El centro del sector está en: sectorIndex * anglePerSector + (anglePerSector / 2)
+   
       const sectorCenterAngle = winningSector * anglePerSector + (anglePerSector / 2);
       
-      // CORRECCIÓN COMPLETA DEL SISTEMA DE COORDENADAS:
-      // 1. Canvas dibuja sectores en sentido HORARIO desde 0° (3 en punto)
-      // 2. Flecha verde está desplazada ~32px a la DERECHA del centro
-      // 3. Con radio ~325px → ángulo de desplazamiento: arctan(32/325) ≈ 5.6° ≈ 0.098 radianes
-      // 4. Necesitamos rotar para que el centro del sector coincida con la flecha
+   
       
       // CORRECCIÓN: Usar el desplazamiento real de la flecha (5.6°, no 24°)
       const arrowOffset = 0.098; // 5.6° en radianes (desplazamiento real de la flecha verde)
       
-      // CORRECCIÓN CRÍTICA: Compensar desfase visual detectado
-      // Los logs muestran desfase de -8 sectores (-192°) entre el sector esperado y el visual
-      // Necesitamos rotar +8 sectores adicionales para compensar
       const visualOffsetSectors = 8; // 8 sectores de compensación
       const visualOffset = visualOffsetSectors * anglePerSector; // 192° en radianes
       
-      // Calcular la rotación necesaria
-      // La flecha está desplazada a la DERECHA, así que necesitamos rotar ligeramente a la IZQUIERDA
-      // Además, agregamos visualOffset para compensar el desfase visual
       let targetRotation = -sectorCenterAngle + Math.PI / 2 - arrowOffset + visualOffset;
       
       // Normalizar la rotación para que esté entre 0 y 2π
@@ -973,9 +945,9 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         onClick={handleCanvasClick}
       />
      
-      <div className="roulette-pointer roulette-main-pointer"></div>
-      <div className="roulette-pointer roulette-left-pointer"></div>
-      <div className="roulette-pointer roulette-right-pointer"></div>
+      <img src="/rombo.png" alt="Ganador principal" className="roulette-pointer roulette-main-pointer" />
+      <img src="/rombo.png" alt="Ganador izquierdo" className="roulette-pointer roulette-left-pointer" />
+      <img src="/rombo.png" alt="Ganador derecho" className="roulette-pointer roulette-right-pointer" />
     </div>
   );
   }

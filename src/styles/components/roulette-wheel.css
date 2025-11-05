@@ -100,8 +100,8 @@
 /* Sombra de la ruleta - Responsive */
 .roulette-wheel-shadow {
   position: absolute;
-  width: 110%;
-  height: 110%;
+  width: 115%;
+  height: 115%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -152,11 +152,9 @@
 /* Punteros profesionales para los 3 ganadores - Responsive */
 .roulette-pointer {
   position: absolute;
-  width: 0;
-  height: 0;
-  border-left: var(--pointer-size-desktop) solid transparent;
-  border-right: var(--pointer-size-desktop) solid transparent;
-  border-top: var(--pointer-height-desktop) solid var(--roulette-accent-color);
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
   z-index: 10;
   filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
   transition: transform 0.2s ease, filter 0.2s ease;
@@ -164,32 +162,28 @@
 
 /* Puntero principal - 12 en punto (GANADOR PRINCIPAL - 70%) */
 .roulette-main-pointer {
-  top: -18px;
+  top: -47px;
   left: calc(50% + 2rem);
   transform: translateX(-50%);
-  border-top-color: #00FF9C;
 }
 
 /* Puntero derecho - Sector DERECHO del principal (SEGUNDO GANADOR - 10%) */
 .roulette-right-pointer {
-  top: 26px;
-  left: calc(50% + 10rem - 5px + 0.5rem);
+  top: -1px;
+  left: calc(50% + 10rem - 5px + 1.2rem);
   transform: translateX(-50%) rotate(24deg);
-  border-top-color: #dc2626; /* Color ROJO INTENSO */
 }
 
 /* Puntero izquierdo - Sector IZQUIERDO del principal (TERCER GANADOR - 10%) */
 .roulette-left-pointer {
-  top:1px;
-  left: calc(50% - 6.5rem);
+  top:-28px;
+  left: calc(50% - 7.2rem);
   transform: translateX(-50%) rotate(-24deg);
-  border-top-color: #dcf30a; /* Color AMARILLO */
 }
 
 /* Efectos cuando hay ganadores */
 .roulette-pointer.winner-active {
   animation: pointerPulse 1.6s ease-in-out infinite alternate;
-  border-top-color: #f39c12;
 }
 
 @keyframes pointerPulse {
@@ -243,6 +237,7 @@
   }
   /* Textura de mesa de madera para móvil - asegurar que se vea */
   .roulette-wheel-shadow {
+    
     background: 
       radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
       radial-gradient(ellipse at 70% 60%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
@@ -425,30 +420,26 @@
   }
   
   .roulette-pointer {
-    border-left: var(--pointer-size-tablet) solid transparent;
-    border-right: var(--pointer-size-tablet) solid transparent;
-    border-top: var(--pointer-height-tablet) solid var(--roulette-accent-color);
+    width: 30px;
+    height: 30px;
   }
   
   .roulette-main-pointer {
-    top: -20px;
+    top: -25px;
   left: calc(50% + 1.2rem);
   transform: translateX(-50%) rotate(6deg);
-  border-top-color: #00FF9C;
   }
   
   .roulette-left-pointer {
-    top: -10px;
-    left: calc(50% - 3.7rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+    top: -18px;
+    left: calc(50% - 4.1rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
     transform: translateX(-50%) rotate(-30deg);
-    border-top-color: #dcf30a;
   }
   
   .roulette-right-pointer {
-    top: 5px;
-    left: calc(50% + 5rem - 5px + 0.5rem);
+    top: -4px;
+    left: calc(50% + 5rem - 5px + 1.1rem);
     transform: translateX(-50%) rotate(30deg);
-    border-top-color: #dc2626; /* Color ROJO INTENSO */
   }
   
   .roulette-title {
@@ -484,11 +475,15 @@
   }
   
   .roulette-wheel-container {
-    /* Mantener el tamaño aumentado sin transform scale (ya establecido en la media query anterior) */
-    max-width: min(100vw, 896px) !important; /* Mantener consistencia con el cambio anterior */
-    margin-bottom: 20px;
-  }
+    width: 80vw !important; 
+    height: 80vw !important;
+    max-width: 80vw !important;
+    margin: 0 auto 0 auto !important;  /* Centrar horizontalmente y mantener margen inferior */
+    position: relative;
+    left: -46px;
   
+  }
+
   /* Textura de mesa de madera para móvil */
   .roulette-wheel-shadow {
     background: 
@@ -506,31 +501,26 @@
   }
   
   .roulette-pointer {
-    border-left: var(--pointer-size-mobile) solid transparent;
-    border-right: var(--pointer-size-mobile) solid transparent;
-    border-top: var(--pointer-height-mobile) solid var(--roulette-accent-color);
+    width: 25px;
+    height: 25px;
   }
   
-  /* Mantener el triángulo principal verde en móviles y acercarlo al borde */
   .roulette-main-pointer {
-    top: -60px;
+    top: -20px;
   left: calc(50% + 1.1rem);
   transform: translateX(-50%) rotate(6deg);
-  border-top-color: #00FF9C;
   }
   
   .roulette-left-pointer {
-    top: -54px;
-    left: calc(50% - 3.2rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
+    top: -14px;
+    left: calc(50% - 3.8rem + 4px); /* 10px hacia la izquierda (14px - 10px) */
     transform: translateX(-50%) rotate(-30deg);
-    border-top-color: #dcf30a;
   }
   
   .roulette-right-pointer {
-    top: -39px;
-    left: calc(50% + 4.7rem - 5px + 0.5rem);
+    top: -0px;
+    left: calc(50% + 5rem - 5px + 0.5rem);
     transform: translateX(-50%) rotate(30deg);
-    border-top-color: #dc2626; /* Color ROJO INTENSO */
   }
   
   .roulette-title {
@@ -552,7 +542,7 @@
   }
   
   .roulette-main-container {
-    padding: 12px;
+    padding: 12px 0 !important;  /* Eliminar padding lateral para centrar la ruleta */
   }
   
   .countdown-display {
