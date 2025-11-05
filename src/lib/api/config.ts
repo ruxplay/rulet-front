@@ -3,35 +3,42 @@
 const getBaseURL = (): string => {
   // Si existe variable de entorno, usarla (para override manual)
   // Validar que tenga protocolo y normalizar
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    let url = process.env.NEXT_PUBLIC_API_URL.trim();
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    let url = envUrl.trim();
     // Asegurar que tenga protocolo
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       url = `https://${url}`;
     }
     // Remover trailing slash
-    return url.replace(/\/+$/, '');
+    const normalizedUrl = url.replace(/\/+$/, '');
+    if (normalizedUrl) {
+      return normalizedUrl;
+    }
   }
   
   // Detectar entorno automáticamente
-  // En el cliente, typeof window !== 'undefined' indica que estamos en el navegador
-  // En producción (Vercel), usar siempre el backend de producción
-  if (typeof window !== 'undefined') {
-    // Estamos en el cliente (navegador)
-    // En producción, siempre usar el backend de producción
-    if (process.env.NODE_ENV === 'production') {
-      return 'https://ruleta-backend-12.onrender.com';
-    }
-    // En desarrollo local, usar localhost
-    return 'http://localhost:3001';
+  const isClient = typeof window !== 'undefined';
+  const nodeEnv = process.env.NODE_ENV;
+  const isProduction = nodeEnv === 'production';
+  
+  // Detectar producción por hostname (si estamos en el cliente)
+  let isProductionByHostname = false;
+  if (isClient && typeof window.location !== 'undefined') {
+    const hostname = window.location.hostname;
+    // Si el hostname contiene 'vercel.app' o no es 'localhost', asumimos producción
+    isProductionByHostname = !hostname.includes('localhost') && 
+                              !hostname.includes('127.0.0.1') && 
+                              hostname !== '';
   }
   
-  // Estamos en el servidor (SSR/SSG)
-  if (process.env.NODE_ENV === 'production') {
+  // Si estamos en producción (detectado por NODE_ENV o por hostname), usar backend de producción
+  if (isProduction || isProductionByHostname) {
     return 'https://ruleta-backend-12.onrender.com';
   }
   
-  // Desarrollo local por defecto
+  // Fallback absoluto: desarrollo local por defecto
+  // Esto asegura que siempre retornamos un valor válido
   return 'http://localhost:3001';
 };
 
