@@ -477,10 +477,10 @@
   .roulette-wheel-container {
     width: 80vw !important; 
     height: 80vw !important;
-    max-width: 80vw !important;
+    max-width: 90vw !important;
     margin: 0 auto 0 auto !important;  /* Centrar horizontalmente y mantener margen inferior */
     position: relative;
-    left: -46px;
+    left: -47px;
   
   }
 
