@@ -53,12 +53,29 @@ export const ForgotPasswordModal = ({ isOpen, onClose }: ForgotPasswordModalProp
         ? { email: trimmed }
         : { username: trimmed };
 
-      const res = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH_PASSWORD_FORGOT}`, {
+      const fullUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH_PASSWORD_FORGOT}`;
+      console.log('🔍 [ForgotPasswordModal] URL completa:', fullUrl);
+      console.log('🔍 [ForgotPasswordModal] BASE_URL:', API_CONFIG.BASE_URL);
+      console.log('🔍 [ForgotPasswordModal] ENDPOINT:', API_CONFIG.ENDPOINTS.AUTH_PASSWORD_FORGOT);
+      console.log('🔍 [ForgotPasswordModal] Payload:', payload);
+
+      const startTime = Date.now();
+      
+      // Crear AbortController para timeout (compatible con todos los navegadores)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos timeout (Render.com puede tardar en cold start)
+      
+      const res = await fetch(fullUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        credentials: 'include'
+        credentials: 'include',
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      const endTime = Date.now();
+      console.log('🔍 [ForgotPasswordModal] Request completado en:', endTime - startTime, 'ms');
 
       if (res.ok) {
         await showSuccess(
@@ -75,7 +92,13 @@ export const ForgotPasswordModal = ({ isOpen, onClose }: ForgotPasswordModalProp
         onClose();
       }
     } catch (err) {
-      await showError('Error', 'No se pudo procesar la solicitud en este momento. Por favor, intenta nuevamente.');
+      const error = err as Error;
+      console.error('🔍 [ForgotPasswordModal] Error en request:', error);
+      if (error.name === 'AbortError') {
+        await showError('Timeout', 'La solicitud tardó demasiado. El servidor puede estar iniciando. Por favor, intenta nuevamente.');
+      } else {
+        await showError('Error', 'No se pudo procesar la solicitud en este momento. Por favor, intenta nuevamente.');
+      }
     } finally {
       setIsSubmitting(false);
     }
