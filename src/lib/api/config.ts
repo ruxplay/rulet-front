@@ -2,11 +2,31 @@
 // Configuración automática por entorno
 const getBaseURL = (): string => {
   // Si existe variable de entorno, usarla (para override manual)
+  // Validar que tenga protocolo y normalizar
   if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
+    let url = process.env.NEXT_PUBLIC_API_URL.trim();
+    // Asegurar que tenga protocolo
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `https://${url}`;
+    }
+    // Remover trailing slash
+    return url.replace(/\/+$/, '');
   }
   
   // Detectar entorno automáticamente
+  // En el cliente, typeof window !== 'undefined' indica que estamos en el navegador
+  // En producción (Vercel), usar siempre el backend de producción
+  if (typeof window !== 'undefined') {
+    // Estamos en el cliente (navegador)
+    // En producción, siempre usar el backend de producción
+    if (process.env.NODE_ENV === 'production') {
+      return 'https://ruleta-backend-12.onrender.com';
+    }
+    // En desarrollo local, usar localhost
+    return 'http://localhost:3001';
+  }
+  
+  // Estamos en el servidor (SSR/SSG)
   if (process.env.NODE_ENV === 'production') {
     return 'https://ruleta-backend-12.onrender.com';
   }
@@ -15,8 +35,14 @@ const getBaseURL = (): string => {
   return 'http://localhost:3001';
 };
 
+// Función getter para evaluar BASE_URL en tiempo de ejecución
+export const getAPIBaseURL = (): string => getBaseURL();
+
 export const API_CONFIG = {
-  BASE_URL: getBaseURL(),
+  // Usar getter function para evaluar en tiempo de ejecución en lugar de tiempo de importación
+  get BASE_URL() {
+    return getBaseURL();
+  },
   ENDPOINTS: {
     AUTH: '/api/auth',
     AUTH_PASSWORD_FORGOT: '/api/auth/password/forgot',
