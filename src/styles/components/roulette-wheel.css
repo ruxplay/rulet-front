@@ -519,7 +519,7 @@
   
   .roulette-right-pointer {
     top: -0px;
-    left: calc(50% + 5rem - 5px + 0.5rem);
+    left: calc(50% + 5rem - 5px + 0.8rem);
     transform: translateX(-50%) rotate(30deg);
   }
   
