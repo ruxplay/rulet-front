@@ -6,10 +6,12 @@ import { useAuth } from './hooks/useAuth';
 import { AuthForm } from './AuthForm';
 import { UserInfo } from './UserInfo';
 import { MobileMenu } from './MobileMenu';
+import { ForgotPasswordModal } from '@/components/auth/ForgotPasswordModal';
 import { useRouletteSSE } from '@/components/roulette/hooks/useRouletteSSE';
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   
   const {
     loginData,
@@ -72,6 +74,7 @@ export const Header = () => {
             isVerifying={isVerifying}
             handleLogin={handleLogin}
             variant="desktop"
+            onOpenForgotPassword={() => setShowForgotPasswordModal(true)}
           />
         )}
 
@@ -113,6 +116,13 @@ export const Header = () => {
         handleLogin={handleLogin}
         authState={authState}
         handleLogout={handleLogout}
+        onOpenForgotPassword={() => setShowForgotPasswordModal(true)}
+      />
+      
+      {/* Modal de recuperación de contraseña (renderizado fuera del MobileMenu) */}
+      <ForgotPasswordModal
+        isOpen={showForgotPasswordModal}
+        onClose={() => setShowForgotPasswordModal(false)}
       />
     </header>
   );

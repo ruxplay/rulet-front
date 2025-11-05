@@ -12,6 +12,7 @@ interface AuthFormProps {
   handleLogin: (e: React.FormEvent) => void;
   variant: 'desktop' | 'mobile';
   onMobileMenuClose?: () => void;
+  onOpenForgotPassword?: () => void;
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({
@@ -23,6 +24,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   handleLogin,
   variant,
   onMobileMenuClose,
+  onOpenForgotPassword,
 }) => {
   const isMobile = variant === 'mobile';
 
@@ -42,6 +44,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
   if (isMobile) {
     return (
+      <>
       <form onSubmit={handleSubmit} className="mobile-login-form">
         <div className="mobile-login-title">Iniciar Sesión</div>
 
@@ -70,6 +73,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         {errors.password && <span>{errors.password}</span>}
 
         <button
+          type="button"
+          className="mobile-forgot-link"
+          onClick={() => {
+            if (onOpenForgotPassword) {
+              onOpenForgotPassword();
+            }
+            if (onMobileMenuClose) {
+              onMobileMenuClose();
+            }
+          }}
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+
+        <button
           type="submit"
           disabled={isLoading || !loginData.username.trim() || !loginData.password.trim()}
           className="mobile-login-button"
@@ -80,10 +98,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           Regístrate
         </Link>
       </form>
+    </>
     );
   }
 
   return (
+    <>
     <form onSubmit={handleLogin} className="header-login-form">
       {errors.general && (
         <div className="header-error-general">
@@ -120,6 +140,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           {errors.password && (
             <span className="header-field-error">{errors.password}</span>
           )}
+          <div className="forgot-wrapper">
+            <button
+              type="button"
+              className="nav-link forgot-link"
+              onClick={() => {
+                if (onOpenForgotPassword) {
+                  onOpenForgotPassword();
+                }
+              }}
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
         </div>
 
         <button
@@ -134,5 +167,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         </Link>
       </div>
     </form>
+    </>
   );
 };

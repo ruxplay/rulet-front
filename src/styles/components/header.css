@@ -201,8 +201,11 @@
 /* Contenedor de inputs y botón */
 .login-inputs-container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-sm);
+  position: relative;
+  flex-wrap: wrap;
+  padding-bottom: 28px; /* Espacio para el enlace "¿Olvidaste tu contraseña?" */
 }
 
 /* Título del formulario de login desktop - Alineado a la izquierda */
@@ -428,6 +431,73 @@
   border-color: var(--accent);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(199, 160, 8, 0.3);
+}
+
+/* Enlace Olvidé contraseña (desktop) */
+.header-input-wrapper {
+  position: relative;
+}
+
+.forgot-wrapper {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* Centrar el enlace debajo de ambos inputs */
+.login-inputs-container > .header-input-wrapper:last-of-type .forgot-wrapper {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: calc(-160px - var(--spacing-sm) + 160px); /* Mover al inicio del primer input + offset hacia la derecha */
+  width: calc(320px + var(--spacing-sm)); /* Ancho de ambos inputs + gap */
+  text-align: center;
+  pointer-events: auto;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.forgot-link:hover {
+  color: var(--text-accent);
+  text-decoration-color: var(--text-accent);
+}
+
+/* Enlace Olvidé contraseña (mobile) */
+.mobile-forgot-link {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs) 0;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: center;
+  width: 100%;
+}
+
+.mobile-forgot-link:hover {
+  color: var(--text-accent);
+  text-decoration-color: var(--text-accent);
 }
 
 /* Botón Menú Mobile */

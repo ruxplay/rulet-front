@@ -19,6 +19,9 @@ export const API_CONFIG = {
   BASE_URL: getBaseURL(),
   ENDPOINTS: {
     AUTH: '/api/auth',
+    AUTH_PASSWORD_FORGOT: '/api/auth/password/forgot',
+    AUTH_PASSWORD_VERIFY: '/api/auth/password/verify',
+    AUTH_PASSWORD_RESET: '/api/auth/password/reset',
     USER: '/api/user',
     USERS: '/api/users',
     DASHBOARD: '/api/dashboard',

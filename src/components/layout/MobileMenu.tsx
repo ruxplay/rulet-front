@@ -23,6 +23,7 @@ interface MobileMenuProps {
     } | null;
   };
   handleLogout: () => void;
+  onOpenForgotPassword: () => void;
 }
 
 export const MobileMenu: React.FC<MobileMenuProps> = ({
@@ -37,6 +38,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   handleLogin,
   authState,
   handleLogout,
+  onOpenForgotPassword,
 }) => {
   if (!isOpen) return null;
 
@@ -74,6 +76,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
             handleLogin={handleLogin}
             variant="mobile"
             onMobileMenuClose={onClose}
+            onOpenForgotPassword={onOpenForgotPassword}
           />
         )}
 
