@@ -12,11 +12,13 @@ import { RouletteType, RouletteWinners } from '@/types';
 import { useRouletteSSE } from './useRouletteSSE';
 import { useAppDispatch } from '@/lib/store/hooks';
 import { updateUserBalance, updateUserLosses } from '@/store/slices/authSlice';
+import { useSweetAlert } from '@/hooks/useSweetAlert';
 
 export const useRoulette = (type: RouletteType) => {
   const { authState } = useAuth();
   const username = authState.user?.username;
   const dispatch = useAppDispatch();
+  const { showError } = useSweetAlert();
 
   // Estados locales
   const [selectedSector, setSelectedSector] = useState<number | null>(null);
@@ -130,6 +132,21 @@ export const useRoulette = (type: RouletteType) => {
             code: 'code' in errorData ? errorData.code : undefined,
             ...errorData,
           };
+
+          // Manejo UX: saldo insuficiente con causa específica
+          const code = (errorData as { code?: string }).code;
+          if (code === 'INSUFFICIENT_FUNDS') {
+            const cause = (errorData as { cause?: 'blocked' | 'balance' }).cause;
+            const details = (errorData as { details?: { required?: number; availableBalance?: number } }).details;
+            if (cause === 'blocked') {
+              showError('Saldo insuficiente', 'Tienes saldo bloqueado por un retiro pendiente.');
+            } else {
+              const faltante = Math.max(0, (details?.required ?? 0) - (details?.availableBalance ?? 0));
+              showError('Fondos insuficientes', `Recarga tu saldo para continuar.`);
+            }
+            // No relanzamos: ya mostramos feedback al usuario
+            return;
+          }
         }
 
         console.error('❌ Error completo:', errorInfo);
@@ -151,6 +168,8 @@ export const useRoulette = (type: RouletteType) => {
         console.error('❌ Error desconocido:', error);
       }
 
+      // Mostrar error genérico si no fue el caso de saldo insuficiente
+      showError('Error', 'Error al realizar la apuesta');
       throw error;
     }
   }, [username, selectedSector, mesaData, type, placeBetMutation, refetch, error, dispatch]);
