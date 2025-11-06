@@ -1,16 +1,13 @@
 /* Deposit Form Styles */
 .deposit-form-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary) 0%, #1a1a2e 100%);
-  padding: var(--spacing-lg) 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 110%;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-left: -5%;
 }
 
 .deposit-form {
   width: 100%;
-  max-width: 600px;
   background: var(--primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-xl);
@@ -88,6 +85,8 @@
 /* Form Content */
 .deposit-form-content {
   padding: var(--spacing-lg);
+  margin-left: -5%;
+  width: 110%;
 }
 
 .form-step {
