@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from './hooks/useAuth';
 import { AuthForm } from './AuthForm';
 import { UserInfo } from './UserInfo';
@@ -34,9 +35,13 @@ export const Header = () => {
       <div className="header-container">
         {/* Logo */}
         <Link href="/" className="logo">
-          <div className="logo-icon">
-            <span className="logo-text">R</span>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="RuxPlay Logo"
+            width={40}
+            height={40}
+            style={{ objectFit: 'contain' }}
+          />
           <span className="logo-text">RuxPlay</span>
         </Link>
 
