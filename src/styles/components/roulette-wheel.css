@@ -235,8 +235,8 @@
 }
 
 .roulette-wheel-center-wood img {
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   object-fit: contain;
 }
 
@@ -492,6 +492,11 @@
     font-size: 1.1rem;
     padding: 8px 16px;
   }
+  
+  .roulette-wheel-center-wood img {
+    width: 55px;
+    height: 55px;
+  }
 }
 
 /* Mobile - 480px y menos */
@@ -595,8 +600,8 @@
   }
   
   .roulette-wheel-center-wood img {
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
   }
 }
 
