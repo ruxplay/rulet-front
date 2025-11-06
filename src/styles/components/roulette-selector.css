@@ -66,15 +66,16 @@
 
 @media (max-width: 480px) {
   .roulette-selector {
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
   
   .rouleta-btn {
-    padding: 10px 25px;
+    padding: 10px 15px;
     font-size: 0.9rem;
-    min-width: 200px;
+    min-width: auto;
+    width: 100%;
   }
 }
 

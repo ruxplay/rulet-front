@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/lib/store/hooks';
 import { setUser, setError, clearError } from '@/store/slices/authSlice';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
+import { PrivacyPolicyModal } from '@/components/auth/PrivacyPolicyModal';
 
 interface FormData {
   fullName: string;
@@ -60,6 +61,7 @@ export default function RegisterPage() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [passwordStrength, setPasswordStrength] = useState(0);
@@ -501,6 +503,14 @@ export default function RegisterPage() {
                   <span className="checkbox-text">
                     Acepto los <a href="#" className="terms-link">términos y condiciones</a> y la <a href="#" className="terms-link">política de privacidad</a>
                   </span>
+                  <button
+                    type="button"
+                    className="terms-view-btn"
+                    onClick={() => setShowPrivacyModal(true)}
+                    aria-label="Ver política de privacidad"
+                  >
+                      Ver
+                  </button>
                 </label>
                 {errors.acceptTerms && (
                   <span className="error-message">{errors.acceptTerms}</span>
@@ -531,6 +541,12 @@ export default function RegisterPage() {
         </div>
         </div>
       </div>
+
+      {/* Modal Política de Privacidad */}
+      <PrivacyPolicyModal 
+        isOpen={showPrivacyModal} 
+        onClose={() => setShowPrivacyModal(false)} 
+      />
     </div>
   );
 }

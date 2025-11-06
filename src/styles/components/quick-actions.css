@@ -32,6 +32,7 @@
   box-shadow: 0 12px 28px rgba(76, 106, 255, 0.28);
 }
 
+
 /* Neon verde suave animado para resaltar los 4 botones */
 .quick-actions { position: relative; }
 
@@ -53,86 +54,60 @@
 .quick-actions .action-btn:nth-child(3) { animation-delay: .4s; }
 .quick-actions .action-btn:nth-child(4) { animation-delay: .6s; }
 
-/* Efecto especial para Recargar Saldo - Fondo verde animado */
+/* Recargar Saldo - Sin estilos especiales, igual que los demás botones */
 .action-btn.action-random {
   position: relative;
-  overflow: hidden;
-  border: 2px solid var(--secondary) !important;
-  animation: neonPulse 2.8s ease-in-out infinite;
-  z-index: 1;
+  /* Mismo fondo y color que los demás botones (Ruleta 150 / Retirar) */
+  background: linear-gradient(180deg, rgba(18,27,57,.95), rgba(15,21,48,.98));
+  color: #c7d2ff;
 }
 
-/* Fondo verde animado que se mueve */
+/* Fondo radial difuminado como Dashboard Admin */
 .action-btn.action-random::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 255, 156, 0.05) 0%,
-    rgba(0, 255, 156, 0.15) 20%,
-    rgba(0, 255, 156, 0.3) 40%,
-    rgba(0, 200, 120, 0.4) 50%,
-    rgba(0, 255, 156, 0.3) 60%,
-    rgba(0, 255, 156, 0.15) 80%,
-    rgba(0, 255, 156, 0.05) 100%
-  );
-  background-size: 300% 100%;
-  animation: shimmer-background 4s ease-in-out infinite;
-  z-index: 0;
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--accent) 0%, transparent 70%);
   border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(6px);
 }
 
-@keyframes shimmer-background {
-  0% {
-    background-position: -300% 0;
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    background-position: 300% 0;
-    opacity: 0.5;
-  }
-}
-
-/* Borde verde rotativo */
+/* Raya amarilla que alumbra en la parte inferior como Dashboard Admin */
 .action-btn.action-random::after {
   content: '';
   position: absolute;
-  inset: -3px;
-  border-radius: 12px;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    transparent 240deg,
-    var(--secondary) 270deg,
-    var(--secondary) 290deg,
-    transparent 320deg,
-    transparent 360deg
-  );
-  opacity: 0.8;
-  animation: rotate-border 5s linear infinite;
-  z-index: -1;
-  pointer-events: none;
-  filter: blur(1px);
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent);
 }
 
-@keyframes rotate-border {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Desactivar hover para Recargar Saldo */
+/* Hover de Recargar Saldo igual a Dashboard Admin (manteniendo borde actual) */
 .action-btn.action-random:hover {
-  transform: none;
-  box-shadow: 0 0 6px rgba(0, 255, 156, 0.25);
+  background: linear-gradient(135deg, rgba(199, 160, 8, 0.2), rgba(199, 160, 8, 0.1));
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(199, 160, 8, 0.3);
+  border-color: var(--accent);
+}
+
+.action-btn.action-random:hover::before {
+  opacity: 0.2;
+}
+
+.action-btn.action-random:hover::after {
+  width: 100%;
 }
 
 @media (max-width: 1100px) {
@@ -148,7 +123,7 @@
 
 @media (max-width: 560px) {
   .quick-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .action-btn {
