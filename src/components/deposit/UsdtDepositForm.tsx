@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/components/layout/hooks/useAuth';
 import { useCreateDepositMutation } from '@/store/api/depositApi';
 import { ReceiptUpload } from './ReceiptUpload';
@@ -47,6 +48,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
   } | null>(null);
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [showQrModal, setShowQrModal] = useState(false);
 
   // Calcular monto en RUX usando la nueva tasa con margen
   const [calculatedAmount, setCalculatedAmount] = useState(0);
@@ -268,24 +270,60 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                    </div>
 
                    <div className="wallet-info">
-                     <h4>📋 Datos de la Wallet</h4>
+                     <h4>📋 Datos de Binance</h4>
                      <div className="wallet-details">
-                       <div className="wallet-copy-item">
-                         <span className="wallet-copy-label">Red:</span>
-                         <span className="wallet-copy-text">BEP-20 (Binance Smart Chain)</span>
-                         <CopyButton 
-                           text="BEP-20 (Binance Smart Chain)" 
-                           label="Red"
-                           className="small"
-                         />
+                       {/* QR Code */}
+                       <div className="binance-qr-container">
+                         <h3 className="binance-qr-preview-title">ESCANEAR CÓDIGO QR</h3>
+                         <div className="binance-qr-preview">
+                           <Image
+                             src="/binance.jpg"
+                             alt="Binance QR Code"
+                             width={250}
+                             height={250}
+                             className="binance-qr-image"
+                             priority
+                           />
+                         </div>
+                         <button
+                           type="button"
+                           onClick={() => setShowQrModal(true)}
+                           className="binance-qr-view-btn"
+                         >
+                           Ver
+                         </button>
                        </div>
                        
+                       {/* Modal para ver QR completo */}
+                       {showQrModal && (
+                         <div className="binance-qr-modal-overlay" onClick={() => setShowQrModal(false)}>
+                           <div className="binance-qr-modal-content" onClick={(e) => e.stopPropagation()}>
+                             <button
+                               type="button"
+                               className="binance-qr-modal-close"
+                               onClick={() => setShowQrModal(false)}
+                             >
+                               ×
+                             </button>
+                             <h3 className="binance-qr-modal-title">Escanear código QR</h3>
+                             <Image
+                               src="/binance.jpg"
+                               alt="Binance QR Code Completo"
+                               width={400}
+                               height={400}
+                               className="binance-qr-modal-image"
+                               priority
+                             />
+                           </div>
+                         </div>
+                       )}
+                       
                        <div className="wallet-copy-item">
-                         <span className="wallet-copy-label">Dirección:</span>
-                         <span className="wallet-copy-text">0x742d35Cc6634C0532925a3b8D9F2E1A0B7C6D5E4</span>
+                         <span className="wallet-copy-label">Binance ID:</span>
+                         <span className="wallet-copy-text">53723619</span>
                          <CopyButton 
-                           text="0x742d35Cc6634C0532925a3b8D9F2E1A0B7C6D5E4" 
-                           label="Dirección"
+                           text="53723619" 
+                           label="Binance ID"
                            className="small"
                          />
                        </div>
@@ -297,14 +335,14 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                        
                        <div className="copy-all-section">
                          <CopyButton 
-                           text={`Red: BEP-20 (Binance Smart Chain)\nDirección: 0x742d35Cc6634C0532925a3b8D9F2E1A0B7C6D5E4\nMonto mínimo: 1 USDT`}
+                           text={`Binance ID: 53723619\nMonto mínimo: 1 USDT`}
                            label="todo"
                            className="copy-all-button"
                          />
                        </div>
                        
                        <div className="wallet-instructions">
-                         <strong>Instrucciones:</strong> Envía USDT desde tu wallet personal a la dirección mostrada arriba usando la red BEP-20. Las comisiones son muy bajas (~$0.30 USD) y la confirmación es rápida (1-3 minutos).
+                         <strong>Instrucciones:</strong> Escanea el código QR con tu aplicación de Binance o ingresa el Binance ID mostrado arriba. Las comisiones son muy bajas y la confirmación es rápida (1-3 minutos).
                        </div>
                      </div>
                    </div>
