@@ -857,13 +857,15 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         onClick={handleCanvasClick}
       />
       <div className="roulette-wheel-center">
-        <Image
-          src="/logo.png"
-          alt="RuxPlay Logo"
-          width={60}
-          height={60}
-          style={{ objectFit: 'contain' }}
-        />
+        <div className="roulette-wheel-center-wood">
+          <Image
+            src="/logo.png"
+            alt="RuxPlay Logo"
+            width={40}
+            height={40}
+            style={{ objectFit: 'contain' }}
+          />
+        </div>
       </div>
       <img src="/rombo.png" alt="Ganador principal" className="roulette-pointer roulette-main-pointer" />
       <img src="/rombo.png" alt="Ganador izquierdo" className="roulette-pointer roulette-left-pointer" />

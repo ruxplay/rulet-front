@@ -106,8 +106,10 @@ export default function RegisterPage() {
         break;
 
       case 'phone':
-        if (value && !/^[0-9+\-\s()]+$/.test(value)) {
-          newErrors.phone = 'Formato de teléfono inválido';
+        if (!value || value.trim() === '') {
+          newErrors.phone = 'El teléfono es requerido';
+        } else if (!/^[0-9]+$/.test(value)) {
+          newErrors.phone = 'El teléfono solo debe contener números';
         } else {
           delete newErrors.phone;
         }
@@ -147,7 +149,14 @@ export default function RegisterPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    const newValue = type === 'checkbox' ? checked : value;
+    
+    // Para teléfono, solo permitir números
+    let processedValue = value;
+    if (name === 'phone') {
+      processedValue = value.replace(/\D/g, ''); // Eliminar todo lo que no sea número
+    }
+    
+    const newValue = type === 'checkbox' ? checked : processedValue;
     
     setFormData(prev => ({
       ...prev,
@@ -165,7 +174,7 @@ export default function RegisterPage() {
         return newErrors;
       });
       
-      validateField(name, value);
+      validateField(name, processedValue);
     }
   };
 
@@ -185,13 +194,20 @@ export default function RegisterPage() {
       dispatch(clearError());
       setErrors({});
       
+      // Validar que el teléfono esté presente (es requerido)
+      if (!formData.phone || formData.phone.trim() === '') {
+        setErrors({ phone: 'El teléfono es requerido' });
+        setIsLoading(false);
+        return;
+      }
+
       // Preparar datos para el backend (sin confirmPassword y acceptTerms)
       const registerData = {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         fullName: formData.fullName,
-        phone: formData.phone || undefined,
+        phone: formData.phone,
       };
 
       // Llamar a la API de registro
@@ -433,7 +449,7 @@ export default function RegisterPage() {
 
               <div className="form-group">
                 <label htmlFor="phone" className="form-label">
-                  Teléfono (Opcional)
+                  Teléfono
                 </label>
                 <input
                   type="tel"
@@ -442,7 +458,10 @@ export default function RegisterPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className={`form-input ${errors.phone ? 'error' : ''}`}
-                  placeholder="Ej: +57 300 123 4567"
+                  placeholder="Ej: 04144446186"
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
                 {errors.phone && (
                   <span className="error-message">{errors.phone}</span>
@@ -457,7 +476,7 @@ export default function RegisterPage() {
                   type="button" 
                   onClick={nextStep}
                   className="btn-primary"
-                  disabled={!formData.password || !formData.confirmPassword || !!errors.password || !!errors.confirmPassword || !!errors.phone}
+                  disabled={!formData.password || !formData.confirmPassword || !formData.phone || !!errors.password || !!errors.confirmPassword || !!errors.phone}
                 >
                   Continuar
                 </button>

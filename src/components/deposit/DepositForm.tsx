@@ -246,7 +246,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                     <div className="bank-details">
                       <div className="bank-item">
                         <span className="bank-label">Banco:</span>
-                        <span className="bank-value">{variant === 'pago_movil' ? '0105 (Mercantil)' : 'Banco'}</span>
+                        <span className="bank-value">{variant === 'pago_movil' ? '0105 (Mercantil)' : '0105 (Mercantil)'}</span>
                       </div>
                       {variant === 'pago_movil' ? (
                         <>
@@ -262,20 +262,12 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                       ) : (
                         <>
                           <div className="bank-item">
-                            <span className="bank-label">Cuenta:</span>
-                            <span className="bank-value">00000 - Cuenta C</span>
-                          </div>
-                          <div className="bank-item">
-                            <span className="bank-label">Titular:</span>
-                            <span className="bank-value">Rulet Games C.A.</span>
-                          </div>
-                          <div className="bank-item">
-                            <span className="bank-label">Número:</span>
-                            <span className="bank-value">000000000</span>
+                            <span className="bank-label">Número de Cuenta:</span>
+                            <span className="bank-value">01050109161109136862</span>
                           </div>
                           <div className="bank-item">
                             <span className="bank-label">Cédula:</span>
-                            <span className="bank-value">00000000</span>
+                            <span className="bank-value">24967880</span>
                           </div>
                         </>
                       )}
