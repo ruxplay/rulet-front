@@ -128,6 +128,40 @@ export const authApi = createApi({
         }
       },
     }),
+
+    // ✏️ ACTUALIZAR PERFIL
+    updateProfile: builder.mutation<{ user: unknown }, { userId: number; data: { username?: string; email?: string; fullName?: string; phone?: string | null; password?: string } }>({
+      query: ({ userId, data }) => ({
+        url: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.USER_PROFILE(userId)}`,
+        method: 'PUT',
+        body: data,
+      }),
+      transformResponse: (response: { user?: unknown } | unknown) => {
+        if (response && typeof response === 'object' && 'user' in response) {
+          return { user: (response as { user: unknown }).user };
+        }
+        return { user: response };
+      },
+      async onQueryStarted({ userId, data }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: result } = await queryFulfilled;
+          if (result?.user) {
+            const user = result.user as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string; phone?: string | null };
+            dispatch(setUser({
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              fullName: user.fullName,
+              role: user.role,
+              balance: user.balance,
+            }));
+          }
+        } catch {
+          // Error manejado en el componente
+        }
+      },
+      invalidatesTags: ['Auth'],
+    }),
   }),
 });
 
@@ -136,4 +170,5 @@ export const {
   useLoginMutation,
   useVerifyAuthQuery,
   useLogoutMutation,
+  useUpdateProfileMutation,
 } = authApi;

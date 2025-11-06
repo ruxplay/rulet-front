@@ -1,10 +1,12 @@
 import { useAuth } from '@/components/layout/hooks/useAuth';
 import { useState } from 'react';
 import Link from 'next/link';
+import { EditProfileModal } from '@/components/auth/EditProfileModal';
 
 export const DashboardSidebar = () => {
   const { authState } = useAuth();
   const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const toggleUserInfo = () => {
     setShowUserInfo(!showUserInfo);
@@ -19,12 +21,21 @@ export const DashboardSidebar = () => {
       <div className="dashboard-card">
         <div className="sidebar-header">
           <h3 className="sidebar-title">Información del Usuario</h3>
-          <button 
-            onClick={toggleUserInfo}
-            className="toggle-info-button"
-          >
-            {showUserInfo ? 'Ocultar' : 'Ver'}
-          </button>
+          <div className="sidebar-header-actions">
+            <button 
+              onClick={toggleUserInfo}
+              className="toggle-info-button"
+            >
+              {showUserInfo ? 'Ocultar' : 'Ver'}
+            </button>
+            <button 
+              onClick={() => setShowEditModal(true)}
+              className="edit-profile-button"
+              title="Editar perfil"
+            >
+              ✏️
+            </button>
+          </div>
         </div>
         <div className="user-info">
           <div className="info-item">
@@ -78,6 +89,12 @@ export const DashboardSidebar = () => {
           </Link>
         </div>
       </div>
+
+      {/* Modal de Edición de Perfil */}
+      <EditProfileModal 
+        isOpen={showEditModal} 
+        onClose={() => setShowEditModal(false)} 
+      />
     </div>
   );
 };

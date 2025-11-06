@@ -1,4 +1,8 @@
 /* SweetAlert2 Custom Styles */
+.swal2-container {
+  z-index: 9999 !important; /* Asegurar que esté por encima de todos los modales */
+}
+
 .swal-popup {
   border-radius: 1rem !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;

@@ -48,6 +48,7 @@ export const API_CONFIG = {
     AUTH_PASSWORD_RESET: '/api/auth/password/reset',
     USER: '/api/user',
     USERS: '/api/users',
+    USER_PROFILE: (userId: number) => `/api/users/${userId}/profile`,
     DASHBOARD: '/api/dashboard',
     RULETA: '/api/roulette',
     SUPPORT: '/api/support',

@@ -246,24 +246,39 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                     <div className="bank-details">
                       <div className="bank-item">
                         <span className="bank-label">Banco:</span>
-                        <span className="bank-value">{variant === 'pago_movil' ? 'Pago Móvil' : 'Banco'}</span>
+                        <span className="bank-value">{variant === 'pago_movil' ? '0105 (Mercantil)' : 'Banco'}</span>
                       </div>
-                      <div className="bank-item">
-                        <span className="bank-label">Cuenta:</span>
-                        <span className="bank-value">00000 - Cuenta C</span>
-                      </div>
-                      <div className="bank-item">
-                        <span className="bank-label">Titular:</span>
-                        <span className="bank-value">Rulet Games C.A.</span>
-                      </div>
-                      <div className="bank-item">
-                        <span className="bank-label">Número:</span>
-                        <span className="bank-value">000000000</span>
-                      </div>
-                      <div className="bank-item">
-                        <span className="bank-label">Cédula:</span>
-                        <span className="bank-value">00000000</span>
-                      </div>
+                      {variant === 'pago_movil' ? (
+                        <>
+                          <div className="bank-item">
+                            <span className="bank-label">Teléfono:</span>
+                            <span className="bank-value">04144446186</span>
+                          </div>
+                          <div className="bank-item">
+                            <span className="bank-label">Cédula:</span>
+                            <span className="bank-value">24967880</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="bank-item">
+                            <span className="bank-label">Cuenta:</span>
+                            <span className="bank-value">00000 - Cuenta C</span>
+                          </div>
+                          <div className="bank-item">
+                            <span className="bank-label">Titular:</span>
+                            <span className="bank-value">Rulet Games C.A.</span>
+                          </div>
+                          <div className="bank-item">
+                            <span className="bank-label">Número:</span>
+                            <span className="bank-value">000000000</span>
+                          </div>
+                          <div className="bank-item">
+                            <span className="bank-label">Cédula:</span>
+                            <span className="bank-value">00000000</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
