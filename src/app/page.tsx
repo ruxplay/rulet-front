@@ -1,5 +1,6 @@
 import { StepsSection } from '@/components/sections/StepsSection';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
@@ -32,7 +33,14 @@ export default function HomePage() {
             </div>
             <div className="hero-image">
               <div className="promo-image">
-                <span className="promo-text">Imagen Promocional</span>
+                <Image
+                  src="/inicio.jpg"
+                  alt="Imagen Promocional"
+                  fill
+                  className="promo-image-content"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
               </div>
             </div>
           </div>
