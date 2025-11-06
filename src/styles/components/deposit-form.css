@@ -30,8 +30,10 @@
 }
 
 .form-subtitle {
-  font-size: 1rem;
-  opacity: 0.9;
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 1;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -542,13 +544,24 @@
   }
   
   .bank-item {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
     gap: var(--spacing-xs);
   }
   
+  .bank-label {
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+  
   .bank-value {
-    align-self: flex-end;
+    flex: 1;
+    text-align: right;
+    white-space: nowrap;
+    line-height: 1.6;
+    min-height: 1.6em;
   }
 
   .wallet-copy-item {
