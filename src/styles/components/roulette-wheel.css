@@ -200,16 +200,17 @@
 /* Centro de la ruleta - Responsive */
 .roulette-wheel-center {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  /* Color brillante neon - sólido sin difuminación */
-  background: #00FF9C;
-  border-radius: 50%;
+  width: 60px;
+  height: 60px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 5;
-  border: 1.5px solid #00FF9C; /* Verde neón - borde delgado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 /* Ampliar el círculo solo en móvil (canvas + overlay + centro) */
@@ -555,10 +556,13 @@
   }
   
   .roulette-wheel-center {
-    width: 25px;
-    height: 25px;
-    border-width: 1.5px;
-    border-color: #00FF9C; /* Verde neón - borde delgado */
+    width: 50px;
+    height: 50px;
+  }
+  
+  .roulette-wheel-center img {
+    width: 50px;
+    height: 50px;
   }
 }
 

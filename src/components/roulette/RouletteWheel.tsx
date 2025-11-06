@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState } from 'react';
+import Image from 'next/image';
 import { RouletteType, RouletteSector } from '@/types';
 import { SectorButton } from './SectorButton';
 import '@/styles/components/sector-button.css';
@@ -182,96 +183,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         ctx.stroke();
       }
 
-      // Dibujar centro - Textura de madera igual al exterior
-      // Reducir tamaño del círculo central en móvil
-      const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches;
-      const centerRadius = isMobile ? 20 : 30; // Reducido de 30 a 20 en móvil
-      
-      // Base de color madera (capa principal)
-      const baseGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
-      baseGradient.addColorStop(0, 'rgb(139, 69, 19)'); // SaddleBrown
-      baseGradient.addColorStop(0.2, 'rgb(160, 82, 45)'); // Sienna
-      baseGradient.addColorStop(0.4, 'rgb(184, 134, 11)'); // DarkGoldenrod
-      baseGradient.addColorStop(0.6, 'rgb(205, 133, 63)'); // Peru
-      baseGradient.addColorStop(0.8, 'rgb(210, 180, 140)'); // Tan
-      baseGradient.addColorStop(0.95, 'rgb(139, 69, 19)'); // SaddleBrown sólido
-      baseGradient.addColorStop(1, 'rgb(139, 69, 19)'); // SaddleBrown sólido - sin transparencia
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = baseGradient;
-      ctx.fill();
-      
-      // Anillos de crecimiento de madera (capa 2)
-      ctx.globalAlpha = 0.8; // Aumentado para mayor opacidad
-      const ringGradient1 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
-      ringGradient1.addColorStop(0, 'rgba(139, 69, 19, 0.1)');
-      ringGradient1.addColorStop(0.2, 'rgba(139, 69, 19, 0.5)');
-      ringGradient1.addColorStop(0.3, 'rgba(160, 82, 45, 0.3)');
-      ringGradient1.addColorStop(0.4, 'rgba(160, 82, 45, 0.4)');
-      ringGradient1.addColorStop(0.5, 'rgba(184, 134, 11, 0.3)');
-      ringGradient1.addColorStop(0.6, 'rgba(184, 134, 11, 0.4)');
-      ringGradient1.addColorStop(0.7, 'rgba(205, 133, 63, 0.3)');
-      ringGradient1.addColorStop(0.8, 'rgba(205, 133, 63, 0.4)');
-      ringGradient1.addColorStop(0.9, 'rgba(139, 69, 19, 0.5)');
-      ringGradient1.addColorStop(1, 'rgba(139, 69, 19, 0.6)');
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = ringGradient1;
-      ctx.fill();
-      
-      // Capa de brillo/laca (capa 3)
-      ctx.globalAlpha = 0.4; // Aumentado para mayor opacidad
-      const shineOffset1 = isMobile ? -6 : -9;
-      const shineOffset2 = isMobile ? -8 : -12;
-      const shineRadius1 = isMobile ? 10 : 15;
-      const shineGradient1 = ctx.createRadialGradient(centerX + shineOffset1, centerY + shineOffset2, 0, centerX + shineOffset1, centerY + shineOffset2, shineRadius1);
-      shineGradient1.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-      shineGradient1.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
-      shineGradient1.addColorStop(1, 'rgba(139, 69, 19, 0.2)');
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = shineGradient1;
-      ctx.fill();
-      
-      const shineOffset3 = isMobile ? 14 : 21;
-      const shineOffset4 = isMobile ? 12 : 18;
-      const shineRadius2 = isMobile ? 10 : 15;
-      const shineGradient2 = ctx.createRadialGradient(centerX + shineOffset3, centerY + shineOffset4, 0, centerX + shineOffset3, centerY + shineOffset4, shineRadius2);
-      shineGradient2.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
-      shineGradient2.addColorStop(0.5, 'rgba(255, 255, 255, 0.08)');
-      shineGradient2.addColorStop(1, 'rgba(139, 69, 19, 0.15)');
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = shineGradient2;
-      ctx.fill();
-      
-      // Vetas horizontales de madera (capa 4) - simular con líneas
-      ctx.globalAlpha = 0.8; // Aumentado para mayor opacidad
-      ctx.strokeStyle = 'rgba(139, 69, 19, 0.8)'; // Aumentada opacidad para mayor visibilidad
-      ctx.lineWidth = 0.5;
-      const maxOffset = isMobile ? 10 : 15;
-      for (let i = -maxOffset; i <= maxOffset; i += 2) {
-        const y = centerY + i;
-        ctx.beginPath();
-        ctx.moveTo(centerX - Math.sqrt(centerRadius * centerRadius - i * i), y);
-        ctx.lineTo(centerX + Math.sqrt(centerRadius * centerRadius - i * i), y);
-        ctx.stroke();
-      }
-      
-      // Resetear alpha
-      ctx.globalAlpha = 1;
-      
-      // Borde final
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#00FF9C'; // Verde neón
-      ctx.lineWidth = isMobile ? 1.5 : 1.5; // Borde delgado
-      ctx.stroke();
-
+      // Centro de la ruleta ahora se dibuja como imagen HTML/CSS fuera del canvas
       // Los punteros ahora se dibujan como elementos HTML/CSS fuera del canvas
     }, [sectors]);
 
@@ -944,7 +856,15 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         className="roulette-wheel-canvas"
         onClick={handleCanvasClick}
       />
-     
+      <div className="roulette-wheel-center">
+        <Image
+          src="/logo.png"
+          alt="RuxPlay Logo"
+          width={60}
+          height={60}
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
       <img src="/rombo.png" alt="Ganador principal" className="roulette-pointer roulette-main-pointer" />
       <img src="/rombo.png" alt="Ganador izquierdo" className="roulette-pointer roulette-left-pointer" />
       <img src="/rombo.png" alt="Ganador derecho" className="roulette-pointer roulette-right-pointer" />
