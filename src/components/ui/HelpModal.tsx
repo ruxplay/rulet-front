@@ -35,7 +35,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
         <div className="help-modal-header">
           <h2 className="help-modal-title">
             <span className="help-icon">❓</span>
-            Guía Completa de RubPlay - Sistema de Ruleta
+            Guía Completa de RuxPlay - Sistema de Ruleta
           </h2>
           <button 
             className="help-modal-close"
@@ -50,15 +50,15 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
         </div>
 
         <div className="help-modal-content">
-          {/* Sección: ¿Qué es RubPlay? */}
+          {/* Sección: ¿Qué es RuxPlay? */}
           <section className="help-section">
             <h3 className="help-section-title">
               <span className="section-icon">🎮</span>
-              ¿Qué es RubPlay?
+              ¿Qué es RuxPlay?
             </h3>
             <div className="help-description">
               <p>
-                <strong>RubPlay</strong> es una plataforma de ruleta online donde puedes apostar con la moneda virtual <strong>RUX</strong>. 
+                <strong>RuxPlay</strong> es una plataforma de ruleta online donde puedes apostar con la moneda virtual <strong>RUX</strong>. 
                 El sistema funciona con <strong>mesas</strong> que se completan cuando <strong>15 jugadores</strong> realizan sus apuestas, 
                 y luego la ruleta gira automáticamente para determinar los ganadores.
               </p>
@@ -75,7 +75,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">💵 ¿Qué es RUX?</h4>
                 <p>
-                  <strong>RUX</strong> es la moneda virtual de RubPlay. Todas las apuestas, premios, depósitos y retiros 
+                  <strong>RUX</strong> es la moneda virtual de RuxPlay. Todas las apuestas, premios, depósitos y retiros 
                   se realizan en RUX. Puedes depositar fondos mediante depósitos aprobados y retirar tus ganancias 
                   cuando lo desees.
                 </p>
@@ -393,7 +393,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">🔄 Sistema SSE (Server-Sent Events)</h4>
                 <p>
-                  RubPlay usa tecnología de <strong>actualizaciones en tiempo real</strong>. Esto significa que:
+                  RuxPlay usa tecnología de <strong>actualizaciones en tiempo real</strong>. Esto significa que:
                 </p>
                 <ul className="bet-list">
                   <li>Ves cuando otros jugadores apuestan <strong>instantáneamente</strong></li>
@@ -561,7 +561,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="contact-methods">
                 <div className="contact-item">
                   <span className="contact-icon">📧</span>
-                  <span>soporte@rubplay.com</span>
+                  <span>soporte@RuxPlay.com</span>
                 </div>
                 <div className="contact-item">
                   <span className="contact-icon">💬</span>

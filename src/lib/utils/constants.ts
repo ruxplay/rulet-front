@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-    name: 'RubPlay',
+    name: 'RuxPlay',
     description: 'La mejor experiencia de ruleta online',
     version: '1.0.0',
     url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',

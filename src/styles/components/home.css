@@ -285,6 +285,12 @@
     align-items: center;
   }
 
+  /* Imagen más pequeña y sin recortes en tablet */
+  .promo-image {
+    height: 700px;
+    width: 100%;
+  }
+
   .promo-image {
     border-width: 2px;
   }

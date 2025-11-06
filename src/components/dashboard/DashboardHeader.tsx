@@ -22,7 +22,7 @@ export const DashboardHeader = () => {
       <div className="dashboard-brand">
         <div>
           <div className="dashboard-brand-subtitle">
-            Dashboard RubPlay
+            Dashboard RuxPlay
           </div>
           <div className="dashboard-brand-title">
             Bienvenido, {user?.fullName || 'Usuario'}
