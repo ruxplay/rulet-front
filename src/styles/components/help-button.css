@@ -2,7 +2,7 @@
 .help-button {
   position: fixed;
   bottom: 30px;
-  right: 30px;
+  left: 30px;
   width: 60px;
   height: 60px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -73,7 +73,7 @@
 @media (max-width: 768px) {
   .help-button {
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     width: 55px;
     height: 55px;
   }
@@ -87,7 +87,7 @@
 @media (max-width: 480px) {
   .help-button {
     bottom: 15px;
-    right: 15px;
+    left: 15px;
     width: 50px;
     height: 50px;
   }

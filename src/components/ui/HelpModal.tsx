@@ -86,8 +86,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <p>
                   Tu saldo en RUX se muestra en el <strong>Dashboard</strong>, junto con tus estadísticas: 
                   <strong>Ganancias totales</strong>, <strong>Pérdidas totales</strong> y tu <strong>Neto</strong> 
-                  (diferencia entre ganancias y pérdidas). El saldo se actualiza en <strong>tiempo real</strong> 
-                  cuando realizas apuestas o recibes premios.
+                  (diferencia entre ganancias y pérdidas). El saldo se actualiza en <strong>tiempo real</strong> cuando 
+                  realizas apuestas o recibes premios.
                 </p>
               </div>
             </div>
@@ -280,10 +280,6 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                   <div className="payout-row">
                     <span>🥉 Secundario Derecho</span>
                     <span className="payout payout-secondary">10%</span>
-                  </div>
-                  <div className="payout-row">
-                    <span>🏠 Ganancias Casa</span>
-                    <span className="payout payout-house">10%</span>
                   </div>
                 </div>
               </div>
@@ -560,16 +556,12 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <p>Si tienes más preguntas o necesitas asistencia técnica:</p>
               <div className="contact-methods">
                 <div className="contact-item">
+                  <span className="contact-icon">📞</span>
+                  <span><a href="https://wa.me/584144446186?text=Hola%20RuxPlay%2C%20necesito%20ayuda" target="_blank" rel="noopener noreferrer" style={{ color: '#00ff9c', textDecoration: 'none' }}>+58 414-4446186</a></span>
+                </div>
+                <div className="contact-item">
                   <span className="contact-icon">📧</span>
-                  <span>soporte@RuxPlay.com</span>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-icon">💬</span>
-                  <span>Chat en vivo 24/7</span>
-                </div>
-                <div className="contact-item">
-                  <span className="contact-icon">📱</span>
-                  <span>WhatsApp: +591 XXX XXX XXX</span>
+                  <span><a href="mailto:ruxplayoficial@gmail.com" style={{ color: '#00ff9c', textDecoration: 'none' }}>ruxplayoficial@gmail.com</a></span>
                 </div>
               </div>
             </div>

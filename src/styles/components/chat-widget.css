@@ -1,0 +1,82 @@
+/* Tawk.to Chat Widget - Posicionamiento a la derecha (opuesto al botón de ayuda) */
+
+/* Sobrescribir posición del widget de Tawk.to */
+#tawkchat-container {
+  left: auto !important;
+  right: 30px !important;
+  bottom: 30px !important;
+  z-index: 999 !important; /* Menor que el botón de ayuda (1000) */
+}
+
+/* Ajustar el botón flotante del chat */
+#tawkchat-container .tawk-chat-container {
+  left: auto !important;
+  right: 30px !important;
+  bottom: 30px !important;
+  z-index: 999 !important;
+}
+
+/* Para el botón de chat cuando está minimizado */
+#tawkchat-container iframe {
+  left: auto !important;
+  right: 30px !important;
+  bottom: 30px !important;
+  z-index: 999 !important;
+}
+
+/* Estilos adicionales para asegurar posición derecha */
+div[id^="tawkchat"] {
+  left: auto !important;
+  right: 30px !important;
+  bottom: 30px !important;
+  z-index: 999 !important;
+}
+
+iframe[id^="tawkchat"] {
+  left: auto !important;
+  right: 30px !important;
+  bottom: 30px !important;
+  z-index: 999 !important;
+}
+
+/* Asegurar que el widget esté en el lado derecho en tablet (opuesto al botón de ayuda) */
+@media (max-width: 1024px) {
+  #tawkchat-container,
+  #tawkchat-container .tawk-chat-container,
+  #tawkchat-container iframe,
+  div[id^="tawkchat"],
+  iframe[id^="tawkchat"] {
+    left: auto !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    z-index: 999 !important;
+  }
+}
+
+/* Asegurar que el widget esté en el lado derecho en móvil (opuesto al botón de ayuda) */
+@media (max-width: 768px) {
+  #tawkchat-container,
+  #tawkchat-container .tawk-chat-container,
+  #tawkchat-container iframe,
+  div[id^="tawkchat"],
+  iframe[id^="tawkchat"] {
+    left: auto !important;
+    right: 20px !important;
+    bottom: 20px !important;
+    z-index: 999 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #tawkchat-container,
+  #tawkchat-container .tawk-chat-container,
+  #tawkchat-container iframe,
+  div[id^="tawkchat"],
+  iframe[id^="tawkchat"] {
+    left: auto !important;
+    right: 15px !important;
+    bottom: 15px !important;
+    z-index: 999 !important;
+  }
+}
+

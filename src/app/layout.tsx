@@ -14,6 +14,7 @@ import "@/styles/components/roulette-modal.css";
 import "@/styles/components/roulette-selector.css";
 import "@/styles/components/deposits-table.css";
 import { HelpButton } from "@/components/ui/HelpButton";
+import { ChatWidget } from "@/components/ui/ChatWidget";
 import { Header } from "@/components/layout/Header";
 import { Providers } from "@/lib/providers";
 import { AuthPersistence } from "@/components/auth";
@@ -41,6 +42,7 @@ export default function RootLayout({
           <Header />
           {children}
           <HelpButton />
+          <ChatWidget />
         </Providers>
       </body>
     </html>
