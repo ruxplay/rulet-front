@@ -40,6 +40,8 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
   });
 
   const [errors, setErrors] = useState<UsdtDepositFormErrors>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [receiptData, setReceiptData] = useState<{
     receiptUrl: string;
     receiptPublicId: string;
@@ -102,11 +104,19 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
     setErrors(newErrors);
   };
 
+  // Función helper para determinar si debe mostrarse el error de un campo
+  const shouldShowError = (fieldName: string): boolean => {
+    return (touchedFields.has(fieldName) || hasAttemptedSubmit) && !!errors[fieldName];
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     const newValue = type === 'number' ? parseFloat(value) || 0 : value;
     
     setFormData(prev => ({ ...prev, [name]: newValue }));
+    
+    // Marcar el campo como tocado
+    setTouchedFields((prev) => new Set(prev).add(name));
     
     // Limpiar errores específicos del campo
     setErrors(prev => {
@@ -126,6 +136,7 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
     receiptBytes: number;
   }) => {
     setReceiptData(fileData);
+    setTouchedFields((prev) => new Set(prev).add('receipt'));
     setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors.receipt;
@@ -135,6 +146,17 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
   const nextStep = () => {
     if (currentStep === 1) {
+      // Marcar que se intentó avanzar
+      setHasAttemptedSubmit(true);
+      
+      // Marcar todos los campos del paso 1 como tocados
+      setTouchedFields((prev) => {
+        const newSet = new Set(prev);
+        newSet.add('usdtAmount');
+        newSet.add('walletAddress');
+        return newSet;
+      });
+      
       // Validar paso 1
       const step1Errors = [];
       if (!formData.usdtAmount || formData.usdtAmount < 1) step1Errors.push('usdtAmount');
@@ -162,6 +184,14 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Marcar que se intentó enviar
+    setHasAttemptedSubmit(true);
+    setTouchedFields((prev) => {
+      const newSet = new Set(prev);
+      newSet.add('receipt');
+      return newSet;
+    });
     
     if (!receiptData) {
       setErrors(prev => ({ ...prev, receipt: 'Debes subir un comprobante' }));
@@ -357,12 +387,12 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                 name="usdtAmount"
                 value={formData.usdtAmount || ''}
                 onChange={handleInputChange}
-                className={`form-input ${errors.usdtAmount ? 'error' : ''}`}
+                className={`form-input ${shouldShowError('usdtAmount') ? 'error' : ''}`}
                 placeholder="Ej: 1"
                 min="1"
                 step="0.01"
               />
-              {errors.usdtAmount && <span className="error-message">{errors.usdtAmount}</span>}
+              {shouldShowError('usdtAmount') && <span className="error-message">{errors.usdtAmount}</span>}
               
                      {formData.usdtAmount > 0 && rateData && (
                        <div className="conversion-info">
@@ -381,10 +411,10 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                 name="walletAddress"
                 value={formData.walletAddress}
                 onChange={handleInputChange}
-                className={`form-input ${errors.walletAddress ? 'error' : ''}`}
+                className={`form-input ${shouldShowError('walletAddress') ? 'error' : ''}`}
                 placeholder="Ej: 0x742d35Cc6634C0532925a3b8D..."
               />
-              {errors.walletAddress && <span className="error-message">{errors.walletAddress}</span>}
+              {shouldShowError('walletAddress') && <span className="error-message">{errors.walletAddress}</span>}
               <div className="field-help">
                 Dirección de tu wallet desde donde enviaste los USDT
               </div>
@@ -400,10 +430,10 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
                 name="transactionHash"
                 value={formData.transactionHash}
                 onChange={handleInputChange}
-                className={`form-input ${errors.transactionHash ? 'error' : ''}`}
+                className={`form-input ${shouldShowError('transactionHash') ? 'error' : ''}`}
                 placeholder="Ej: 0x1234567890abcdef..."
               />
-              {errors.transactionHash && <span className="error-message">{errors.transactionHash}</span>}
+              {shouldShowError('transactionHash') && <span className="error-message">{errors.transactionHash}</span>}
               <div className="field-help">
                 Hash de la transacción en la blockchain (opcional pero recomendado)
               </div>
@@ -430,11 +460,11 @@ export const UsdtDepositForm: React.FC<UsdtDepositFormProps> = ({ onSuccess }) =
               <label className="form-label">
                 Subir Comprobante
               </label>
-              <ReceiptUpload
-                onUpload={handleReceiptUpload}
-                error={errors.receipt}
-                disabled={isLoading}
-              />
+                <ReceiptUpload
+                  onUpload={handleReceiptUpload}
+                  error={shouldShowError('receipt') ? errors.receipt : undefined}
+                  disabled={isLoading}
+                />
               <div className="field-help">
                 Captura de pantalla de la transacción o comprobante del envío de USDT
               </div>

@@ -11,6 +11,7 @@ interface PagoMovilFieldsProps {
     phoneNumber?: string;
     accountHolder?: string;
   };
+  shouldShowError: (fieldName: string) => boolean;
   onChange: (field: string, value: string) => void;
 }
 
@@ -36,6 +37,7 @@ const BANCO_CODES = [
 export const PagoMovilFields: React.FC<PagoMovilFieldsProps> = ({
   formData,
   errors,
+  shouldShowError,
   onChange,
 }) => {
   return (
@@ -49,7 +51,7 @@ export const PagoMovilFields: React.FC<PagoMovilFieldsProps> = ({
           name="banco"
           value={formData.banco}
           onChange={(e) => onChange('banco', e.target.value)}
-          className={`form-select ${errors.banco ? 'error' : ''}`}
+          className={`form-select ${shouldShowError('banco') ? 'error' : ''}`}
         >
           <option value="">Seleccione el banco</option>
           {BANCO_CODES.map((banco) => (
@@ -58,7 +60,7 @@ export const PagoMovilFields: React.FC<PagoMovilFieldsProps> = ({
             </option>
           ))}
         </select>
-        {errors.banco && <span className="error-message">{errors.banco}</span>}
+        {shouldShowError('banco') && <span className="error-message">{errors.banco}</span>}
         <div className="field-help">
           Seleccione el código de 4 dígitos del banco (ej: 0105 = Mercantil, 0134 = Banesco)
         </div>
@@ -73,11 +75,17 @@ export const PagoMovilFields: React.FC<PagoMovilFieldsProps> = ({
           id="phoneNumber"
           name="phoneNumber"
           value={formData.phoneNumber}
-          onChange={(e) => onChange('phoneNumber', e.target.value)}
-          className={`form-input ${errors.phoneNumber ? 'error' : ''}`}
+          onChange={(e) => {
+            // Solo permitir números
+            const numericValue = e.target.value.replace(/[^0-9]/g, '');
+            onChange('phoneNumber', numericValue);
+          }}
+          className={`form-input ${shouldShowError('phoneNumber') ? 'error' : ''}`}
           placeholder="Ej: 04144446186"
+          inputMode="numeric"
+          pattern="[0-9]*"
         />
-        {errors.phoneNumber && <span className="error-message">{errors.phoneNumber}</span>}
+        {shouldShowError('phoneNumber') && <span className="error-message">{errors.phoneNumber}</span>}
         <div className="field-help">
           Número de teléfono asociado al Pago Móvil donde recibirás el dinero (ej: 04144446186)
         </div>
@@ -93,10 +101,10 @@ export const PagoMovilFields: React.FC<PagoMovilFieldsProps> = ({
           name="accountHolder"
           value={formData.accountHolder}
           onChange={(e) => onChange('accountHolder', e.target.value)}
-          className={`form-input ${errors.accountHolder ? 'error' : ''}`}
+          className={`form-input ${shouldShowError('accountHolder') ? 'error' : ''}`}
           placeholder="Ej: 24967880"
         />
-        {errors.accountHolder && <span className="error-message">{errors.accountHolder}</span>}
+        {shouldShowError('accountHolder') && <span className="error-message">{errors.accountHolder}</span>}
         <div className="field-help">
           Cédula o RIF del titular de la cuenta Pago Móvil (ej: 24967880 o V-24967880)
         </div>

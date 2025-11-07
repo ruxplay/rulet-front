@@ -9,6 +9,7 @@ interface UsdtFieldsProps {
     network?: string;
     walletAddress?: string;
   };
+  shouldShowError: (fieldName: string) => boolean;
   onChange: (field: string, value: string) => void;
 }
 
@@ -18,7 +19,7 @@ const NETWORKS = [
   { value: 'ERC20', label: 'ERC20 (Ethereum) - Más lento y costoso' },
 ];
 
-export const UsdtFields: React.FC<UsdtFieldsProps> = ({ formData, errors, onChange }) => {
+export const UsdtFields: React.FC<UsdtFieldsProps> = ({ formData, errors, shouldShowError, onChange }) => {
   return (
     <>
       <div className="form-group">
@@ -30,7 +31,7 @@ export const UsdtFields: React.FC<UsdtFieldsProps> = ({ formData, errors, onChan
           name="network"
           value={formData.network}
           onChange={(e) => onChange('network', e.target.value)}
-          className={`form-select ${errors.network ? 'error' : ''}`}
+          className={`form-select ${shouldShowError('network') ? 'error' : ''}`}
         >
           <option value="">Seleccione una red</option>
           {NETWORKS.map((network) => (
@@ -39,7 +40,7 @@ export const UsdtFields: React.FC<UsdtFieldsProps> = ({ formData, errors, onChan
             </option>
           ))}
         </select>
-        {errors.network && <span className="error-message">{errors.network}</span>}
+        {shouldShowError('network') && <span className="error-message">{errors.network}</span>}
         <div className="field-help">
           Selecciona la red que soporte tu wallet. TRC20 es la más recomendada.
         </div>
@@ -55,10 +56,10 @@ export const UsdtFields: React.FC<UsdtFieldsProps> = ({ formData, errors, onChan
           name="walletAddress"
           value={formData.walletAddress}
           onChange={(e) => onChange('walletAddress', e.target.value)}
-          className={`form-input ${errors.walletAddress ? 'error' : ''}`}
+          className={`form-input ${shouldShowError('walletAddress') ? 'error' : ''}`}
           placeholder="Ej: TXYZ1234567890abcdefghijklmnopqrstuvwx"
         />
-        {errors.walletAddress && <span className="error-message">{errors.walletAddress}</span>}
+        {shouldShowError('walletAddress') && <span className="error-message">{errors.walletAddress}</span>}
         <div className="field-help">
           Dirección de tu wallet donde recibirás los USDT. la dirección que introduzcas.
         </div>

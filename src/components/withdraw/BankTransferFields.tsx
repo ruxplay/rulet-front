@@ -11,12 +11,14 @@ interface BankTransferFieldsProps {
     accountNumber?: string;
     accountHolder?: string;
   };
+  shouldShowError: (fieldName: string) => boolean;
   onChange: (field: string, value: string) => void;
 }
 
 export const BankTransferFields: React.FC<BankTransferFieldsProps> = ({
   formData,
   errors,
+  shouldShowError,
   onChange,
 }) => {
   return (
@@ -30,13 +32,13 @@ export const BankTransferFields: React.FC<BankTransferFieldsProps> = ({
           name="accountType"
           value={formData.accountType}
           onChange={(e) => onChange('accountType', e.target.value)}
-          className={`form-select ${errors.accountType ? 'error' : ''}`}
+          className={`form-select ${shouldShowError('accountType') ? 'error' : ''}`}
         >
           <option value="">Seleccione un tipo</option>
           <option value="ahorros">Cuenta de Ahorros</option>
           <option value="corriente">Cuenta Corriente</option>
         </select>
-        {errors.accountType && <span className="error-message">{errors.accountType}</span>}
+        {shouldShowError('accountType') && <span className="error-message">{errors.accountType}</span>}
       </div>
 
       <div className="form-group">
@@ -49,10 +51,10 @@ export const BankTransferFields: React.FC<BankTransferFieldsProps> = ({
           name="accountNumber"
           value={formData.accountNumber}
           onChange={(e) => onChange('accountNumber', e.target.value)}
-          className={`form-input ${errors.accountNumber ? 'error' : ''}`}
+          className={`form-input ${shouldShowError('accountNumber') ? 'error' : ''}`}
           placeholder="Ej: 1234567890"
         />
-        {errors.accountNumber && <span className="error-message">{errors.accountNumber}</span>}
+        {shouldShowError('accountNumber') && <span className="error-message">{errors.accountNumber}</span>}
       </div>
 
       <div className="form-group">
@@ -65,10 +67,10 @@ export const BankTransferFields: React.FC<BankTransferFieldsProps> = ({
           name="accountHolder"
           value={formData.accountHolder}
           onChange={(e) => onChange('accountHolder', e.target.value)}
-          className={`form-input ${errors.accountHolder ? 'error' : ''}`}
+          className={`form-input ${shouldShowError('accountHolder') ? 'error' : ''}`}
           placeholder="Ej: Juan Pérez"
         />
-        {errors.accountHolder && <span className="error-message">{errors.accountHolder}</span>}
+        {shouldShowError('accountHolder') && <span className="error-message">{errors.accountHolder}</span>}
       </div>
     </>
   );

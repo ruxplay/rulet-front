@@ -37,6 +37,8 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
   });
 
   const [errors, setErrors] = useState<DepositFormErrors>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [receiptData, setReceiptData] = useState<{
     receiptUrl: string;
     receiptPublicId: string;
@@ -85,6 +87,11 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
     setErrors(newErrors);
   };
 
+  // Función helper para determinar si debe mostrarse el error de un campo
+  const shouldShowError = (fieldName: string): boolean => {
+    return (touchedFields.has(fieldName) || hasAttemptedSubmit) && !!errors[fieldName];
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const newValue = type === 'number' ? parseFloat(value) || 0 : value;
@@ -94,6 +101,9 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
     } else {
       setFormData(prev => ({ ...prev, [name]: newValue }));
     }
+    
+    // Marcar el campo como tocado
+    setTouchedFields((prev) => new Set(prev).add(name));
     
     // Limpiar errores específicos del campo
     setErrors(prev => {
@@ -113,6 +123,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
     receiptBytes: number;
   }) => {
     setReceiptData(fileData);
+    setTouchedFields((prev) => new Set(prev).add('receipt'));
     setErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors.receipt;
@@ -122,6 +133,20 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
 
   const nextStep = () => {
     if (currentStep === 1) {
+      // Marcar que se intentó avanzar
+      setHasAttemptedSubmit(true);
+      
+      // Marcar todos los campos del paso 1 como tocados
+      setTouchedFields((prev) => {
+        const newSet = new Set(prev);
+        newSet.add('amount');
+        newSet.add('reference');
+        if (variant !== 'pago_movil') {
+          newSet.add('bank');
+        }
+        return newSet;
+      });
+      
       // Validar paso 1
       const step1Errors = [];
       if (!formData.amount || formData.amount < 50) step1Errors.push('amount');
@@ -150,6 +175,14 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Marcar que se intentó enviar
+    setHasAttemptedSubmit(true);
+    setTouchedFields((prev) => {
+      const newSet = new Set(prev);
+      newSet.add('receipt');
+      return newSet;
+    });
     
     if (!receiptData) {
       setErrors(prev => ({ ...prev, receipt: 'Debes subir un comprobante' }));
@@ -286,12 +319,12 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                   name="amount"
                   value={formData.amount === 0 ? '' : formData.amount}
                   onChange={handleInputChange}
-                  className={`form-input ${errors.amount ? 'error' : ''}`}
+                  className={`form-input ${shouldShowError('amount') ? 'error' : ''}`}
                   placeholder="Ej: 2000"
                   min="50"
                   step="50"
                 />
-                {errors.amount && <span className="error-message">{errors.amount}</span>}
+                {shouldShowError('amount') && <span className="error-message">{errors.amount}</span>}
               </div>
 
               <div className="form-group">
@@ -304,10 +337,10 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                   name="reference"
                   value={formData.reference}
                   onChange={handleInputChange}
-                  className={`form-input ${errors.reference ? 'error' : ''}`}
+                  className={`form-input ${shouldShowError('reference') ? 'error' : ''}`}
                   placeholder={variant === 'pago_movil' ? 'Ej: PM123456789' : 'Número de transferencia'}
                 />
-                {errors.reference && <span className="error-message">{errors.reference}</span>}
+                {shouldShowError('reference') && <span className="error-message">{errors.reference}</span>}
               </div>
 
               <div className="form-group">
@@ -319,7 +352,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                   name="bank"
                   value={formData.bank}
                   onChange={handleInputChange}
-                  className={`form-select ${errors.bank ? 'error' : ''}`}
+                  className={`form-select ${shouldShowError('bank') ? 'error' : ''}`}
                 >
                   <option value="">{variant === 'pago_movil' ? 'Pago Móvil' : 'Seleccione su banco'}</option>
                   <option value="Banesco">Banesco</option>
@@ -329,7 +362,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                   <option value="Bicentenario">Banco Bicentenario</option>
                   <option value="Otro">Otro Banco</option>
                 </select>
-                {errors.bank && <span className="error-message">{errors.bank}</span>}
+                {shouldShowError('bank') && <span className="error-message">{errors.bank}</span>}
               </div>
 
               <button 
@@ -355,7 +388,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                 </label>
                 <ReceiptUpload
                   onUpload={handleReceiptUpload}
-                  error={errors.receipt}
+                  error={shouldShowError('receipt') ? errors.receipt : undefined}
                   disabled={isLoading}
                 />
               </div>

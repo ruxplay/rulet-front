@@ -68,6 +68,8 @@ export const WithdrawForm: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<WithdrawFormErrors>({});
+  const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   // Verificar elegibilidad
   const { data: eligibilityData, isLoading: isLoadingEligibility } = useCheckEligibilityQuery(
@@ -89,142 +91,173 @@ export const WithdrawForm: React.FC = () => {
   const availableBalance = eligibilityData?.availableBalance ?? balanceValue;
   const minAmount = 150; // Monto mínimo en RUX
 
-  const validateField = (name: string, value: string | number) => {
-    const newErrors = { ...errors };
+  // Función de validación síncrona que retorna errores sin actualizar estado
+  const validateForm = (data: WithdrawFormData): WithdrawFormErrors => {
+    const validationErrors: WithdrawFormErrors = {};
 
-    switch (name) {
-      case 'monto':
-        if (!value || Number(value) < minAmount) {
-          newErrors.monto = `El monto mínimo es ${minAmount} RUX`;
-        } else if (Number(value) > availableBalance) {
-          newErrors.monto = 'Saldo insuficiente';
-        } else {
-          delete newErrors.monto;
-        }
-        break;
-
-      case 'cedula':
-        if (!value || String(value).length < 6) {
-          newErrors.cedula = 'La cédula debe tener al menos 6 caracteres';
-        } else if (String(value).length > 20) {
-          newErrors.cedula = 'La cédula no puede exceder 20 caracteres';
-        } else {
-          delete newErrors.cedula;
-        }
-        break;
-
-      case 'telefono':
-        if (!value || String(value).length < 10) {
-          newErrors.telefono = 'El teléfono debe tener al menos 10 dígitos';
-        } else if (String(value).length > 20) {
-          newErrors.telefono = 'El teléfono no puede exceder 20 caracteres';
-        } else {
-          delete newErrors.telefono;
-        }
-        break;
-
-      case 'banco':
-        if (!value || String(value).length < 3) {
-          newErrors.banco = 'El banco es requerido';
-        } else {
-          delete newErrors.banco;
-        }
-        break;
-
-      case 'payment_method':
-        if (!value) {
-          newErrors.payment_method = 'Debe seleccionar un método de pago';
-        } else {
-          delete newErrors.payment_method;
-        }
-        break;
-
-      // Validaciones específicas para bank_transfer
-      case 'accountType':
-        if (!value) {
-          newErrors.accountType = 'El tipo de cuenta es requerido';
-        } else {
-          delete newErrors.accountType;
-        }
-        break;
-
-      case 'accountNumber':
-        if (!value || String(value).length < 5) {
-          newErrors.accountNumber = 'El número de cuenta es requerido';
-        } else {
-          delete newErrors.accountNumber;
-        }
-        break;
-
-      case 'accountHolder':
-        if (!value || String(value).length < 3) {
-          newErrors.accountHolder = 'El nombre del titular es requerido';
-        } else {
-          delete newErrors.accountHolder;
-        }
-        break;
-
-      // Validaciones específicas para pago_movil
-      case 'phoneNumber':
-        if (!value || String(value).length < 10) {
-          newErrors.phoneNumber = 'El teléfono de Pago Móvil es requerido';
-        } else {
-          delete newErrors.phoneNumber;
-        }
-        break;
-
-      // Validaciones específicas para usdt
-      case 'network':
-        if (!value) {
-          newErrors.network = 'Debe seleccionar una red blockchain';
-        } else {
-          delete newErrors.network;
-        }
-        break;
-
-      case 'walletAddress':
-        if (!value || String(value).length < 10) {
-          newErrors.walletAddress = 'La dirección de wallet es requerida';
-        } else {
-          delete newErrors.walletAddress;
-        }
-        break;
-
-      default:
-        break;
+    // Validar campos comunes
+    if (!data.cedula || String(data.cedula).length < 6) {
+      validationErrors.cedula = 'La cédula debe tener al menos 6 caracteres';
+    } else if (String(data.cedula).length > 20) {
+      validationErrors.cedula = 'La cédula no puede exceder 20 caracteres';
     }
 
+    if (!data.telefono || String(data.telefono).length < 10) {
+      validationErrors.telefono = 'El teléfono debe tener al menos 10 dígitos';
+    } else if (String(data.telefono).length > 20) {
+      validationErrors.telefono = 'El teléfono no puede exceder 20 caracteres';
+    } else if (!/^\d+$/.test(String(data.telefono))) {
+      validationErrors.telefono = 'El teléfono solo puede contener números';
+    }
+
+    if (!data.monto || Number(data.monto) < minAmount) {
+      validationErrors.monto = `El monto mínimo es ${minAmount} RUX`;
+    } else if (Number(data.monto) > availableBalance) {
+      validationErrors.monto = 'Saldo insuficiente';
+    }
+
+    if (!data.payment_method) {
+      validationErrors.payment_method = 'Debe seleccionar un método de pago';
+    }
+
+    // Validar campos según el método de pago
+    if (data.payment_method === 'bank_transfer') {
+      if (!data.accountType) {
+        validationErrors.accountType = 'El tipo de cuenta es requerido';
+      }
+      if (!data.accountNumber || String(data.accountNumber).length < 5) {
+        validationErrors.accountNumber = 'El número de cuenta es requerido';
+      }
+      if (!data.accountHolder || String(data.accountHolder).length < 3) {
+        validationErrors.accountHolder = 'El nombre del titular es requerido';
+      }
+      if (!data.banco || String(data.banco).length < 3) {
+        validationErrors.banco = 'El banco es requerido';
+      }
+    } else if (data.payment_method === 'pago_movil') {
+      if (!data.banco || String(data.banco).length < 3) {
+        validationErrors.banco = 'El banco es requerido';
+      }
+      if (!data.phoneNumber || String(data.phoneNumber).length < 10) {
+        validationErrors.phoneNumber = 'El teléfono de Pago Móvil es requerido';
+      } else if (!/^\d+$/.test(String(data.phoneNumber))) {
+        validationErrors.phoneNumber = 'El teléfono solo puede contener números';
+      }
+      if (!data.accountHolder || String(data.accountHolder).length < 3) {
+        validationErrors.accountHolder = 'El nombre del titular es requerido';
+      }
+    } else if (data.payment_method === 'usdt') {
+      if (!data.network) {
+        validationErrors.network = 'Debe seleccionar una red blockchain';
+      }
+      if (!data.walletAddress || String(data.walletAddress).length < 10) {
+        validationErrors.walletAddress = 'La dirección de wallet es requerida';
+      }
+      if (!data.banco || String(data.banco).length < 3) {
+        validationErrors.banco = 'El banco es requerido';
+      }
+    }
+
+    return validationErrors;
+  };
+
+  // Función para validar un campo individual y actualizar estado
+  const validateField = (name: string, value: string | number) => {
+    const currentData = { ...formData, [name]: name === 'monto' ? Number(value) : value };
+    const validationErrors = validateForm(currentData);
+    
+    // Si cambió el método de pago, limpiar errores de campos que ya no aplican
+    const newErrors = { ...errors };
+    
+    if (name === 'payment_method') {
+      // Limpiar errores de campos específicos de métodos anteriores
+      delete newErrors.accountType;
+      delete newErrors.accountNumber;
+      delete newErrors.accountHolder;
+      delete newErrors.phoneNumber;
+      delete newErrors.network;
+      delete newErrors.walletAddress;
+      delete newErrors.banco;
+    }
+    
+    // Actualizar el error del campo que se está validando
+    if (validationErrors[name as keyof WithdrawFormErrors]) {
+      newErrors[name as keyof WithdrawFormErrors] = validationErrors[name as keyof WithdrawFormErrors];
+    } else {
+      delete newErrors[name as keyof WithdrawFormErrors];
+    }
+    
+    // También validar y actualizar errores de campos relacionados si el método de pago cambió
+    if (name === 'payment_method') {
+      Object.keys(validationErrors).forEach((key) => {
+        if (validationErrors[key as keyof WithdrawFormErrors]) {
+          newErrors[key as keyof WithdrawFormErrors] = validationErrors[key as keyof WithdrawFormErrors];
+        } else {
+          delete newErrors[key as keyof WithdrawFormErrors];
+        }
+      });
+    }
+    
     setErrors(newErrors);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
+    // Filtrar solo números para campos de teléfono
+    let processedValue = value;
+    if (name === 'telefono' || name === 'phoneNumber') {
+      // Solo permitir números
+      processedValue = value.replace(/[^0-9]/g, '');
+    }
+    
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'monto' ? Number(value) : value,
+      [name]: name === 'monto' ? Number(processedValue) : processedValue,
     }));
     
-    validateField(name, value);
+    // Marcar el campo como tocado
+    setTouchedFields((prev) => new Set(prev).add(name));
+    
+    // Limpiar error general cuando se modifica cualquier campo
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.general;
+      return newErrors;
+    });
+    
+    validateField(name, processedValue);
+  };
+
+  // Función para verificar si el formulario es válido
+  const isFormValid = (): boolean => {
+    const validationErrors = validateForm(formData);
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  // Función helper para determinar si debe mostrarse el error de un campo
+  const shouldShowError = (fieldName: string): boolean => {
+    return (touchedFields.has(fieldName) || hasAttemptedSubmit) && !!errors[fieldName as keyof WithdrawFormErrors];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Marcar que se intentó enviar el formulario
+    setHasAttemptedSubmit(true);
+    
+    // Marcar todos los campos como tocados
+    const allFields = Object.keys(formData) as Array<keyof WithdrawFormData>;
+    setTouchedFields(new Set(allFields.map(f => String(f))));
 
-    // Validar todos los campos
-    const fieldsToValidate = Object.keys(formData) as Array<keyof WithdrawFormData>;
-    fieldsToValidate.forEach((field) => {
-      validateField(field, formData[field]);
-    });
+    // Validar todos los campos de forma síncrona
+    const validationErrors = validateForm(formData);
+    
+    // Actualizar el estado de errores con todos los errores encontrados
+    setErrors(validationErrors);
 
     // Si hay errores, no enviar
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-
-    // Verificar que todos los campos estén llenos
-    if (!formData.cedula || !formData.telefono || !formData.banco || formData.monto <= 0 || !formData.payment_method) {
-      setErrors({ general: 'Por favor, completa todos los campos' });
+    if (Object.keys(validationErrors).length > 0) {
       return;
     }
 
@@ -394,7 +427,7 @@ export const WithdrawForm: React.FC = () => {
             name="payment_method"
             value={formData.payment_method}
             onChange={handleChange}
-            className={`form-select ${errors.payment_method ? 'error' : ''}`}
+            className={`form-select ${shouldShowError('payment_method') ? 'error' : ''}`}
           >
             <option value="">Selecciona un método</option>
             {allowedMethods.map((method) => {
@@ -410,7 +443,7 @@ export const WithdrawForm: React.FC = () => {
               );
             })}
           </select>
-          {errors.payment_method && <span className="error-message">{errors.payment_method}</span>}
+          {shouldShowError('payment_method') && <span className="error-message">{errors.payment_method}</span>}
         </div>
 
         {/* Campos específicos según el método de pago */}
@@ -426,8 +459,15 @@ export const WithdrawForm: React.FC = () => {
               accountNumber: errors.accountNumber,
               accountHolder: errors.accountHolder,
             }}
+            shouldShowError={shouldShowError}
             onChange={(field: string, value: string) => {
               setFormData((prev) => ({ ...prev, [field]: value }));
+              setTouchedFields((prev) => new Set(prev).add(field));
+              setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors.general;
+                return newErrors;
+              });
               validateField(field, value);
             }}
           />
@@ -445,8 +485,15 @@ export const WithdrawForm: React.FC = () => {
               phoneNumber: errors.phoneNumber,
               accountHolder: errors.accountHolder,
             }}
+            shouldShowError={shouldShowError}
             onChange={(field: string, value: string) => {
               setFormData((prev) => ({ ...prev, [field]: value }));
+              setTouchedFields((prev) => new Set(prev).add(field));
+              setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors.general;
+                return newErrors;
+              });
               validateField(field, value);
             }}
           />
@@ -462,8 +509,15 @@ export const WithdrawForm: React.FC = () => {
               network: errors.network,
               walletAddress: errors.walletAddress,
             }}
+            shouldShowError={shouldShowError}
             onChange={(field: string, value: string) => {
               setFormData((prev) => ({ ...prev, [field]: value }));
+              setTouchedFields((prev) => new Set(prev).add(field));
+              setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors.general;
+                return newErrors;
+              });
               validateField(field, value);
             }}
           />
@@ -482,10 +536,10 @@ export const WithdrawForm: React.FC = () => {
             min={minAmount}
             max={availableBalance}
             step="0.01"
-            className={`form-input ${errors.monto ? 'error' : ''}`}
+            className={`form-input ${shouldShowError('monto') ? 'error' : ''}`}
             placeholder="Mínimo 150 RUX"
           />
-          {errors.monto && <span className="error-message">{errors.monto}</span>}
+          {shouldShowError('monto') && <span className="error-message">{errors.monto}</span>}
           {formData.monto > 0 && formData.monto < availableBalance && (
             <span className="form-help">
               Disponible: {availableBalance.toFixed(2)} RUX
@@ -503,10 +557,10 @@ export const WithdrawForm: React.FC = () => {
             name="cedula"
             value={formData.cedula}
             onChange={handleChange}
-            className={`form-input ${errors.cedula ? 'error' : ''}`}
+            className={`form-input ${shouldShowError('cedula') ? 'error' : ''}`}
             placeholder="V-12345678"
           />
-          {errors.cedula && <span className="error-message">{errors.cedula}</span>}
+          {shouldShowError('cedula') && <span className="error-message">{errors.cedula}</span>}
         </div>
 
         <div className="form-group">
@@ -519,10 +573,12 @@ export const WithdrawForm: React.FC = () => {
             name="telefono"
             value={formData.telefono}
             onChange={handleChange}
-            className={`form-input ${errors.telefono ? 'error' : ''}`}
-            placeholder="+58 412 1234567"
+            className={`form-input ${shouldShowError('telefono') ? 'error' : ''}`}
+            placeholder="Ej: 04144446186"
+            inputMode="numeric"
+            pattern="[0-9]*"
           />
-          {errors.telefono && <span className="error-message">{errors.telefono}</span>}
+          {shouldShowError('telefono') && <span className="error-message">{errors.telefono}</span>}
         </div>
 
         {/* No mostrar "Banco" común cuando es pago_movil, ya está en el subcomponente */}
@@ -537,10 +593,10 @@ export const WithdrawForm: React.FC = () => {
               name="banco"
               value={formData.banco}
               onChange={handleChange}
-              className={`form-input ${errors.banco ? 'error' : ''}`}
+              className={`form-input ${shouldShowError('banco') ? 'error' : ''}`}
               placeholder={formData.payment_method === 'usdt' ? 'usdt' : 'Banesco, Mercantil, BVC...'}
             />
-            {errors.banco && <span className="error-message">{errors.banco}</span>}
+            {shouldShowError('banco') && <span className="error-message">{errors.banco}</span>}
           </div>
         )}
 
@@ -553,7 +609,7 @@ export const WithdrawForm: React.FC = () => {
         <button
           type="submit"
           className="submit-btn"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isFormValid()}
         >
           {isSubmitting ? 'Enviando...' : 'Solicitar Retiro'}
         </button>
