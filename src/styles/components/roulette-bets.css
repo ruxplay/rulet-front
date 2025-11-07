@@ -59,14 +59,14 @@
 }
 
 .no-bets-message p {
-  color: #000000;
+  color: #ecf0f1;
   margin: 8px 0;
   font-size: 1rem;
 }
 
 .no-bets-message p:first-child {
   font-weight: bold;
-  color: #000000;
+  color: #f39c12;
   font-size: 1.1rem;
 }
 
