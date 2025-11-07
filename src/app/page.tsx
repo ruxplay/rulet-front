@@ -49,7 +49,7 @@ export default function HomePage() {
         {/* Sección de Registro */}
         <section className="register-section">
           <div className="register-content">
-            <h3 className="register-title">¡Únete a RuxPlay!</h3>
+            <h3 className="register-title">¡Únete a RubPlay!</h3>
             <p className="register-subtitle">
               Si todavía no eres usuario, abre tu cuenta, es gratis y solo toma unos segundos
             </p>

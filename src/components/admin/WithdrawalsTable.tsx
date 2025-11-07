@@ -161,7 +161,7 @@ export const WithdrawalsTable: React.FC<WithdrawalsTableProps> = ({ onStatsChang
   const formatAmount = (monto: number): string => {
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'RUX',
+      currency: 'RUB',
       minimumFractionDigits: 2,
     }).format(monto);
   };

@@ -50,10 +50,10 @@ export const AdminContent: React.FC<AdminContentProps> = ({ stats }) => {
             <p className="stat-number">
               {stats?.houseEarnings ? new Intl.NumberFormat('es-VE', {
                 style: 'currency',
-                currency: 'RUX',
+                currency: 'RUB',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
-              }).format(stats.houseEarnings) : '0 RUX'}
+              }).format(stats.houseEarnings) : '0 RUB'}
             </p>
           </div>
         </div>

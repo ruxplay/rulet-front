@@ -363,7 +363,7 @@ export const DepositsTable: React.FC<DepositsTableProps> = ({ onStatsChange }) =
   const formatAmount = (amount: number): string => {
     return new Intl.NumberFormat('es-VE', {
       style: 'currency',
-      currency: 'RUX',
+      currency: 'RUB',
       minimumFractionDigits: 2,
     }).format(amount);
   };

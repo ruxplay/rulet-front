@@ -37,12 +37,12 @@ export const Header = () => {
         <Link href="/" className="logo">
           <Image
             src="/logo.png"
-            alt="RuxPlay Logo"
+            alt="RubPlay Logo"
             width={40}
             height={40}
             style={{ objectFit: 'contain' }}
           />
-          <span className="logo-text">RuxPlay</span>
+          <span className="logo-text">RubPlay</span>
         </Link>
 
         {/* Nav */}

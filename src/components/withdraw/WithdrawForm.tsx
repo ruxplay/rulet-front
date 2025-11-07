@@ -89,7 +89,7 @@ export const WithdrawForm: React.FC = () => {
   const balanceFromRedux = user?.balance ?? 0;
   const balanceValue = typeof balanceFromRedux === 'string' ? parseFloat(balanceFromRedux) : balanceFromRedux;
   const availableBalance = eligibilityData?.availableBalance ?? balanceValue;
-  const minAmount = 150; // Monto mínimo en RUX
+  const minAmount = 150; // Monto mínimo en RUB
 
   // Función de validación síncrona que retorna errores sin actualizar estado
   const validateForm = (data: WithdrawFormData): WithdrawFormErrors => {
@@ -111,7 +111,7 @@ export const WithdrawForm: React.FC = () => {
     }
 
     if (!data.monto || Number(data.monto) < minAmount) {
-      validationErrors.monto = `El monto mínimo es ${minAmount} RUX`;
+      validationErrors.monto = `El monto mínimo es ${minAmount} RUB`;
     } else if (Number(data.monto) > availableBalance) {
       validationErrors.monto = 'Saldo insuficiente';
     }
@@ -295,7 +295,7 @@ export const WithdrawForm: React.FC = () => {
       await Swal.fire({
         icon: 'success',
         title: '¡Retiro Solicitado!',
-        text: `Tu solicitud de retiro de ${formData.monto} RUX fue enviada exitosamente. Estará en revisión.`,
+        text: `Tu solicitud de retiro de ${formData.monto} RUB fue enviada exitosamente. Estará en revisión.`,
         confirmButtonText: 'Ir al Dashboard',
       });
 
@@ -319,7 +319,7 @@ export const WithdrawForm: React.FC = () => {
             errorMessage = 'Saldo insuficiente';
             break;
           case 'MINIMUM_AMOUNT_NOT_MET':
-            errorMessage = `El monto mínimo es ${minAmount} RUX`;
+            errorMessage = `El monto mínimo es ${minAmount} RUB`;
             break;
           case 'PENDING_WITHDRAWAL_EXISTS':
             errorMessage = 'Ya tienes un retiro pendiente de aprobación. Espera a que se procese antes de solicitar otro.';
@@ -404,11 +404,11 @@ export const WithdrawForm: React.FC = () => {
         <div className="balance-info">
           <div className="balance-item">
             <span className="balance-label">Balance disponible:</span>
-            <span className="balance-value">{availableBalance.toFixed(2)} RUX</span>
+            <span className="balance-value">{availableBalance.toFixed(2)} RUB</span>
           </div>
         </div>
         <p className="balance-note">
-          Solo puedes retirar si has ganado en la ruleta. El monto mínimo es {minAmount} RUX.
+          Solo puedes retirar si has ganado en la ruleta. El monto mínimo es {minAmount} RUB.
         </p>
         {allowedMethods.length > 0 && (
           <p className="balance-note method-note">
@@ -525,7 +525,7 @@ export const WithdrawForm: React.FC = () => {
 
         <div className="form-group">
           <label htmlFor="monto" className="form-label">
-            Monto a Retirar (RUX) *
+            Monto a Retirar (RUB) *
           </label>
           <input
             type="number"
@@ -537,12 +537,12 @@ export const WithdrawForm: React.FC = () => {
             max={availableBalance}
             step="0.01"
             className={`form-input ${shouldShowError('monto') ? 'error' : ''}`}
-            placeholder="Mínimo 150 RUX"
+            placeholder="Mínimo 150 RUB"
           />
           {shouldShowError('monto') && <span className="error-message">{errors.monto}</span>}
           {formData.monto > 0 && formData.monto < availableBalance && (
             <span className="form-help">
-              Disponible: {availableBalance.toFixed(2)} RUX
+              Disponible: {availableBalance.toFixed(2)} RUB
             </span>
           )}
         </div>

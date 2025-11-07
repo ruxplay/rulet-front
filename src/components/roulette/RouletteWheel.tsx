@@ -860,7 +860,7 @@ export const RouletteWheel = forwardRef<RouletteWheelRef, RouletteWheelProps>(
         <div className="roulette-wheel-center-wood">
           <Image
             src="/logo.png"
-            alt="RuxPlay Logo"
+            alt="RubPlay Logo"
             width={40}
             height={40}
             style={{ objectFit: 'contain' }}

@@ -1,4 +1,4 @@
-# 🎨 Paleta de Colores - RuxPlay
+# 🎨 Paleta de Colores - RubPlay
 
 Paleta completa de los 15 colores principales utilizados en la aplicación.
 

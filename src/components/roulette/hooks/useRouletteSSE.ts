@@ -284,31 +284,31 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
           switch (data.reason) {
             case 'deposit_approved':
               if (data.depositAmount !== undefined)
-                alertsRef.current.showSuccess('✅ Depósito Aprobado', `Tu depósito de ${data.depositAmount} RUX ha sido aprobado`);
+                alertsRef.current.showSuccess('✅ Depósito Aprobado', `Tu depósito de ${data.depositAmount} RUB ha sido aprobado`);
               break;
             case 'deposit_rejected':
               if (data.depositAmount !== undefined)
-                alertsRef.current.showError('❌ Depósito Rechazado', `Tu depósito de ${data.depositAmount} RUX ha sido rechazado`);
+                alertsRef.current.showError('❌ Depósito Rechazado', `Tu depósito de ${data.depositAmount} RUB ha sido rechazado`);
               break;
             case 'bet':
               if (data.betAmount !== undefined)
-                alertsRef.current.showInfo('💸 Apuesta Realizada', `Has apostado ${data.betAmount} RUX`);
+                alertsRef.current.showInfo('💸 Apuesta Realizada', `Has apostado ${data.betAmount} RUB`);
               break;
             case 'spin_prize':
               if (data.prize !== undefined) {
                 const prizeAmount = data.prize;
                 setTimeout(() => {
-                  alertsRef.current.showSuccess('🎉 ¡Ganaste!', `¡Felicitaciones! Has ganado ${prizeAmount} RUX`);
+                  alertsRef.current.showSuccess('🎉 ¡Ganaste!', `¡Felicitaciones! Has ganado ${prizeAmount} RUB`);
                 }, 16000);
               }
               break;
             case 'withdrawal_approved':
               if (data.withdrawalAmount !== undefined)
-                alertsRef.current.showInfo('✅ Retiro Aprobado', `Tu retiro de ${data.withdrawalAmount} RUX ha sido procesado`);
+                alertsRef.current.showInfo('✅ Retiro Aprobado', `Tu retiro de ${data.withdrawalAmount} RUB ha sido procesado`);
               break;
             case 'withdrawal_rejected':
               if (data.withdrawalAmount !== undefined)
-                alertsRef.current.showInfo('ℹ️ Retiro Rechazado', `Tu retiro de ${data.withdrawalAmount} RUX ha sido rechazado`);
+                alertsRef.current.showInfo('ℹ️ Retiro Rechazado', `Tu retiro de ${data.withdrawalAmount} RUB ha sido rechazado`);
               break;
           }
         }
@@ -337,7 +337,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const deposit: DepositEventPayload = JSON.parse(event.data);
         dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showInfo('💰 Nuevo Depósito Pendiente', `${deposit.fullName || deposit.username} - ${deposit.amount} RUX (${deposit.paymentMethod})`);
+          alertsRef.current.showInfo('💰 Nuevo Depósito Pendiente', `${deposit.fullName || deposit.username} - ${deposit.amount} RUB (${deposit.paymentMethod})`);
         }
       } catch (error) {
         console.error('❌ Error parsing deposit.created:', error);
@@ -349,7 +349,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const deposit: DepositEventPayload = JSON.parse(event.data);
         dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showSuccess('✅ Depósito Aprobado', `${deposit.username} - ${deposit.amount} RUX`);
+          alertsRef.current.showSuccess('✅ Depósito Aprobado', `${deposit.username} - ${deposit.amount} RUB`);
         }
       } catch (error) {
         console.error('❌ Error parsing deposit.approved:', error);
@@ -361,7 +361,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const deposit: DepositEventPayload = JSON.parse(event.data);
         dispatch(adminDepositsApi.util.invalidateTags(['Deposit']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showError('❌ Depósito Rechazado', `${deposit.username} - ${deposit.amount} RUX`);
+          alertsRef.current.showError('❌ Depósito Rechazado', `${deposit.username} - ${deposit.amount} RUB`);
         }
       } catch (error) {
         console.error('❌ Error parsing deposit.rejected:', error);
@@ -373,7 +373,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
         dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showInfo('💸 Nuevo Retiro Pendiente', `${withdrawal.username} - ${withdrawal.monto} RUX (${withdrawal.payment_method})`);
+          alertsRef.current.showInfo('💸 Nuevo Retiro Pendiente', `${withdrawal.username} - ${withdrawal.monto} RUB (${withdrawal.payment_method})`);
         }
       } catch (error) {
         console.error('❌ Error parsing withdrawal.created:', error);
@@ -385,7 +385,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
         dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showSuccess('✅ Retiro Aprobado', `${withdrawal.username} - ${withdrawal.monto} RUX`);
+          alertsRef.current.showSuccess('✅ Retiro Aprobado', `${withdrawal.username} - ${withdrawal.monto} RUB`);
         }
       } catch (error) {
         console.error('❌ Error parsing withdrawal.approved:', error);
@@ -397,7 +397,7 @@ export const useRouletteSSE = (type: RouletteType, currentMesaId?: string | null
         const withdrawal: WithdrawalEventPayload = JSON.parse(event.data);
         dispatch(adminWithdrawalsApi.util.invalidateTags(['Withdrawal']));
         if (roleRef.current === 'admin') {
-          alertsRef.current.showError('❌ Retiro Rechazado', `${withdrawal.username} - ${withdrawal.monto} RUX`);
+          alertsRef.current.showError('❌ Retiro Rechazado', `${withdrawal.username} - ${withdrawal.monto} RUB`);
         }
       } catch (error) {
         console.error('❌ Error parsing withdrawal.rejected:', error);

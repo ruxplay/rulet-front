@@ -126,7 +126,7 @@ const DepositHistory: React.FC = () => {
                   <div className="deposit-header">
                     <div className="deposit-info">
                       <h3 className="deposit-amount">
-                        {Number(deposit.amount).toFixed(2)} RUX
+                        {Number(deposit.amount).toFixed(2)} RUB
                       </h3>
                       <span className="deposit-reference">
                         Ref: {deposit.reference}

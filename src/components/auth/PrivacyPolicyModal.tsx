@@ -28,7 +28,7 @@ export const PrivacyPolicyModal = ({ isOpen, onClose }: PrivacyPolicyModalProps)
       <div className="privacy-policy-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="privacy-policy-modal-header">
           <h2 id="privacyPolicyTitle" className="privacy-policy-modal-title">
-            🔒 Política de Privacidad de RUXPLAY
+            🔒 Política de Privacidad de RubPlay
           </h2>
           <button
             className="privacy-policy-modal-close"
@@ -44,7 +44,7 @@ export const PrivacyPolicyModal = ({ isOpen, onClose }: PrivacyPolicyModalProps)
           
           <h3>1. Introducción</h3>
           <p>
-            Bienvenido a RUXPLAY nosotros nos comprometemos a proteger tu privacidad y tus datos personales. 
+            Bienvenido a RubPlay nosotros nos comprometemos a proteger tu privacidad y tus datos personales. 
             Esta política explica cómo recopilamos, usamos, almacenamos y protegemos tu información cuando 
             utilizas nuestros servicios, juegos y funciones online.
           </p>

@@ -519,7 +519,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({ onStatsChange }) => {
   const formatBalance = (balance: string) => {
     return parseFloat(balance).toLocaleString('es-ES', {
       style: 'currency',
-      currency: 'RUX',
+      currency: 'RUB',
     });
   };
 

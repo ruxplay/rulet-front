@@ -22,10 +22,10 @@ import { AuthPersistence } from "@/components/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RuxPlay - La mejor experiencia de ruleta online",
+  title: "RubPlay - La mejor experiencia de ruleta online",
   description: "Disfruta de la emoción de la ruleta con gráficos increíbles, apuestas seguras y premios reales.",
   keywords: ["ruleta", "casino", "juegos", "apuestas", "online"],
-  authors: [{ name: "RuxPlay Team" }],
+  authors: [{ name: "RubPlay Team" }],
   viewport: "width=device-width, initial-scale=1",
 };
 

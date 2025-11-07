@@ -55,7 +55,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
     switch (name) {
       case 'amount':
         if (!value || Number(value) < 50) {
-          newErrors.amount = 'El monto mínimo es 50 RUX';
+          newErrors.amount = 'El monto mínimo es 50 RUB';
         } else {
           delete newErrors.amount;
         }
@@ -421,7 +421,7 @@ export const DepositForm: React.FC<DepositFormProps> = ({ onSuccess, variant }) 
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Monto:</span>
-                  <span className="summary-value">{formData.amount.toFixed(2)} RUX</span>
+                  <span className="summary-value">{formData.amount.toFixed(2)} RUB</span>
                 </div>
                 <div className="summary-item">
                   <span className="summary-label">Referencia:</span>

@@ -134,7 +134,7 @@ const WithdrawalsHistory: React.FC = () => {
                   <div className="deposit-header">
                     <div className="deposit-info">
                       <h3 className="deposit-amount">
-                        {Number(w.monto).toFixed(2)} RUX
+                        {Number(w.monto).toFixed(2)} RUB
                       </h3>
                       <span className="deposit-reference">
                         {getMethodText(w.payment_method)}

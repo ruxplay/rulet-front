@@ -43,23 +43,23 @@ export const KPICards = () => {
     <div className="kpi-cards">
       <div className="dashboard-card">
         <h4>Saldo</h4>
-        <div className="kpi-value">{formatCurrency(balance)} RUX</div>
+        <div className="kpi-value">{formatCurrency(balance)} RUB</div>
         <div className="kpi-trend">Saldo actual</div>
       </div>
       <div className="dashboard-card">
         <h4>Ganancias</h4>
-        <div className="kpi-value kpi-success">{formatCurrency(wins)} RUX</div>
+        <div className="kpi-value kpi-success">{formatCurrency(wins)} RUB</div>
         <div className="kpi-trend">Total ganado</div>
       </div>
       <div className="dashboard-card">
         <h4>Pérdidas</h4>
-        <div className="kpi-value kpi-danger">{formatCurrency(losses)} RUX</div>
+        <div className="kpi-value kpi-danger">{formatCurrency(losses)} RUB</div>
         <div className="kpi-trend">Total perdido</div>
       </div>
       <div className={`dashboard-card ${neto < 0 ? 'kpi-net-negative' : ''}`}>
         <h4>Neto</h4>
         <div className={`kpi-value ${neto >= 0 ? 'kpi-primary' : 'kpi-danger'}`}>
-          {neto >= 0 ? '+' : ''}{formatCurrency(neto)} RUX
+          {neto >= 0 ? '+' : ''}{formatCurrency(neto)} RUB
         </div>
         <div className="kpi-trend">{neto >= 0 ? 'Tendencia positiva' : 'Tendencia negativa'}</div>
       </div>

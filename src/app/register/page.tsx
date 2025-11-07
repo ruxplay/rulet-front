@@ -289,7 +289,7 @@ export default function RegisterPage() {
             <Link href="/" className="back-link">
               ← Volver al inicio
             </Link>
-            <h1 className="register-title">Crear Cuenta en RuxPlay</h1>
+            <h1 className="register-title">Crear Cuenta en RubPlay</h1>
             <p className="register-subtitle">
               Únete a la mejor plataforma de ruleta online
             </p>

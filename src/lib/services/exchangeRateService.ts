@@ -84,7 +84,7 @@ class ExchangeRateService {
   }
 
   /**
-   * Convierte USDT a RUX usando la tasa final
+   * Convierte USDT a RUB usando la tasa final
    */
   public async convertUsdtToRub(usdtAmount: number): Promise<number> {
     const rateData = await this.getCurrentRate();
@@ -93,7 +93,7 @@ class ExchangeRateService {
   }
 
   /**
-   * Convierte RUX a USDT usando la tasa final
+   * Convierte RUB a USDT usando la tasa final
    */
   public async convertRubToUsdt(rubAmount: number): Promise<number> {
     const rateData = await this.getCurrentRate();
@@ -153,7 +153,7 @@ export const useExchangeRate = () => {
     try {
       return await exchangeRateService.convertUsdtToRub(usdtAmount);
     } catch (err) {
-      console.error('Error converting USDT to RUX:', err);
+      console.error('Error converting USDT to RUB:', err);
       return 0;
     }
   }, []);
@@ -162,7 +162,7 @@ export const useExchangeRate = () => {
     try {
       return await exchangeRateService.convertRubToUsdt(rubAmount);
     } catch (err) {
-      console.error('Error converting RUX to USDT:', err);
+      console.error('Error converting RUB to USDT:', err);
       return 0;
     }
   }, []);

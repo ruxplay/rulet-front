@@ -35,7 +35,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
         <div className="help-modal-header">
           <h2 className="help-modal-title">
             <span className="help-icon">❓</span>
-            Guía Completa de RuxPlay - Sistema de Ruleta
+            Guía Completa de RubPlay - Sistema de Ruleta
           </h2>
           <button 
             className="help-modal-close"
@@ -50,33 +50,53 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
         </div>
 
         <div className="help-modal-content">
-          {/* Sección: ¿Qué es RuxPlay? */}
+          {/* Aviso importante sobre la moneda RUB */}
+          <div className="help-notice" style={{ 
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+            border: '2px solid #f59e0b',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            marginBottom: '24px',
+            boxShadow: '0 4px 6px rgba(245, 158, 11, 0.1)'
+          }}>
+            <p style={{ 
+              margin: 0, 
+              color: '#92400e',
+              fontSize: '1rem',
+              lineHeight: '1.6',
+              fontWeight: 500
+            }}>
+              <strong>⚠️ Importante:</strong> La moneda <strong>RUB</strong> es únicamente una moneda virtual del juego y no tiene valor monetario real fuera de la plataforma.
+            </p>
+          </div>
+
+          {/* Sección: ¿Qué es RubPlay? */}
           <section className="help-section">
             <h3 className="help-section-title">
               <span className="section-icon">🎮</span>
-              ¿Qué es RuxPlay?
+              ¿Qué es RubPlay?
             </h3>
             <div className="help-description">
               <p>
-                <strong>RuxPlay</strong> es una plataforma de ruleta online donde puedes apostar con la moneda virtual <strong>RUX</strong>. 
+                <strong>RubPlay</strong> es una plataforma de ruleta online donde puedes apostar con la moneda virtual <strong>RUB</strong>. 
                 El sistema funciona con <strong>mesas</strong> que se completan cuando <strong>15 jugadores</strong> realizan sus apuestas, 
                 y luego la ruleta gira automáticamente para determinar los ganadores.
               </p>
             </div>
           </section>
 
-          {/* Sección: Sistema de Moneda RUX */}
+          {/* Sección: Sistema de Moneda RUB */}
           <section className="help-section">
             <h3 className="help-section-title">
               <span className="section-icon">💰</span>
-              Sistema de Moneda RUX
+              Sistema de Moneda RUB
             </h3>
             <div className="help-grid">
               <div className="help-card">
-                <h4 className="card-title">💵 ¿Qué es RUX?</h4>
+                <h4 className="card-title">💵 ¿Qué es RUB?</h4>
                 <p>
-                  <strong>RUX</strong> es la moneda virtual de RuxPlay. Todas las apuestas, premios, depósitos y retiros 
-                  se realizan en RUX. Puedes depositar fondos mediante depósitos aprobados y retirar tus ganancias 
+                  <strong>RUB</strong> es la moneda virtual de RubPlay. Todas las apuestas, premios, depósitos y retiros 
+                  se realizan en RUB. Puedes depositar fondos mediante depósitos aprobados y retirar tus ganancias 
                   cuando lo desees.
                 </p>
               </div>
@@ -84,9 +104,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">📊 Ver tu Saldo</h4>
                 <p>
-                  Tu saldo en RUX se muestra en el <strong>Dashboard</strong>, junto con tus estadísticas: 
-                  <strong>Ganancias totales</strong>, <strong>Pérdidas totales</strong> y tu <strong>Neto</strong> 
-                  (diferencia entre ganancias y pérdidas). El saldo se actualiza en <strong>tiempo real</strong> cuando 
+                  Tu saldo en RUB se muestra en el <strong>Dashboard</strong>, junto con tus estadísticas: 
+                  <strong>Ganancias totales</strong>, <strong>Pérdidas totales</strong> y tu <strong>Neto</strong> (diferencia entre ganancias y pérdidas). El saldo se actualiza en <strong>tiempo real</strong> cuando 
                   realizas apuestas o recibes premios.
                 </p>
               </div>
@@ -102,21 +121,21 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
             
             <div className="help-grid">
               <div className="help-card">
-                <h4 className="card-title">🎯 Ruleta 150 RUX</h4>
+                <h4 className="card-title">🎯 Ruleta 150 RUB</h4>
                 <ul className="bet-list">
-                  <li><strong>Apuesta fija:</strong> 150 RUX por jugador</li>
-                  <li><strong>Premio principal:</strong> 70% del total apostado (máximo 1.575 RUX si se llena)</li>
-                  <li><strong>Premios secundarios:</strong> 10% cada uno (máximo 225 RUX cada uno)</li>
+                  <li><strong>Apuesta fija:</strong> 150 RUB por jugador</li>
+                  <li><strong>Premio principal:</strong> 70% del total apostado (máximo 1.575 RUB si se llena)</li>
+                  <li><strong>Premios secundarios:</strong> 10% cada uno (máximo 225 RUB cada uno)</li>
                   <li><strong>Ideal para:</strong> Principiantes o jugadores con presupuesto moderado</li>
                 </ul>
               </div>
 
               <div className="help-card">
-                <h4 className="card-title">🎯 Ruleta 300 RUX</h4>
+                <h4 className="card-title">🎯 Ruleta 300 RUB</h4>
                 <ul className="bet-list">
-                  <li><strong>Apuesta fija:</strong> 300 RUX por jugador</li>
-                  <li><strong>Premio principal:</strong> 70% del total apostado (máximo 3.150 RUX si se llena)</li>
-                  <li><strong>Premios secundarios:</strong> 10% cada uno (máximo 450 RUX cada uno)</li>
+                  <li><strong>Apuesta fija:</strong> 300 RUB por jugador</li>
+                  <li><strong>Premio principal:</strong> 70% del total apostado (máximo 3.150 RUB si se llena)</li>
+                  <li><strong>Premios secundarios:</strong> 10% cada uno (máximo 450 RUB cada uno)</li>
                   <li><strong>Ideal para:</strong> Jugadores experimentados con mayor presupuesto</li>
                 </ul>
               </div>
@@ -149,8 +168,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-content">
                   <h4>Selecciona tu Ruleta</h4>
                   <p>
-                    Elige entre <strong>Ruleta 150 RUX</strong> o <strong>Ruleta 300 RUX</strong> según tu presupuesto. 
-                    Asegúrate de tener suficiente saldo en RUX (mínimo 150 para ruleta básica, 300 para ruleta premium).
+                    Elige entre <strong>Ruleta 150 RUB</strong> o <strong>Ruleta 300 RUB</strong> según tu presupuesto. 
+                    Asegúrate de tener suficiente saldo en RUB (mínimo 150 para ruleta básica, 300 para ruleta premium).
                   </p>
                 </div>
               </div>
@@ -172,7 +191,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-content">
                   <h4>Confirma tu Apuesta</h4>
                   <p>
-                    Una vez seleccionado tu número, haz clic en el botón <strong>"Apostar [150/300] RUX"</strong>. 
+                    Una vez seleccionado tu número, haz clic en el botón <strong>"Apostar [150/300] RUB"</strong>. 
                     Tu saldo se descontará <strong>inmediatamente</strong> y tu nombre aparecerá en el número elegido.
                   </p>
                   <p className="warning-text">
@@ -211,11 +230,11 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
             <div className="help-card full-width warning-card">
               <h4 className="card-title">⚠️ Reglas de Apuesta</h4>
               <ul className="bet-list">
-                <li>El monto de apuesta es <strong>FIJO</strong>: 150 RUX para Ruleta 150, 300 RUX para Ruleta 300</li>
+                <li>El monto de apuesta es <strong>FIJO</strong>: 150 RUB para Ruleta 150, 300 RUB para Ruleta 300</li>
                 <li><strong>Una sola apuesta por usuario por mesa</strong>. No puedes apostar múltiples veces en la misma ronda</li>
                 <li>Solo puedes elegir números <strong>disponibles</strong> (no ocupados por otros jugadores)</li>
                 <li>Si ya apostaste en una mesa, deberás esperar a que se cierre y se abra una nueva para apostar de nuevo</li>
-                <li>Tu saldo debe ser suficiente: <strong>150 RUX mínimo</strong> para Ruleta 150, <strong>300 RUX mínimo</strong> para Ruleta 300</li>
+                <li>Tu saldo debe ser suficiente: <strong>150 RUB mínimo</strong> para Ruleta 150, <strong>300 RUB mínimo</strong> para Ruleta 300</li>
               </ul>
             </div>
           </section>
@@ -252,15 +271,15 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="example-box">
                 <h5>📝 Ejemplo Práctico:</h5>
                 <p>
-                  Si una mesa de <strong>150 RUX</strong> se completa con 15 jugadores:
+                  Si una mesa de <strong>150 RUB</strong> se completa con 15 jugadores:
                 </p>
                 <ul>
-                  <li><strong>Total apostado:</strong> 15 × 150 = 2.250 RUX</li>
+                  <li><strong>Total apostado:</strong> 15 × 150 = 2.250 RUB</li>
                   <li>Si el número <strong>8</strong> gana como principal:</li>
-                  <li>→ El jugador del número 8 gana: <strong>1.575 RUX</strong> (70%)</li>
-                  <li>→ El jugador del número 7 (izquierda) gana: <strong>225 RUX</strong> (10%)</li>
-                  <li>→ El jugador del número 9 (derecha) gana: <strong>225 RUX</strong> (10%)</li>
-                  <li>→ La casa retiene: <strong>225 RUX</strong> (10%)</li>
+                  <li>→ El jugador del número 8 gana: <strong>1.575 RUB</strong> (70%)</li>
+                  <li>→ El jugador del número 7 (izquierda) gana: <strong>225 RUB</strong> (10%)</li>
+                  <li>→ El jugador del número 9 (derecha) gana: <strong>225 RUB</strong> (10%)</li>
+                  <li>→ La casa retiene: <strong>225 RUB</strong> (10%)</li>
                 </ul>
               </div>
             </div>
@@ -287,7 +306,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">⚡ Premios Automáticos</h4>
                 <p>
-                  Los premios se <strong>acreditan automáticamente</strong> a tu saldo en RUX cuando termina la ronda. 
+                  Los premios se <strong>acreditan automáticamente</strong> a tu saldo en RUB cuando termina la ronda. 
                   No necesitas hacer nada adicional. Verás una notificación si eres ganador y tu saldo se actualizará 
                   instantáneamente.
                 </p>
@@ -322,7 +341,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-content">
                   <h4>Inicio</h4>
                   <p>
-                    Entras a <strong>Ruleta 150 RUX</strong>. Tu saldo es <strong>500 RUX</strong>. 
+                    Entras a <strong>Ruleta 150 RUB</strong>. Tu saldo es <strong>500 RUB</strong>. 
                     La mesa muestra <strong>3/15</strong> jugadores. Veo que el número 7 está disponible.
                   </p>
                 </div>
@@ -333,8 +352,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-content">
                   <h4>Realizas tu Apuesta</h4>
                   <p>
-                    Haces clic en el número 7 y luego en <strong>"Apostar 150 RUX"</strong>. 
-                    Tu saldo baja a <strong>350 RUX</strong> y tu nombre aparece en el número 7. 
+                    Haces clic en el número 7 y luego en <strong>"Apostar 150 RUB"</strong>. 
+                    Tu saldo baja a <strong>350 RUB</strong> y tu nombre aparece en el número 7. 
                     La mesa ahora muestra <strong>4/15</strong>.
                   </p>
                 </div>
@@ -359,8 +378,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                   <p>
                     La ruleta se detiene y el número <strong>6</strong> es el ganador principal. 
                     Como apostaste en el número 7 (que está inmediatamente a la derecha del 6), 
-                    eres el <strong>Ganador Secundario Derecho</strong> y recibes <strong>225 RUX</strong> 
-                    (10% del total apostado: 15 × 150 = 2.250 RUX).
+                    eres el <strong>Ganador Secundario Derecho</strong> y recibes <strong>225 RUB</strong> 
+                    (10% del total apostado: 15 × 150 = 2.250 RUB).
                   </p>
                 </div>
               </div>
@@ -370,9 +389,9 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <div className="step-content">
                   <h4>Premio Acreditado</h4>
                   <p>
-                    Recibes una notificación: <strong>"🎉 ¡Ganaste! Has ganado 225 RUX"</strong>. 
-                    Tu saldo se actualiza automáticamente a <strong>575 RUX</strong> 
-                    (350 + 225). Tu estadística de <strong>Ganancias</strong> aumenta en 225 RUX.
+                    Recibes una notificación: <strong>"🎉 ¡Ganaste! Has ganado 225 RUB"</strong>. 
+                    Tu saldo se actualiza automáticamente a <strong>575 RUB</strong> 
+                    (350 + 225). Tu estadística de <strong>Ganancias</strong> aumenta en 225 RUB.
                   </p>
                 </div>
               </div>
@@ -389,7 +408,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="help-card">
                 <h4 className="card-title">🔄 Sistema SSE (Server-Sent Events)</h4>
                 <p>
-                  RuxPlay usa tecnología de <strong>actualizaciones en tiempo real</strong>. Esto significa que:
+                  RubPlay usa tecnología de <strong>actualizaciones en tiempo real</strong>. Esto significa que:
                 </p>
                 <ul className="bet-list">
                   <li>Ves cuando otros jugadores apuestan <strong>instantáneamente</strong></li>
@@ -426,7 +445,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <h4>🎯 Gestiona tu Presupuesto</h4>
                 <p>
                   Antes de jugar, decide cuánto puedes permitirte perder. Recuerda que cada apuesta es 
-                  <strong>150 RUX o 300 RUX</strong> dependiendo de la ruleta. No apuestes más de lo que 
+                  <strong>150 RUB o 300 RUB</strong> dependiendo de la ruleta. No apuestes más de lo que 
                   puedes permitirte perder.
                 </p>
               </div>
@@ -450,8 +469,8 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="tip-card">
                 <h4>💰 Apuesta Inteligente</h4>
                 <p>
-                  Considera que si ganas como <strong>secundario</strong> recibes solo el 10% (ej: 225 RUX en mesa 150), 
-                  pero si ganas como <strong>principal</strong> recibes el 70% (ej: 1.575 RUX en mesa 150). 
+                  Considera que si ganas como <strong>secundario</strong> recibes solo el 10% (ej: 225 RUB en mesa 150), 
+                  pero si ganas como <strong>principal</strong> recibes el 70% (ej: 1.575 RUB en mesa 150). 
                   La probabilidad es la misma para todos los números.
                 </p>
               </div>
@@ -503,10 +522,10 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
                 <p className="faq-answer">
                   Depende del tipo de ruleta:
                   <ul>
-                    <li><strong>Ruleta 150:</strong> Máximo <strong>1.575 RUX</strong> como ganador principal (si los 15 jugadores apostaron)</li>
-                    <li><strong>Ruleta 300:</strong> Máximo <strong>3.150 RUX</strong> como ganador principal (si los 15 jugadores apostaron)</li>
+                    <li><strong>Ruleta 150:</strong> Máximo <strong>1.575 RUB</strong> como ganador principal (si los 15 jugadores apostaron)</li>
+                    <li><strong>Ruleta 300:</strong> Máximo <strong>3.150 RUB</strong> como ganador principal (si los 15 jugadores apostaron)</li>
                   </ul>
-                  Como ganador secundario: máximo 225 RUX (150) o 450 RUX (300).
+                  Como ganador secundario: máximo 225 RUB (150) o 450 RUB (300).
                 </p>
               </div>
 
@@ -538,7 +557,7 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
               <div className="faq-item">
                 <h4 className="faq-question">¿Cómo funciona el sistema de depósitos y retiros?</h4>
                 <p className="faq-answer">
-                  Puedes depositar RUX mediante diferentes métodos de pago (aprobará un administrador) y retirar tus ganancias 
+                  Puedes depositar RUB mediante diferentes métodos de pago (aprobará un administrador) y retirar tus ganancias 
                   cuando lo desees. Los retiros también requieren aprobación administrativa. Consulta las secciones de 
                   <strong>Depósitos</strong> y <strong>Retiros</strong> en el menú para más detalles.
                 </p>
@@ -555,10 +574,6 @@ export const HelpModal = ({ onClose }: HelpModalProps) => {
             <div className="support-info">
               <p>Si tienes más preguntas o necesitas asistencia técnica:</p>
               <div className="contact-methods">
-                <div className="contact-item">
-                  <span className="contact-icon">📞</span>
-                  <span><a href="https://wa.me/584144446186?text=Hola%20RuxPlay%2C%20necesito%20ayuda" target="_blank" rel="noopener noreferrer" style={{ color: '#00ff9c', textDecoration: 'none' }}>+58 414-4446186</a></span>
-                </div>
                 <div className="contact-item">
                   <span className="contact-icon">📧</span>
                   <span><a href="mailto:ruxplayoficial@gmail.com" style={{ color: '#00ff9c', textDecoration: 'none' }}>ruxplayoficial@gmail.com</a></span>
