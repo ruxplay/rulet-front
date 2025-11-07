@@ -89,7 +89,7 @@ class ExchangeRateService {
   public async convertUsdtToRub(usdtAmount: number): Promise<number> {
     const rateData = await this.getCurrentRate();
     const rubAmount = usdtAmount * rateData.finalRate;
-    return Math.round(rubAmount * 100) / 100; // Redondear a 2 decimales
+    return Math.round(rubAmount); // Redondear a entero (sin decimales)
   }
 
   /**
