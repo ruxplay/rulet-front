@@ -20,14 +20,14 @@ const getBaseURL = (): string => {
   if (isClient) {
 
     if (nodeEnv === 'production') {
-      return 'https://ruleta-backend-12.onrender.com';
+      return 'https://rubplay-backend-2.onrender.com';
     }
    
     return 'http://localhost:3001';
   }
   
   if (nodeEnv === 'production') {
-    return 'https://ruleta-backend-12.onrender.com';
+    return 'https://rubplay-backend-2.onrender.com';
   }
   
 
