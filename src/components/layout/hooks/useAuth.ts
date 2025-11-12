@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useLoginMutation,
@@ -22,6 +22,7 @@ export const useAuth = () => {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState<{ username?: string; password?: string; general?: string }>({});
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const previousUserRef = useRef<{ id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string } | null>(null);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -43,6 +44,25 @@ export const useAuth = () => {
   // 🔄 Verificación manual solo al cargar la página
   useEffect(() => {
     const checkAuthOnLoad = async () => {
+      // NO verificar si estamos haciendo logout
+      if (isLoggingOut) {
+        previousUserRef.current = authState.user; // Actualizar ref
+        return; // Salir inmediatamente sin hacer nada
+      }
+      
+      // Detectar si el usuario fue limpiado recientemente (posible logout)
+      // Si había un usuario antes y ahora no hay, probablemente acabamos de hacer logout
+      const wasUserCleared = previousUserRef.current !== null && authState.user === null;
+      
+      if (wasUserCleared) {
+        // Usuario fue limpiado recientemente, no verificar inmediatamente
+        previousUserRef.current = authState.user; // Actualizar ref
+        return;
+      }
+      
+      // Actualizar ref con el usuario actual
+      previousUserRef.current = authState.user;
+      
       // Solo verificar si no hay usuario en Redux y no está haciendo logout
       if (!authState.user && !isLoggingOut && !authState.isAuthenticated) {
         try {
@@ -61,11 +81,7 @@ export const useAuth = () => {
                 ...data.user,
                 fullName: data.user.username // Siempre usar username
               };
-              
-              // Debug: Verificar que el role esté llegando
-              console.log('🔍 useAuth - Usuario recibido del backend:', data.user);
-              console.log('🔍 useAuth - Role del usuario:', data.user.role);
-              
+             
               dispatch(setUser(userWithFallback));
             }
           }
@@ -96,7 +112,7 @@ export const useAuth = () => {
         ? { email: normalizedUsername, password: validatedData.password }
         : { username: normalizedUsername, password: validatedData.password };
 
-      console.log('🔍 useAuth - Payload enviado al backend:', payload);
+      
 
       const result = await login(payload).unwrap();
 
@@ -111,8 +127,7 @@ export const useAuth = () => {
         ? (user as Record<string, unknown>).isActive 
         : true; // Si no viene isActive, asumir que está activo
       
-      console.log('🔍 useAuth LOGIN - Usuario recibido del backend:', user);
-      console.log('🔍 useAuth LOGIN - isActive del usuario:', isUserActive);
+      
       
       // Si el usuario está inactivo, mostrar error y no permitir login
       if (isUserActive === false) {
@@ -127,8 +142,6 @@ export const useAuth = () => {
         fullName: (user as { username?: string }).username // Siempre usar username
       };
       
-      // Debug: Verificar que el role esté llegando en login
-      console.log('🔍 useAuth LOGIN - Role del usuario:', user && typeof user === 'object' && 'role' in user ? (user as Record<string, unknown>).role : 'No disponible');
       
       dispatch(setUser(userWithConsistentName as unknown as { id: number; username: string; email: string; fullName: string; role?: 'user' | 'admin'; balance?: number | string }));
 
